@@ -9,8 +9,8 @@ int x;
 
 /* Testing strcmp*/
 
-char str1[20]="Hello Worla";
-char str2[20]="Hello Worlb";
+char str1[20]="hello";
+char str2[20]="hello";
 
 /*printf("str2-vs-str1 %s \n", strcpy(dest,src));*/
 printf("str2-vs-str1 %d \n", strcmp(str1, str2));
