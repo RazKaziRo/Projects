@@ -11,9 +11,7 @@ char *MyStrCpy(char *dest, const char *src);
 
 char *MyStrNCpy(char *dest, const char *src, size_t n);
 
-/*
 int MyStrCaseCmp(const char *s1, const char *s2); 
-*/
 
 char *MyStrChr(const char *s, int c);
 

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
-/*mystring.c file*/
-#include "Mystring.h"
+#include <ctype.h>	  /*for using tolower/toupper	*/
+#include "Mystring.h" /* mystring.c file*/
 
 size_t MyStrlen(const char *str) /*return string length*/
 {
@@ -87,15 +87,20 @@ char *MyStrNCpy(char *dest, const char *src, size_t n)
    return dest;
 
 }
-/*
+
 int MyStrCaseCmp(const char *s1, const char *s2)
 {
 	char const *runner1 = s1, *runner2 = s2;
 
-		--tbd--
+	while(tolower(*runner1)== tolower(*runner2))
+	{
+ 		++runner1;
+ 		++runner2;
+	}
 
+return(tolower(*runner1)- tolower(*runner2));
 }
-*/
+
 
 char *MyStrChr(const char *s, int c)  /*return pointer to first accurence of c*/
 {
