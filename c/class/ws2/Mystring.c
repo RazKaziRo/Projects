@@ -3,7 +3,7 @@
 #include <ctype.h>	  /*for using tolower/toupper	*/
 #include "Mystring.h" /* mystring.c file*/
 
-size_t MyStrlen(const char *str) /*return string length*/
+size_t Mystrlen(const char *str) 				/*  string length */
 {
 
 	const char *runner = str;
@@ -21,7 +21,7 @@ size_t MyStrlen(const char *str) /*return string length*/
 }
 
 
- int MyStrCmp(const char *s1, const char *s2) /*compare couple of char in 
+ int Mystrcmp(const char *s1, const char *s2)  	/* compare couple of char in 
  string */
  {
 
@@ -29,7 +29,7 @@ size_t MyStrlen(const char *str) /*return string length*/
 
  	assert ( '\0' != *s1 && '\0' != *s2);	
 
- 	while (*runner1 == *runner2)
+ 	while (*runner1 == *runner2 && '\0' != *runner1)
  	{
 		++runner1;
 	 	++runner2;
@@ -40,7 +40,7 @@ size_t MyStrlen(const char *str) /*return string length*/
  }
 
 
-char *MyStrCpy(char *dest, const char *src){ /*copy string */
+char *Mystrcpy(char *dest, const char *src){  	/* copy string */
 
 const char *runnersrc = src;
 char *runnerdest = dest;
@@ -62,7 +62,7 @@ return dest;
 }
 
 
-char *MyStrNCpy(char *dest, const char *src, size_t n)
+char *Mystrncpy(char *dest, const char *src, size_t n)
 {  
 	const char *runnersrc = src;
 	char *runnerdest = dest;
@@ -88,9 +88,11 @@ char *MyStrNCpy(char *dest, const char *src, size_t n)
 
 }
 
-int MyStrCaseCmp(const char *s1, const char *s2)
+int Mystrcasecmp(const char *s1, const char *s2)
 {
 	char const *runner1 = s1, *runner2 = s2;
+
+	assert ('\0' != *s1 && '\0' != *s2);
 
 	while(tolower(*runner1)== tolower(*runner2))
 	{
@@ -102,9 +104,11 @@ return(tolower(*runner1)- tolower(*runner2));
 }
 
 
-char *MyStrChr(const char *s, int c)  /*return pointer to first accurence of c*/
+char *Mystrchr(const char *s, int c)  /*return pointer to first accurence of c*/
 {
 	const char *runner_s = s;
+
+	assert('\0'!=*s);
 
 	while (*runner_s != c &&  '\0'!=* runner_s)
 	{	
