@@ -31,16 +31,19 @@ size_t MyStrlen(const char *s) /*return string length*/
 
 
 char *MyStrCpy(char *dest, const char *src){ /*copy string */
+const char *runnersrc = src;
+char *runnerdest = dest;
 
-size_t i = 0;
-
-	for (i; i< MyStrlen(src) && '\0'!=src[i]; i++)
+	while('\0'!= *runnersrc)
 	{
-		dest[i] = src[i];
+		*runnerdest = *runnersrc;
+		++runnersrc;
+		++runnerdest;
 	}
-	for ( ;i<MyStrlen(dest); i++) /* adding all null characters to fill spaces*/
+	while('\0'!= *runnerdest) /* adding all null characters to fill spaces*/
 	{
-		dest[i] = '\0';
+		*runnerdest = '\0';
+		++runnerdest;
 	}
 
 
