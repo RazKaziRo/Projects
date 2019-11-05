@@ -144,3 +144,46 @@ char *Mystrdup(const char *s)
 	return runner_h;
 }
 
+char *Mystrcat(char *dest, const char *src)
+{
+	char *runnerdest = dest;
+	const char *runnersrc = src;
+
+	while('\0' != *runnerdest)
+	{
+		++runnerdest;
+	}
+	while('\0' != *runnersrc)
+	{
+		*runnerdest = *runnersrc;
+		++runnersrc;
+		++runnerdest;
+	}
+
+	*runnerdest = '\0';
+
+return dest;
+}
+
+int MyIsPalindrome (const char *str)
+{
+	const char *ptrhead = str, *ptrtail = str;
+
+	while('\0'!= *ptrtail)
+	{
+		++ptrtail;
+	}
+	--ptrtail;
+
+	while(ptrhead < ptrtail)
+	{
+		if(*ptrhead!=*ptrtail)
+		{
+			return 0;
+		}
+		++ptrhead;
+		--ptrtail;
+	}
+return 1;
+
+}

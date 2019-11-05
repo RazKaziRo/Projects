@@ -127,6 +127,35 @@ printf("strdup: %s \n", pt2);
 
 [REMOVE HERE] > */
 
+/* Testing Mystrcat - adding to string  (dest,src) >
+ NOT ACCEPT '\0'*/ 
+
+/* < [REMOVE HERE]
+
+char str1[] = "123";
+char str2[] = "45 ";
+
+char str3[] = "123";
+char str4[] = "45";
+
+
+printf("Mystrcat: %s \n", Mystrcat(str1, str2));
+printf("strcat: %s \n", strcat(str3,str4));
+
+[REMOVE HERE] > */
+
+/* Testing IsPolindrom - adding to string  (dest,src) >
+ NOT ACCEPT '\0'*/ 
+
+
+char str1[] = "222";
+
+
+/*printf("Mystrstr: %s \n", Mystrstr(str1, str2));*/
+printf("IsPalindrome: %d \n", MyIsPalindrome(str1));
+
+
+
 return 0;
 }
 
