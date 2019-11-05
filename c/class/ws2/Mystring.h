@@ -21,6 +21,9 @@ char *Mystrcat(char *dest, const char *src);
 
 int MyIsPalindrome (const char *str);
 
+void My7boom (int start, int end);
+
+int My7boomHelper(int i, int j);
 
 #endif
 

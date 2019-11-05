@@ -147,14 +147,15 @@ printf("strcat: %s \n", strcat(str3,str4));
 /* Testing IsPolindrom - adding to string  (dest,src) >
  NOT ACCEPT '\0'*/ 
 
+/* < [REMOVE HERE]
+
 
 char str1[] = "222";
 
-
-/*printf("Mystrstr: %s \n", Mystrstr(str1, str2));*/
 printf("IsPalindrome: %d \n", MyIsPalindrome(str1));
 
-
+[REMOVE HERE] > */
+My7boom(0, 100);
 
 return 0;
 }

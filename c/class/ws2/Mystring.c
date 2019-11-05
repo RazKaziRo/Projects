@@ -187,3 +187,30 @@ int MyIsPalindrome (const char *str)
 return 1;
 
 }
+
+void My7boom (int start, int end)
+{
+	int i = start;
+	for (; i<end; i++)
+	{
+		if(i%7 == 0 || My7boomHelper(i,7))
+		{
+			printf("BOOM \n");
+			continue;
+		}
+		printf("%d\n", i);
+	}
+}
+
+int My7boomHelper(int i, int j) /*Helper Function to 7BOOM*/
+{
+	while(i != 0)
+	{
+		if(i%10 == j)
+		{
+			return 1;
+		}
+		i = i/10;
+	}
+return 0;
+}
