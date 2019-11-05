@@ -15,6 +15,8 @@ int Mystrcasecmp(const char *s1, const char *s2);
 
 char *Mystrchr(const char *s, int c);
 
+char *Mystrdup(const char *s);
+
 #endif
 
 

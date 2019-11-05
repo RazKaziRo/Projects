@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h> /*for using Malloc/Calloc/Realock*/
 #include <assert.h>
 #include <ctype.h>	  /*for using tolower/toupper	*/
 #include "Mystring.h" /* mystring.c file*/
@@ -11,8 +12,8 @@ size_t Mystrlen(const char *str) 				/*  string length */
 	assert ( '\0' != *str);	
 
 
-	while ('\0'!=*runner){
-
+	while ('\0'!=*runner)
+	{
 		++runner;
 	}
 
@@ -52,10 +53,9 @@ char *runnerdest = dest;
 		*runnerdest = *runnersrc;
 		++runnersrc;
 		++runnerdest;
-
 	}
 
-	*runnerdest = '\0';
+*runnerdest = '\0';
 
 return dest;
 
@@ -123,3 +123,24 @@ char *Mystrchr(const char *s, int c)  /*return pointer to first accurence of c*/
 	return (char *)runner_s;
 
 }
+
+char *Mystrdup(const char *s)
+{
+	int s_size = Mystrlen(s)+1;
+
+	char *runner_s = (char *)s;
+	char *new_ptr =(char*) malloc(s_size * sizeof(char));
+	char *runner_h = new_ptr;
+
+		while('\0' != *runner_s)
+		{
+			*new_ptr = *runner_s;
+			++runner_s;
+			++new_ptr;
+
+		}
+	*new_ptr = '\0';
+
+	return runner_h;
+}
+

@@ -5,12 +5,13 @@
  * Language:  C
  * Reviewer: Shye
  */
-
+#include <stdlib.h> /* to use free()*/
 #include <stdio.h>
 #include <string.h>   /*for testing string origin behavoior*/
 #include <strings.h>  /*for testing strcmp*/
 #include "Mystring.h" /* include MyStrlen()/MyStrCmp()/MyStrCpy()*/
 
+char *strdup(const char *s);
 
 int main(void)
 {
@@ -102,6 +103,27 @@ char str4[] = "World";
 
 printf("Mystrcpy: %s \n", Mystrncpy(str1,str2, 10)); 
 printf("strcpy: %s \n", strncpy(str3,str4, 10));
+
+[REMOVE HERE] > */
+
+/* Testing Mystrncpy - return pointer from the n string (dest,src) >
+ NOT ACCEPT '\0'*/ 
+
+/* printf("Mystrdup: %s \n", Mystrdup(str1)); */
+
+/* < [REMOVE HERE]
+
+char *pt1 , *pt2;
+
+char str1[] = "ma kores";
+char str2[] = "ma kores";
+
+
+pt1 = Mystrdup(str1);
+pt2 = strdup(str2);
+
+printf("Mystrdup: %s \n", pt1);
+printf("strdup: %s \n", pt2);
 
 [REMOVE HERE] > */
 
