@@ -1,7 +1,7 @@
 #include <stdio.h>
 /*insertion_sort.h file*/
-#ifndef _ws2head_h
-#define _ws2head_h
+#ifndef _ws2func_h
+#define _ws2func_h
 
 int MyIsPalindrome (const char *str);
 
