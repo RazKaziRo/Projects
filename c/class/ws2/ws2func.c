@@ -92,6 +92,32 @@ void DeleteWhiteSpace(char *str)
 char *SumStringsAsNum(const char *a, const char *b, char *c)
 {
 	const char *runner_a =  a, *runner_b =b;
+	int sizedifference = 0;
+
+	if(strlen(a)>strlen(b))
+	{
+		sizedifference = strlen(a)-strlen(b);
+	}
+	else
+	{
+		sizedifference = strlen(a)-strlen(b);
+	}
+
+	if(strlen(a)>strlen(b) && sizedifference>0)
+	{
+		*c = *runner_a;
+		++c;
+		++runner_a;
+		--sizedifference;
+	} 
+	else
+	{
+		*c = *runner_b;
+		++c;
+		++runner_b;
+		--sizedifference;
+	}
+	
 
 	while(*runner_a != '\0' && *runner_b != '\0')
 	{
