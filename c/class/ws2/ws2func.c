@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "ws2head.h"
 
 int MyIsPalindrome (const char *str)
@@ -87,21 +88,43 @@ void DeleteWhiteSpace(char *str)
 }
 
 
-/* -TBD
-char *addStringToNum(char *a, char *b)
+
+char *SumStringsAsNum(const char *a, const char *b, char *c)
 {
-	char *runner_a = a, *runner_b = b;
-	char *new_num =NULL;
+	const char *runner_a =  a, *runner_b =b;
 
 	while(*runner_a != '\0' && *runner_b != '\0')
 	{
-		*new_num = *runner_a + *runner_b -48;
-		++new_num;
+		if(*runner_a + *runner_b >= 106)
+		{
+			*c ='1';
+			*(c+1) = *runner_a + *runner_b - 48 -10;
+
+		}
+		else
+		{
+			*c =*runner_a + *runner_b - 48;
+		}
+		++c;
 		++runner_a;
 		++runner_b;
 	}
 
-	return new_num;
+return c;
 }
-*/
+
+int NewNumsize(char *num1, char *num2)
+{
+	int x = (strlen(num1) + strlen(num2));
+	if(*num1+*num2 >= 106)
+	{
+		return x/2+1;
+	}
+	else
+	{
+		return x/2;
+	}
+}
+
+
 
