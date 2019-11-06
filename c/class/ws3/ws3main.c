@@ -6,19 +6,20 @@
 int main(int argc, char *argv[], char **envp)
 {
 
-char *str[1][3] = {"One", "Two", "Threes"};
+char *str[1][3] = {"One", "Two", "Three"};
 char **ptr = *str;
 
-while(*ptr != 0)
-{
-	while(**ptr != '\0')
+	while(*ptr != 0 && ptr != 0)
 	{
-	printf("%c \n",**ptr);
-	++(**ptr);
+		while(**ptr != '\0')
+		{
+		printf("%c \n",**ptr);
+		++*ptr;
+		}
+	++ptr;
 	}
-	
-	++*ptr;
-}
+
+
 /*
 char **my_envp = envp;
 StringToLower(my_envp);
