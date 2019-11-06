@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
 #include "ws2head.h"
 
 int MyIsPalindrome (const char *str)
@@ -51,7 +53,15 @@ int My7boomHelper(int i, int j) /*Helper Function to 7BOOM*/
 return 0;
 }
 
-/* [TBD]
+void Myswap(int **a, int **b)
+{
+	int *tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+
+
 void DeleteWhiteSpace(char *str)
 {
 	char *runner_a = str;
@@ -59,7 +69,7 @@ void DeleteWhiteSpace(char *str)
 
 	while(isspace(*runner_a) && '\0'!=*runner_b)
 	{
-		Mystrcpy(runner_a,runner_b);
+		strcpy(runner_a,runner_b);
 		++runner_a;
 		++runner_b;
 	}
@@ -68,7 +78,7 @@ void DeleteWhiteSpace(char *str)
 	{
 		if(isspace(*runner_a))
 		{
-		Mystrcpy(runner_a,runner_b);
+		strcpy(runner_a,runner_b);
 		}
 
 	++runner_a;
@@ -76,4 +86,22 @@ void DeleteWhiteSpace(char *str)
 	}
 }
 
+
+/* -TBD
+char *addStringToNum(char *a, char *b)
+{
+	char *runner_a = a, *runner_b = b;
+	char *new_num =NULL;
+
+	while(*runner_a != '\0' && *runner_b != '\0')
+	{
+		*new_num = *runner_a + *runner_b -48;
+		++new_num;
+		++runner_a;
+		++runner_b;
+	}
+
+	return new_num;
+}
 */
+

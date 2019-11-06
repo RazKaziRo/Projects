@@ -3,21 +3,21 @@
 #ifndef _Mystring_h
 #define _Mystring_h
 
-size_t Mystrlen(const char *str);
+size_t MyStrLen(const char *str);
 
-int Mystrcmp(const char *s1, const char *s2);
+int MyStrCmp(const char *s1, const char *s2);
 
-char *Mystrcpy(char *dest, const char *src);
+char *MyStrCpy(char *dest, const char *src);
 
-char *Mystrncpy(char *dest, const char *src, size_t n);
+char *MyStrNCpy(char *dest, const char *src, size_t n);
 
-int Mystrcasecmp(const char *s1, const char *s2); 
+int MyStrCaseCmp(const char *s1, const char *s2); 
 
-char *Mystrchr(const char *s, int c);
+char *MyStrChr(const char *s, int c);
 
-char *Mystrdup(const char *s);
+char *MyStrDup(const char *s);
 
-char *Mystrcat(char *dest, const char *src);
+char *MyStrCat(char *dest, const char *src);
 
 
 #endif

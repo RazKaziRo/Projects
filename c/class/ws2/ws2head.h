@@ -11,4 +11,9 @@ int My7boomHelper(int i, int j);
 
 void DeleteWhiteSpace(char *str);
 
+void Myswap(int **a, int **b);
+
+char *addStringToNum(char *a, char *b);
+
+
 #endif

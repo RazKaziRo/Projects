@@ -6,12 +6,24 @@
  * 
  */
 #include <stdio.h>
+#include <string.h>
 #include "ws2head.h"
 
+
 int main()
+
 {
-	int* p = (int*) 17;
-	printf("%d",(int)(long)(p+4));
+
+	char arr1[] = "  111";
+
+	char *ptr1;
+	ptr1 = arr1;
+
+	printf("WhiteSpace Before:%s\n",arr1);
+
+	DeleteWhiteSpace(ptr1);
+
+	printf("WhiteSpace After:%s\n",arr1);
+
 	return 0;
 }
-
