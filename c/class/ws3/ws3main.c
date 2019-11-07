@@ -1,23 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <stdio.h>
 #include "ws3head.h"
 
 int main(int argc, char *argv[], char **envp)
 {
 
-char *str[1][3] = {"One", "Two", "Three"};
-char **ptr = *str;
+char arr[] = "Hello";
+char *str = arr;
+StringToLower(str);
+PrintEnv((const char **)envp);
 
-	while(*ptr != 0 && ptr != 0)
-	{
-		while(**ptr != '\0')
-		{
-		printf("%c \n",**ptr);
-		++*ptr;
-		}
-	++ptr;
-	}
+printf("%s \n",str);
 
 
 /*

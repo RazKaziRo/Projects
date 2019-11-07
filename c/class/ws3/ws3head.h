@@ -3,9 +3,9 @@
 #define _ws3func_h
 
 
-void *StringToLower(char **);
-void *PrintEnv(const char **envp);
-char *CopyEnv(const char **envp);
+void *StringToLower(char *);
+void *PrintEnv(const char **);
+char *CopyEnv(const char **);
 void CleanEnvCopy(char *);
 
 #endif

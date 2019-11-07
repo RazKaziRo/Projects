@@ -11,34 +11,24 @@
 #include <ctype.h>
 #include "ws3head.h"
 
-void *StringToLower(char **my_envp)
-{		
-		while(0 != *my_envp)
-		{
-		while('\0' != **my_envp)
-		{
-		if(islower(**my_envp))
-		{
-			*(++*my_envp);
-		}
-		else
-		{
-		**my_envp = tolower(**my_envp);
-		*(++*my_envp);
-		}
-
-		}
-		++*my_envp;
-		}
-
+void *StringToLower(char *my_strenvp)
+{	
+	char *runner_envp = my_strenvp;
+	while(*runner_envp)
+	{
+		*runner_envp = tolower(*runner_envp);
+		++runner_envp;
+	}
 }
 
 void *PrintEnv(const char **my_envp)
 {
-	while(0!=*my_envp)
+	char **runner_envp = (char **)my_envp;
+	while(0!=*runner_envp)
 	{
-		printf("%s \n",*my_envp);
-		++my_envp;
+		StringToLower(*runner_envp);
+		printf("%s \n",*runner_envp);
+		++runner_envp;
 	}
 
 }
