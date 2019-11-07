@@ -9,8 +9,6 @@ int main(int argc, char *argv[], char **envp)
 {
 
 char **envp_copy = CopyEnv((const char **)envp);
-
-
 PrintEnv((const char **)envp_copy);
 
 /*printf("envp_copy size: %d",EnvpSize((const char **)envp_copy));*/

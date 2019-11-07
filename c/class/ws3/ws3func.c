@@ -1,21 +1,24 @@
 /*
  * Author: Raz KaziRo
  * Purpose: Answares for CW3 - Array & Pointers to Pointers.
- * Date: 06.11.2019
+ * Date: 07.11.2019
  * Language:  C
  * 
  */
 
 #include <stdio.h>
-#include <string.h>
-#include <ctype.h> /*For tolower use */
-#include <stdlib.h>
-#include <assert.h>
-#include "ws3head.h"
+#include <string.h>		/* import for strlen() use */
+#include <ctype.h> 		/* import for tolower() use */
+#include <stdlib.h> 	/* import for calloc use  */
+#include <assert.h>		/* import for assert user */
+#include "ws3head.h"	/* import for MyStrDup() user */
 
 void *StringToLower(char *my_strenvp)
 {	
 	char *runner_envp = my_strenvp;
+
+	assert (my_strenvp !=0);
+
 	while(*runner_envp)
 	{
 		*runner_envp = tolower(*runner_envp);
@@ -26,6 +29,9 @@ void *StringToLower(char *my_strenvp)
 void *PrintEnv(const char **my_envp)
 {
 	char **runner_envp = (char **)my_envp;
+
+	assert (0 != my_envp);
+
 	while(0 != *runner_envp)
 	{
 		StringToLower(*runner_envp);
@@ -39,20 +45,22 @@ char **CopyEnv(const char **envp)
 	char const **runner_envp = envp ;
 
 	int size = EnvpSize(envp);
-	char **envp_copy = (char **)calloc((size+1),sizeof(*runner_envp)); /*Size ptr size*/
+	char **envp_copy = (char **)calloc((size+1),sizeof(*runner_envp)); 
 	char **runner_copy = envp_copy;
 
 
-	if(**envp_copy) /*check if malloc not able to get memory*/
+	if(envp_copy != NULL) 			/*check calloc memory allocation*/
 	{
-		/*free*/
+		while(0 != *runner_envp)
+		{
+			*runner_copy=MyStrDup(*runner_envp);
+			++runner_envp;
+			++runner_copy;
+		}
 	}
-
-	while(0 != *runner_envp)
+	else
 	{
-		*runner_copy=MyStrDup(*runner_envp);
-		++runner_envp;
-		++runner_copy;
+		/*TBD malloc failed */
 	}
 
 return envp_copy;
@@ -60,19 +68,17 @@ return envp_copy;
 
 
 
-int EnvpSize(const char **envp)
+long int EnvpSize(const char **envp)
 {	
-	int counter = 0;
 	char const **runner_envp =envp ;
 	while(NULL != *runner_envp)
 	{
-	++counter;
 	++runner_envp;
 	}
-return counter;
+return runner_envp - envp;
 }
 
-char *MyStrDup(const char *s)
+char *MyStrDup(const char *s) 		/*copy Strings*/
 {
 	int s_size = strlen(s)+1;
 
@@ -82,13 +88,20 @@ char *MyStrDup(const char *s)
 
     assert(0 != s);
 
+    if(new_ptr) 					/*Test malloc allocation*/
+    {
 		while('\0' != *runner_s)
 		{
 			*new_ptr = *runner_s;
 			++runner_s;
 			++new_ptr;
-
 		}
+    }
+    else
+    {
+    	/*TBD malloc failed*/
+    }
+
 	*new_ptr = '\0';
 
 	return runner_h;
@@ -97,13 +110,13 @@ char *MyStrDup(const char *s)
 void CleanEnvCopy(char **envp_copy)
 {	
 	char **free_runner = envp_copy;
-	int size = EnvpSize((const char**)envp_copy);
-	while(size > 0)
+
+	while(*free_runner != 0)
 	{
 		free(*free_runner);
 		*free_runner = NULL;
 		++free_runner;
-		--size;
 	}
+
 free(envp_copy);	
 }
