@@ -120,3 +120,8 @@ void CleanEnvCopy(char **envp_copy)
 
 free(envp_copy);	
 }
+
+void printSizeOfType(char *type)
+{
+	printf("Size Of %s: %ld",type, sizeof(type));
+}

@@ -9,5 +9,6 @@ char **CopyEnv(const char **);
 void CleanEnvCopy(char **envp);
 long int EnvpSize(const char **envp); /*return Envp size - Num of pointers */
 char *MyStrDup(const char *s);
+void printSizeOfType(char *type);
 
 #endif
