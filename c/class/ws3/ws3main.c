@@ -14,17 +14,15 @@ CleanEnvCopy(envp_copy);
 */
 
 int i = 0;
-char soldier_list[3] = {'1', '2'};
+char soldier_list[10] = {'L','L','L','L','L','L','L','L','L','L'};
 char *ptr_sl = soldier_list;
-char *sw_ptr = soldier_list+1; /*Send 1*/
+char *sw_ptr = soldier_list+2; /*Send 1*/
 
-Jospehus(ptr_sl,sw_ptr);
+Jospehus(soldier_list,sw_ptr);
 
-/* Jospehus(soldier_list,sw_ptr);*/
-
-for(;i<5;i++)
+for(;i<10;i++)
 {
-	printf("Soldier: %d, %c\n", i+1, soldier_list[i]);
+	printf("Soldier %d: %c\n", i+1, soldier_list[i]);
 }
 printf("Live Solders: %d \n", LiveCounter(ptr_sl));
 

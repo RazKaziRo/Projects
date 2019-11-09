@@ -124,46 +124,58 @@ free(envp_copy);
 
 int LiveCounter(const char *soldierlist)
 {
+	int result = 0;
 	char *sl_runner = (char *)soldierlist;
 
-	int alive = 0;
-
-	while('\0'!= *sl_runner)
+	while('\0'!= *sl_runner )
+	{
+		if('0'!=*sl_runner)
 		{
-			if('D'!= *sl_runner)
-			{
-				++alive;
-			}
-		++sl_runner;
+			++result;
 		}
-
-
-return alive;
+	++sl_runner;
+	}
+	return result;
 }
 
-void *killsoldier(const char *soldierlist, char *sw_ptr)
+char *NextAlive(const char *soldierlist, char *sw_ptr)
 {
-	char *soldiers_runner = (char *)soldierlist;
-	
-	
+	char *sl_runner = (char *)soldierlist;
+	char *sw_runner = sw_ptr;
+
+	while(*sw_runner == '0' && *sw_runner != '\0')
+	{
+		++sw_runner;
+	}
+	if(*sw_runner =='\0')
+	{
+		sw_runner = sl_runner;
+		sw_runner = NextAlive(sl_runner,sw_runner);
+	}
+
+return sw_runner;
 }
+
+void *Killlive(const char *soldierlist, char *sw_ptr)
+{	
+	char *sl_runner = (char *)soldierlist;
+	*sw_ptr = '0';
+}
+
 
 void *Jospehus(const char *soldierlist, char *sw_ptr)
 {
-	char *sw_runner = (char *)sw_ptr;
-	char *soldiers_runner = (char *)soldierlist;
-	int size = LiveCounter(soldierlist);
+	char *sl_runner = (char *)soldierlist;
 
 	while(LiveCounter(soldierlist)>1)
 	{
-		if( '\0' == *sw_runner)
-		{
-			sw_runner = soldiers_runner;
-		}
-		killsoldier(soldiers_runner,sw_runner);
-		size =LiveCounter(soldierlist);
+		++sw_ptr;
+		sw_ptr = NextAlive(sl_runner,sw_ptr);
+		Killlive(sl_runner,sw_ptr);
+		sw_ptr = NextAlive(sl_runner,sw_ptr);
 	}
 }
+
 
 
 

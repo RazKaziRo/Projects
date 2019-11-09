@@ -10,6 +10,7 @@ char *MyStrDup(const char *s);
 void printSizeOfType(char *type);
 void *Jospehus(const char *soldierlist, char *sw_ptr);
 int LiveCounter(const char *soldierlist);
-void *killsoldier(const char *soldierlist, char *sw_ptr);
+void *Killlive(const char *soldierlist, char *sw_ptr);
+char *NextAlive(const char *soldierlist, char *sw_ptr);
 
 #endif
