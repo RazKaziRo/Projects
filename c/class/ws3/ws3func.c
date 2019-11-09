@@ -13,7 +13,7 @@
 #include <assert.h>		/* import for assert user */
 #include "ws3head.h"						/* import for MyStrDup() user */
 
-char *MyStrDup(const char *s) 		/*copy Strings*/
+char *MyStrDup(const char *s) 			/*My String Copy*/
 {
 	int s_size = strlen(s)+1;
 
@@ -138,7 +138,7 @@ int LiveCounter(const char *soldierlist)
 	return result;
 }
 
-char *NextAlive(const char *soldierlist, char *sw_ptr)
+char *NextAlive(const char *soldierlist, char *sw_ptr) /* Point To The Next Alive*/
 {
 	char *sl_runner = (char *)soldierlist;
 
@@ -151,7 +151,7 @@ char *NextAlive(const char *soldierlist, char *sw_ptr)
 	{
 		++sw_ptr;
 	}
-	
+
 	if(*sw_ptr =='\0')
 	{
 	sw_ptr = sl_runner;
@@ -165,7 +165,7 @@ char *NextAlive(const char *soldierlist, char *sw_ptr)
 return sw_ptr;
 }
 
-void *Killlive(const char *soldierlist, char *sw_ptr)
+void *Killlive(const char *soldierlist, char *sw_ptr) 	/*Kill The current Soldier*/
 {	
 
 	char *sl_runner = (char *)soldierlist;
@@ -174,7 +174,7 @@ void *Killlive(const char *soldierlist, char *sw_ptr)
 }
 
 
-void *Jospehus(const char *soldierlist, char *sw_ptr)
+void *Jospehus(const char *soldierlist, char *sw_ptr) 
 {
 	char *sl_runner = (char *)soldierlist;
 

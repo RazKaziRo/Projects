@@ -53,8 +53,13 @@ Jospehus(ptr_sl,sw_ptr);
 
 while(*soldier_list)
 {
+	if(*soldier_list == 'L')
+	{
 	printf("Soldiers %d: %c \n", ++i,*soldier_list++);
+	}
 
+++i;
+++soldier_list;
 }
 
 /*
