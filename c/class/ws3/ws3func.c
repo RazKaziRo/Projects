@@ -141,25 +141,36 @@ int LiveCounter(const char *soldierlist)
 char *NextAlive(const char *soldierlist, char *sw_ptr)
 {
 	char *sl_runner = (char *)soldierlist;
-	char *sw_runner = sw_ptr;
 
-	while(*sw_runner == '0' && *sw_runner != '\0')
+	if(*sw_ptr != '0')
 	{
-		++sw_runner;
-	}
-	if(*sw_runner =='\0')
-	{
-		sw_runner = sl_runner;
-		sw_runner = NextAlive(sl_runner,sw_runner);
+		++sw_ptr;
 	}
 
-return sw_runner;
+	while(*sw_ptr == '0' && *sw_ptr != '\0')
+	{
+		++sw_ptr;
+	}
+	
+	if(*sw_ptr =='\0')
+	{
+	sw_ptr = sl_runner;
+
+		while(*sw_ptr == '0' && *sw_ptr != '\0')
+		{
+			++sw_ptr;
+		}
+	}
+
+return sw_ptr;
 }
 
 void *Killlive(const char *soldierlist, char *sw_ptr)
 {	
+
 	char *sl_runner = (char *)soldierlist;
 	*sw_ptr = '0';
+	
 }
 
 
@@ -169,10 +180,10 @@ void *Jospehus(const char *soldierlist, char *sw_ptr)
 
 	while(LiveCounter(soldierlist)>1)
 	{
-		++sw_ptr;
 		sw_ptr = NextAlive(sl_runner,sw_ptr);
 		Killlive(sl_runner,sw_ptr);
 		sw_ptr = NextAlive(sl_runner,sw_ptr);
+
 	}
 }
 
