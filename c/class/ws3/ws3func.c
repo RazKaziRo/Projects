@@ -11,72 +11,7 @@
 #include <ctype.h> 		/* import for tolower() use */
 #include <stdlib.h> 	/* import for calloc use  */
 #include <assert.h>		/* import for assert user */
-#include "ws3head.h"	/* import for MyStrDup() user */
-
-void *StringToLower(char *my_strenvp)
-{	
-	char *runner_envp = my_strenvp;
-
-	assert (my_strenvp !=0);
-
-	while(*runner_envp)
-	{
-		*runner_envp = tolower(*runner_envp);
-		++runner_envp;
-	}
-}
-
-void *PrintEnv(const char **my_envp)
-{
-	char **runner_envp = (char **)my_envp;
-
-	assert (0 != my_envp);
-
-	while(0 != *runner_envp)
-	{
-		StringToLower(*runner_envp);
-		printf("%s \n",*runner_envp);
-		++runner_envp;
-	}
-}
-
-char **CopyEnv(const char **envp)
-{
-	char const **runner_envp = envp ;
-
-	int size = EnvpSize(envp);
-	char **envp_copy = (char **)calloc((size+1),sizeof(*runner_envp)); 
-	char **runner_copy = envp_copy;
-
-
-	if(envp_copy != NULL) 			/*check calloc memory allocation*/
-	{
-		while(0 != *runner_envp)
-		{
-			*runner_copy=MyStrDup(*runner_envp);
-			++runner_envp;
-			++runner_copy;
-		}
-	}
-	else
-	{
-		/*TBD malloc failed */
-	}
-
-return envp_copy;
-}
-
-
-
-long int EnvpSize(const char **envp)
-{	
-	char const **runner_envp =envp ;
-	while(NULL != *runner_envp)
-	{
-	++runner_envp;
-	}
-return runner_envp - envp;
-}
+#include "ws3head.h"						/* import for MyStrDup() user */
 
 char *MyStrDup(const char *s) 		/*copy Strings*/
 {
@@ -104,8 +39,74 @@ char *MyStrDup(const char *s) 		/*copy Strings*/
 
 	*new_ptr = '\0';
 
-	return runner_h;
+return runner_h;
 }
+
+void *StringToLower(char *my_strenvp)
+{
+	char *runner_envp = my_strenvp;
+
+	assert (my_strenvp !=0);
+
+	while(*runner_envp)
+	{
+		*runner_envp = tolower(*runner_envp);
+		++runner_envp;
+	}
+}
+
+void *PrintEnv(const char **my_envp)
+{
+	char **runner_envp = (char **)my_envp;
+
+	assert (0 != my_envp);
+
+	while(0 != *runner_envp)
+	{
+		StringToLower(*runner_envp);
+		printf("%s \n",*runner_envp);
+		++runner_envp;
+	}
+}
+
+long int EnvpSize(const char **envp)
+{	
+	char const **runner_envp =envp ;
+	while(NULL != *runner_envp)
+	{
+	++runner_envp;
+	}
+return runner_envp - envp;
+}
+
+
+char **CopyEnv(const char **envp)
+{
+	char const **runner_envp = envp ;
+
+	long int size = EnvpSize(envp);
+	char **envp_copy = (char **)calloc((size+1),sizeof(*runner_envp)); 
+	char **runner_copy = envp_copy;
+
+
+	if(envp_copy != NULL) 			/*check calloc memory allocation*/
+	{
+		while(0 != *runner_envp)
+		{
+			*runner_copy=MyStrDup(*runner_envp);
+			++runner_envp;
+			++runner_copy;
+		}
+	}
+	else
+	{
+		/*TBD malloc failed */
+	}
+
+return envp_copy;
+}
+
+
 
 void CleanEnvCopy(char **envp_copy)
 {	
@@ -121,7 +122,51 @@ void CleanEnvCopy(char **envp_copy)
 free(envp_copy);	
 }
 
-void printSizeOfType(char *type)
+int LiveCounter(const char *soldierlist)
 {
-	printf("Size Of %s: %ld",type, sizeof(type));
+	char *sl_runner = (char *)soldierlist;
+
+	int alive = 0;
+
+	while('\0'!= *sl_runner)
+		{
+			if('D'!= *sl_runner)
+			{
+				++alive;
+			}
+		++sl_runner;
+		}
+
+
+return alive;
 }
+
+void *killsoldier(const char *soldierlist, char *sw_ptr)
+{
+	char *soldiers_runner = (char *)soldierlist;
+	
+	
+}
+
+void *Jospehus(const char *soldierlist, char *sw_ptr)
+{
+	char *sw_runner = (char *)sw_ptr;
+	char *soldiers_runner = (char *)soldierlist;
+	int size = LiveCounter(soldierlist);
+
+	while(LiveCounter(soldierlist)>1)
+	{
+		if( '\0' == *sw_runner)
+		{
+			sw_runner = soldiers_runner;
+		}
+		killsoldier(soldiers_runner,sw_runner);
+		size =LiveCounter(soldierlist);
+	}
+}
+
+
+
+
+
+
