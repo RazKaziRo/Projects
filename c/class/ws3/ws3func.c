@@ -11,7 +11,7 @@
 #include <ctype.h> 		/* import for tolower() use */
 #include <stdlib.h> 	/* import for calloc use  */
 #include <assert.h>		/* import for assert user */
-#include "ws3head.h"						/* import for MyStrDup() user */
+#include "ws3head.h"	/* import for MyStrDup() user */
 
 void *MyMalloc(size_t size, int flag)
 {
@@ -136,7 +136,7 @@ int LiveCounter(const char *soldierlist)
 	int result = 0;
 	char *sl_runner = (char *)soldierlist;
 
-	while('\0'!= *sl_runner )
+	while('\0' != *sl_runner )
 	{
 		if('0'!=*sl_runner)
 		{
@@ -147,7 +147,8 @@ int LiveCounter(const char *soldierlist)
 	return result;
 }
 
-char *NextAlive(const char *soldierlist, char *sw_ptr) /* Point To The Next Alive*/
+char *NextAlive(const char *soldierlist, char *sw_ptr) 
+/* Point To The Next Alive*/
 {
 	char *sl_runner = (char *)soldierlist;
 
@@ -161,20 +162,22 @@ char *NextAlive(const char *soldierlist, char *sw_ptr) /* Point To The Next Aliv
 		++sw_ptr;
 	}
 
-	if(*sw_ptr =='\0')
+	if(*sw_ptr == '\0')
 	{
 	sw_ptr = sl_runner;
-
+	
 		while(*sw_ptr == '0' && *sw_ptr != '\0')
 		{
 			++sw_ptr;
 		}
+		
 	}
 
 return sw_ptr;
 }
 
-void *Killlive(const char *soldierlist, char *sw_ptr) 	/*Kill The current Soldier*/
+void *Killlive(const char *soldierlist, char *sw_ptr) 	
+/*Kill The current Soldier*/
 {	
 
 	char *sl_runner = (char *)soldierlist;

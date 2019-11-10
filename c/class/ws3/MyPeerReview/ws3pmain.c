@@ -16,34 +16,7 @@ PrintEnv((const char **)envp_copy);
 CleanEnvCopy(envp_copy);
 */
 
-int n = 0;
-int i =0;
-int *arr = NULL;
-printf("How Many Soldiers: ");
-scanf("%d", &n);
-arr = (int *)malloc(n*sizeof(int));
 
-
-
-while(i<n-1)
-{
-	arr[i] = i+1;
-	++i;
-}
-arr[i] = 0;
-
-printf("Sword Location: ");
-scanf("%d", &i);
-
-while(arr[i] != i)
-{
-	arr[i] = arr[arr[i]];
-	i = arr[i];
-}
-
-printf("lucky Soldier: %d \n", i);
-
-/*
 int num_of_soldiers = 0;
 int sw_location = 0;
 char *soldier_list = NULL;
