@@ -7,13 +7,14 @@
 int main(int argc, char *argv[], char **envp)
 {
 
-/* ENV TEST
+
 char **envp_copy = CopyEnv((const char **)envp);
-PrintEnv((const char **)envp_copy);
+/*PrintEnv((const char **)envp_copy);*/
 CleanEnvCopy(envp_copy);
-*/
 
 
+
+/*
 
 int num_of_soldiers = 0;
 int sw_location = 0;
@@ -61,10 +62,11 @@ while(*soldier_list)
 ++i;
 ++soldier_list;
 }
+*/
 
 /*
 int i = 0;
-char arr[13] = {'1','2','3','4','5','6','7','8','9','T','E','T','T'};
+char arr[13] = {'1','2','3','4','5','6','7','8','9','A','B','C','D'};
 char *soldier_list = arr;
 char *sw_location = arr;
 
@@ -74,8 +76,8 @@ for(;i<13; i++)
 {
 	printf("Soldier %d: %c\n", i+1,arr[i]);
 }
-*/
 
+*/
 return 0;
 
 }

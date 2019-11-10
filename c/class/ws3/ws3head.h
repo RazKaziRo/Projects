@@ -1,10 +1,12 @@
 #ifndef _ws3func_h
 #define _ws3func_h
 
-void *StringToLower(char *);
+#include <stdlib.h> /*Import size_y */
+
+void *MyMalloc(size_t size, int flag);
 void *PrintEnv(const char **);
 char **CopyEnv(const char **);
-void CleanEnvCopy(char **envp);
+void CleanEnvCopy(char **envp_copy);
 long int EnvpSize(const char **envp); /*return Envp size - Num of pointers */
 char *MyStrDup(const char *s);
 void printSizeOfType(char *type);
