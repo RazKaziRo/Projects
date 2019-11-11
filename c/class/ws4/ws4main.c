@@ -7,8 +7,8 @@ int main()
 
 
 stopBuffer();
-/*MySwitchLutOfFunctions();*/
-/*MyIfLutOfFunctions();*/
+MySwitchLutOfFunctions();
+MyIfLutOfFunctions();
 MyLutOfFunctions();
 ResumeBuffer();	
 

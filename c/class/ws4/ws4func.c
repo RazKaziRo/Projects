@@ -2,8 +2,8 @@
  * Author: Raz KaziRo
  * Purpose: Answares for CW4 - Functions.
  * Date: 11.11.2019
- * Language:  C
- * Reviewer : Yonatan Zaken
+ * Language: C
+ * Reviewer: Yonatan Zaken
  */
 
 #include <stdio.h>
@@ -54,7 +54,7 @@ void MySwitchLutOfFunctions()
 
 	printf("Enter T/A or ESC to quit:(Switch) \n");
 
-	while( 27 != ch )                         /*'Esc' Character */
+	while( 27 != ch )                        /*'Esc' Character */
 	{
 		ch = getchar();
 		switch(ch)
@@ -90,7 +90,7 @@ void MyLutOfFunctions()
 
 	while(i<256)
 	{
-		funcarr[i] = &WrongChar;
+		funcarr[i] = &WrongChar;    /*Set wrong char result */
 		++i;
 	}
 
