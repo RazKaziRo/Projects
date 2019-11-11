@@ -4,10 +4,15 @@
 
 int main()
 {
+
+
 stopBuffer();
-MySwitchLutOfFunctions();
+/*MySwitchLutOfFunctions();*/
 /*MyIfLutOfFunctions();*/
+MyLutOfFunctions();
 ResumeBuffer();	
- 
+
+
 return 0;
+
 }
