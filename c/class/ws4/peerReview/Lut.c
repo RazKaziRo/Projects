@@ -43,14 +43,15 @@ void LutInit( int (*LUT[])(char) )
 /*keep geting char values from stdin and sending them to the LUT*/ 
 int LutMenu( int (*LUT[])(char))
 {
-	char c=1;
+	char c= 1;	
 	
-	while ((*LUT[c])(c))
+	printf("please enter a char\n");
+	do
 	{
-		printf("please enter a char\n");
 		c= getchar();
 	}
-
+	while ((*LUT[c])(c));
+	
 }
 
 int main()
@@ -63,6 +64,4 @@ int main()
 	system("stty icanon echo");
 
 return 0;
-
-
 }

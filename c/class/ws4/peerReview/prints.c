@@ -1,5 +1,5 @@
 /**************************************************************************************
-			Ws04 - If/Case
+			Ws04 - Switch Case
 			Ben Zaad
 			11.11.19
 			revirewer- the legendary Raz KaziRo
@@ -27,16 +27,14 @@ void SwitchPrinTA(char c)
 }
 }
 
-static void Menu()
+static void Menu() 
 {
 	char c=0;
-
+	printf("please enter 1 charcther\n");
 	do
 	{
-		printf("please enter 1 charcther\n");
 		c= getchar();
 		SwitchPrinTA(c);
-
 	}
 	while( 27 != c);
 }

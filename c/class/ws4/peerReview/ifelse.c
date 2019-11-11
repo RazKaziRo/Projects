@@ -25,6 +25,10 @@ int IFPrinTA(char c)
 	{
 		return 0;
 	}
+	else
+	{
+		printf("Invalid key entered. please try again\n");
+	}
 }
 
 static void Menu()
@@ -32,9 +36,9 @@ static void Menu()
 	char c=0;
 	int flag= 0;
 
+	printf("please enter 1 charcther\n");
 	do
 	{
-		printf("please enter 1 charcther\n");
 		c= getchar();
 		flag= IFPrinTA(c);
 	}

@@ -24,19 +24,19 @@ void resumeBuffer()
 
 void MyIfLutOfFunctions()
 {
-	char ch = 0;
+	int ch = 0;
 
 	printf("Enter T/A or ESC to quit:(IF/ELSE) \n");
 
 	while( 27 != ch )			          /*'Esc' Character */
 	{
 		ch = getchar();	
-		if(ch == 65 || ch==97)            /*'A' OR 'a' */
+		if(ch == 65 || ch == 97)           /*'A' OR 'a' */
 		{
 			printf("A pressed\n");
 		}
 
-		else if(ch == 84 ||ch == 116)     /*'T' OR 't' */
+		else if(ch == 84 ||ch == 116)       /*'T' OR 't' */
 		{
 			printf("T pressed\n");
 		}	
@@ -50,7 +50,7 @@ void MyIfLutOfFunctions()
 
 void MySwitchLutOfFunctions()
 {
-	char ch = 0;
+	int ch = 0;
 
 	printf("Enter T/A or ESC to quit:(Switch) \n");
 
@@ -84,39 +84,49 @@ void MySwitchLutOfFunctions()
 
 void MyLutOfFunctions()
 {
-	char ch = 0;
+	int ch = 0;
     int i = 0;
-	void (*funcarr[256])(char);
+	int (*funcarr[256])(int);
 
 	while(i<256)
 	{
-		funcarr[i] = &WrongChar;    /*Set wrong char result */
+		funcarr[i] = &WrongChar;    		/*Set wrong char result */
 		++i;
 	}
 
+	funcarr[27] = &EscChar;					/*Esc*/
 	funcarr[97] = &CurrectCharPrint;		/*A*/
 	funcarr[65] = &CurrectCharPrint;		/*a*/
 	funcarr[84] = &CurrectCharPrint;		/*t*/
-	funcarr[116] = &CurrectCharPrint;	/*T*/
+	funcarr[116] = &CurrectCharPrint;		/*T*/
+			
 
     printf("Enter T/A or ESC to quit:(LUT) \n");
+	ch = getchar();
 
-	while(27 != ch)
+	while ((*funcarr[ch])(ch))
 	{
 		ch = getchar();
-		(*funcarr[ch])(ch);	
 	}
 
-		
 }
 
-void CurrectCharPrint(char ch) 
+int CurrectCharPrint(const int ch) 
 { 
     printf("%c pressed\n", toupper(ch));
+
+return 1;
 } 
 
-void WrongChar(char ch) 
+int WrongChar(const int ch) 
 { 
 	printf("Wrong Key Pressed \n");
+	
+	return 1;
 }
+
+int EscChar(const int ch) 
+{ 
+    return 0;
+} 
 
