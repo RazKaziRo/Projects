@@ -10,12 +10,12 @@
 #define _ws4func_h
 
 
-void MyIfLutOfFunctions();		/*Print using if/else*/
-void MySwitchLutOfFunctions();	/*Print using Switch*/
-void MyLutOfFunctions();		/*Print using LUT*/
-void MyPrintChar(char ch);		/*Print the char as set */
-void WrongChar(char ch);  		/*Print if Different char then set */
-void stopBuffer();				/*Stop Display User Input in terminal */
-void ResumeBuffer(); 			/*Resume Display User Input in terminal */
+void MyIfLutOfFunctions();			/*Print using if/else*/
+void MySwitchLutOfFunctions();		/*Print using Switch*/
+void MyLutOfFunctions();			/*Print using LUT*/
+void CurrectCharPrint(char ch);		/*Print the char as set */
+void WrongChar(char ch);  			/*Print if Different char then set */
+void stopBuffer();					/*Stop Display User Input in terminal */
+void resumeBuffer(); 				/*Resume Display User Input in terminal */
 
 #endif

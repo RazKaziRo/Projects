@@ -16,7 +16,7 @@ void stopBuffer()
 	system("stty -icanon -echo");
 }
 
-void ResumeBuffer()
+void resumeBuffer()
 {
 	system("stty icanon echo");
 }
@@ -94,10 +94,10 @@ void MyLutOfFunctions()
 		++i;
 	}
 
-	funcarr[97] = &MyPrintChar;		/*A*/
-	funcarr[65] = &MyPrintChar;		/*a*/
-	funcarr[84] = &MyPrintChar;		/*t*/
-	funcarr[116] = &MyPrintChar;	/*T*/
+	funcarr[97] = &CurrectCharPrint;		/*A*/
+	funcarr[65] = &CurrectCharPrint;		/*a*/
+	funcarr[84] = &CurrectCharPrint;		/*t*/
+	funcarr[116] = &CurrectCharPrint;	/*T*/
 
     printf("Enter T/A or ESC to quit:(LUT) \n");
 
@@ -110,7 +110,7 @@ void MyLutOfFunctions()
 		
 }
 
-void MyPrintChar(char ch) 
+void CurrectCharPrint(char ch) 
 { 
     printf("%c pressed\n", toupper(ch));
 } 

@@ -10,7 +10,7 @@ stopBuffer();
 MySwitchLutOfFunctions();
 MyIfLutOfFunctions();
 MyLutOfFunctions();
-ResumeBuffer();	
+resumeBuffer();	
 
 
 return 0;
