@@ -1,7 +1,7 @@
 #ifndef _ws3func_h
 #define _ws3func_h
 
-#include <stdlib.h> /*Import size_y */
+#include <stdlib.h> /*Import size_t */
 
 void *MyMalloc(size_t size, int flag);
 void *PrintEnv(const char **);
