@@ -23,29 +23,25 @@ void ResumeBuffer()
 
 void MyIfLutOfFunctions()
 {
-	int ch;
+	int ch = 0;
 
 	printf("Enter T/A or ESC to quit:(If) \n");
-	ch = getchar();
 
 	while( 27 != ch )			/*Esc Character */
 	{
-
+		ch = getchar();	
 		if(ch == 65 || ch==97)
 		{
 			printf("A pressed\n");
-			ch = getchar();
 		}
 
 		else if(ch == 84 ||ch == 116)
 		{
 			printf("T pressed\n");
-			ch = getchar();
 		}	
 		else
 		{
 			printf("Wrong Key Pressed\n");
-			ch = getchar();
 		}
 	} 
 	
@@ -53,32 +49,29 @@ void MyIfLutOfFunctions()
 
 void MySwitchLutOfFunctions()
 {
-	int ch;
+	int ch = 0;
 
 	printf("Enter T/A or ESC to quit:(Switch) \n");
-	ch = getchar();
 
 	while( 27 != ch )
 	{
+		ch = getchar();
 		switch(ch)
 		{
 			case 65 : case 97:
 			
 				printf("A pressed\n");
-				ch = getchar();
 				break;
 
 			case 84: case 116:
 			{
 				printf("T pressed\n");
-				ch = getchar();
 				break;
 			}
 
 			default:
 			{
 				printf("Wrong Key Pressed\n");
-				ch = getchar();
 				break;
 			}
 		}
