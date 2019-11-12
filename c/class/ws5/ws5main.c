@@ -12,11 +12,17 @@ int main()
 	char *tmp_file_name = "tmp_file.txt";
 	char *input_string = "New Line 2";
 	*/
-
+	
 	Logger(file_name);
+	
+	
 	
 
 /*
+	CountLines(file,file_name);
+
+	Logger(file_name);
+
 	AddLineToStart(file, file_name,input_string);
 
 	MergeTmpFile(file, file_name, tmp_file ,tmp_file_name,input_string);

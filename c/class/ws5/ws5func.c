@@ -10,7 +10,11 @@ void Logger(const char *file_name)
 	FILE *file;
 
 	int op = 0;
-	char *user_input = getInput();
+	char user_input[100];
+
+	printf("Enter String: ");
+	scanf("%s", user_input);
+
 	op = StrToOperation(user_input);
 	StrComparison(file, file_name, user_input, op);
 /*
@@ -26,13 +30,13 @@ void Logger(const char *file_name)
 
 int StrToOperation(const char *user_input)
 {
-	
-	if("-remove" == user_input)
+
+	if(user_input =="-remove")
 	{
 		return REMOVE_FILE;
 	}
 
-	if("-count" == user_input)
+	if(user_input == "-count")
 	{
 		return COUNT_LINES;
 	}
@@ -60,8 +64,11 @@ void StrComparison(FILE *file,const char *file_name,const char *user_input, OPER
 		AddLineToStart(file, file_name, user_input);
 		break;
 
+		/*
 		default:
 		AddLineToEnd(file, file_name, user_input);
+		break;
+		*/
 	}
 
 
@@ -131,7 +138,7 @@ void CountLines(FILE *file, const char *file_name)
 	char c; 				/*store characters from file*/
 
 	file = fopen(file_name, "r");
-	for (c = fgetc(file); c != EOF; c = fgetc(file)) 	/*fgetc() = getc() */
+	for (c = getc(file); c != EOF; c = getc(file)) 	/*fgetc() = getc() */
 	{
 		if (c == '\n')
 		{
@@ -156,23 +163,18 @@ int ExitPrograme()
 
 char *getInput()
 {
-	  char *str, c;
-	  int i = 0, j = 1;
-
-	  str = (char*)malloc(sizeof(char));
-
-	  printf("Enter String : ");
-
-	  while (c != '\n') {
-	 
-	    c = getc(stdin);
-	    str = (char*)realloc(str, j * sizeof(char));
-	    str[i] = c;
-	    i++;
-	    j++;
-	  }
-
-	  str[i] = '\0'; 
+	int length = 100; 
+	char *str = malloc(length * sizeof(char)); 
+	int count = 0; 
+	char c; 
+	while((c = getchar()) != '\n')
+	{ 
+	   if(count >= length)
+	   {
+	     str = realloc(str, (length += 10) * sizeof(char));
+	   }
+	   str[count++] = c;
+	}
 
 return str;
 }

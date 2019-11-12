@@ -4,10 +4,10 @@
 typedef enum 
 {
 	REMOVE_FILE, 			/*0*/
-	COUNT_LINES,				/*1*/
+	COUNT_LINES,			/*1*/
 	EXIT_PROG,				/*2*/
-	ADD_LINE_TO_START,  /*3*/
-	ADD_LINE_TO_END		/*4*/
+	ADD_LINE_TO_START,  	/*3*/
+	ADD_LINE_TO_END			/*4*/
 
 }OPERATIONS;
 
@@ -25,7 +25,7 @@ void AddLineToStart(FILE *file,const char *file_name, const char *intput_string)
 
 void AddLineToEnd(FILE *file,const char *file_name, const char *intput_string);
 
-void CountLines(FILE *file,const char *file_name);
+void CountLines(FILE *file, const char *file_name);
 
 FILE *MergeTmpFile(FILE *old_file,const char *old_file_name, FILE *tmp_file ,const char *tmp_file_name
  ,const char *intput_string) ;
