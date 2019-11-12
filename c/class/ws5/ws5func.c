@@ -17,7 +17,7 @@ void Logger(FILE *file_name)
 	*/
 }
 
-FILE *CreatNewFile(const char *file_name) /* Creat New File */
+FILE *CreateNewFile(const char *file_name) /* Creat New File */
 {
 	FILE *new_file;
 	new_file =fopen(file_name,"w");
@@ -26,6 +26,34 @@ FILE *CreatNewFile(const char *file_name) /* Creat New File */
 return new_file;
 }
 
+
+FILE *MergeTmpFile(FILE *old_file,const char *old_file_name, FILE *tmp_file ,const char *tmp_file_name
+ ,const char *intput_string) 
+{	
+	char c = 0;
+
+	old_file = fopen(old_file_name, "r"); 				/*Open Exsiting File for reading*/
+	tmp_file = fopen(tmp_file_name, "w");				/*Open Temp File for writing*/
+	fputs(intput_string, tmp_file);						/* Insert New String */
+	fputs("\n", tmp_file);						
+	c = fgetc(old_file);
+
+	while (c != EOF) 
+    { 
+        fputc(c, tmp_file); 
+        c = fgetc(old_file); 
+    } 
+
+    fclose(tmp_file);
+    fclose(old_file);
+
+return tmp_file;
+}
+
+void RenameTmpFile(FILE *file_name,const char *new_name)
+{
+
+}
 
 void StrOperation(FILE *file_name, char *intput_string)
 {
@@ -37,24 +65,31 @@ int StrComparison(FILE *file_name,char *intput_string)
 
 }
 
-void addLineToStart(FILE *file,const char *file_name, const char *intput_string)
+void AddLineToStart(FILE *file, const char *file_name, const char *intput_string)
 {
-	file = fopen(file_name,"r+");
-	fseek(file, 0, SEEK_SET);
-	fputs(intput_string, file );		/*write the new line */
+	FILE *tmp_file;
+	char *tmp_file_name = "tmp_file.txt";
 
-	fclose(file);
+	char c = 0;
+	
+	tmp_file = CreateNewFile(tmp_file_name);	/*Creat new Temp file */
+	tmp_file = MergeTmpFile(file, file_name, tmp_file, tmp_file_name, intput_string );
+	RemoveFile(file_name);
+	rename(tmp_file_name,file_name);			/*rename tmp file with old name */
+
 }
 
-void addLineToEnd(FILE *file,const char *file_name, const char *intput_string)
+void AddLineToEnd(FILE *file, const char *file_name, const char *intput_string)
 {
+	char c=0;
 	file = fopen(file_name,"a");
 	fputs(intput_string, file);		/*fputs() to insert string data type */
 	fputs("\n", file);				/*Insert New Line for the next input*/
 	fclose(file);
+	
 }
 
-int CountLines(FILE *file,const char *file_name)
+int CountLines(FILE *file, const char *file_name)
 {
 	int lines = 0;			/*Line counter */
 	char c; 				/*store characters from file*/
@@ -71,6 +106,8 @@ int CountLines(FILE *file,const char *file_name)
 
 return lines;
 }
+
+
 
 void RemoveFile(const char *file_name)
 {

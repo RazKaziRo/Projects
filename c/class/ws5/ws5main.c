@@ -4,15 +4,20 @@
 
 int main()
 {
-	FILE *file;
+	FILE *file, *tmp_file;
 	int lines = 0;
 
 	char *file_name = "raz.txt";
-	char *input_string = "New Line 22";
+	char *tmp_file_name = "tmp_file.txt";
+	char *input_string = "New Line 2";
+
+	AddLineToStart(file, file_name,input_string);
+
+/*
+	MergeTmpFile(file, file_name, tmp_file ,tmp_file_name,input_string);
 
 	addLineToStart(file,file_name,input_string);
 
-/*
 	addLineToEnd(file,file_name,input_string);
 
 	lines = CountLines(file,file_name);
