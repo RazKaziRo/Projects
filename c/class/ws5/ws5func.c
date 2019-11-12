@@ -1,20 +1,70 @@
 #include <stdio.h>
 #include <string.h> 		/*Import strlen() */
+#include <stdlib.h>         /*Inport realloc()*/
 #include "ws5head.h"
 
 
 
-void Logger(FILE *file_name)
+void Logger(const char *file_name)
 {
-	char user_input[25];
-	FILE *new_file = file_name;
+	FILE *file;
 
-	/*
-	struct file_input
+	int op = 0;
+	char *user_input = getInput();
+	op = StrToOperation(user_input);
+	StrComparison(file, file_name, user_input, op);
+/*
+	typedef struct str 
 	{
+       char  *input ;
+       void(*ptrcompare)(FILE *file,const char *file_name,const char *user_input);
 
-	};
-	*/
+	} STR;
+*/
+}
+
+
+int StrToOperation(const char *user_input)
+{
+	
+	if("-remove" == user_input)
+	{
+		return REMOVE_FILE;
+	}
+
+	if("-count" == user_input)
+	{
+		return COUNT_LINES;
+	}
+}
+
+
+void StrComparison(FILE *file,const char *file_name,const char *user_input, OPERATIONS op)
+{
+
+	switch(op)
+	{
+		case (REMOVE_FILE):
+		RemoveFile(file_name);
+		break;
+
+		case(COUNT_LINES):
+		CountLines(file, file_name);
+		break;
+
+		case(EXIT_PROG):
+		ExitPrograme();
+		break;
+
+		case(ADD_LINE_TO_START):
+		AddLineToStart(file, file_name, user_input);
+		break;
+
+		default:
+		AddLineToEnd(file, file_name, user_input);
+	}
+
+
 }
 
 FILE *CreateNewFile(const char *file_name) /* Creat New File */
@@ -50,20 +100,6 @@ FILE *MergeTmpFile(FILE *old_file,const char *old_file_name, FILE *tmp_file ,con
 return tmp_file;
 }
 
-void RenameTmpFile(FILE *file_name,const char *new_name)
-{
-
-}
-
-void StrOperation(FILE *file_name, char *intput_string)
-{
-	
-}
-
-int StrComparison(FILE *file_name,char *intput_string)
-{
-
-}
 
 void AddLineToStart(FILE *file, const char *file_name, const char *intput_string)
 {
@@ -89,7 +125,7 @@ void AddLineToEnd(FILE *file, const char *file_name, const char *intput_string)
 	
 }
 
-int CountLines(FILE *file, const char *file_name)
+void CountLines(FILE *file, const char *file_name)
 {
 	int lines = 0;			/*Line counter */
 	char c; 				/*store characters from file*/
@@ -103,8 +139,7 @@ int CountLines(FILE *file, const char *file_name)
 		}
 	}
     fclose(file); 
-
-return lines;
+    printf("Numer of lines in \"%s\" File: %d \n", file_name, lines);
 }
 
 
@@ -117,5 +152,28 @@ void RemoveFile(const char *file_name)
 int ExitPrograme()
 {
 	return 0;
+}
+
+char *getInput()
+{
+	  char *str, c;
+	  int i = 0, j = 1;
+
+	  str = (char*)malloc(sizeof(char));
+
+	  printf("Enter String : ");
+
+	  while (c != '\n') {
+	 
+	    c = getc(stdin);
+	    str = (char*)realloc(str, j * sizeof(char));
+	    str[i] = c;
+	    i++;
+	    j++;
+	  }
+
+	  str[i] = '\0'; 
+
+return str;
 }
 
