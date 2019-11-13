@@ -1,31 +1,34 @@
 #include <stdio.h>
-#include <string.h> 		/*Import strlen() */
-#include <stdlib.h>         /*Inport realloc()*/
+#include <string.h> 		/* Import strlen() */
+#include <stdlib.h>         /* Inport realloc()*/
+#include <assert.h>			/* import assert() */
 #include "ws5head.h"
 #define NUM_OF_OPERATIONS 5 /*Number of total Operations */
 
 
-void StartLogger()
+void StartInfrastracture()
 
 {	char *file_name = NULL;
 	printf("Enter File Name: ");
 	file_name = getInput();
 
-	Logger(file_name);
+	Infrastracture(file_name);
 
 	free(file_name);
 	file_name = NULL;
 }
 
-void Logger(const char *file_name)
+void Infrastracture(const char *file_name)
 {
 
 	char *user_input = NULL;
 	int Logger_Status = SUCCESS, i = 0;
 	struct operations op[NUM_OF_OPERATIONS];
+
+	assert( 0 != file_name);
+
 	Initialize(op);
 	
-
 	while (EXIT != Logger_Status)
 	{
 		printf("Enter String: ");
@@ -74,16 +77,22 @@ LoggerReturnStatus AllTheRest(const char *string, const char *user_input)
 		UNUSED(string);
 		UNUSED(user_input);
 
+		assert( 0 != string);
+		assert( 0 != user_input);
+
 		return SUCCESS;
 }
 
 LoggerReturnStatus CharCompare(const char *string, const char *user_input)
 {
+	assert( 0 != string);
+	assert( 0 != user_input);
+
 	if(*string == *user_input)  	/*check for the first char */
 	{
 		return SUCCESS;
-		
 	}
+
 	else
 	{
 		return FAIL;
@@ -92,10 +101,14 @@ LoggerReturnStatus CharCompare(const char *string, const char *user_input)
 
 LoggerReturnStatus StringCompare(const char *string, const char *user_input)
 {
+	assert( 0 != string);
+	assert( 0 != user_input);
+
 	if(0 == strcmp(user_input,string))
 	{
 		return SUCCESS;
 	}
+	
 	else
 	{
 		return FAIL;
@@ -105,6 +118,9 @@ LoggerReturnStatus StringCompare(const char *string, const char *user_input)
 FILE *CreateNewFile(const char *file_name) /* Creat New File */
 {
 	FILE *new_file;
+
+	assert( 0 != file_name);
+
 	new_file =fopen(file_name,"w");
 	fclose(new_file);
 
@@ -118,6 +134,9 @@ FILE *MergeTmpFile(const char *file_name,const char *tmp_file_name, const char *
 	FILE *tmp_file;
 
 	char c = 0;
+
+	assert( 0 != file_name);
+	assert( 0 != intput_string);
 
 	exist_file = fopen(file_name, "r"); 				/*Open Exsiting File for reading*/
 	tmp_file = fopen(tmp_file_name, "w");				/*Open Temp File for writing*/
@@ -145,6 +164,9 @@ LoggerReturnStatus AddLineToStart(const char *file_name, const char *intput_stri
 	char *tmp_file_name = "tmp_file.txt";
 	UNUSED(tmp_file);
 
+	assert( 0 != file_name);
+	assert( 0 != intput_string);
+
 	tmp_file = CreateNewFile(tmp_file_name);	/*Creat new Temp file */
 	tmp_file = MergeTmpFile(file_name, tmp_file_name, intput_string+1);
 	RemoveFile(file_name, file_name);
@@ -158,6 +180,10 @@ LoggerReturnStatus AddLineToStart(const char *file_name, const char *intput_stri
 LoggerReturnStatus AddLineToEnd(const char *file_name, const char *intput_string)
 {	
 	FILE *file;
+
+	assert( 0 != file_name);
+	assert( 0 != intput_string);
+
 	file = fopen(file_name,"a");
 	fputs(intput_string, file);		/*fputs() to insert string data type */
 	fputs("\n",file);
@@ -175,6 +201,9 @@ LoggerReturnStatus CountLines(const char *file_name, const char *intput_string)
 	char c; 				/*store characters from file*/
 
 	UNUSED(intput_string);
+
+	assert( 0 != file_name);
+	assert( 0 != intput_string);
 
 	file = fopen(file_name, "r");
 	if(NULL != file)
@@ -202,6 +231,9 @@ LoggerReturnStatus RemoveFile(const char *file_name, const char *intput_string)
 {
 	UNUSED(file_name);
 	UNUSED(intput_string);
+
+	assert( 0 != file_name);
+	assert( 0 != intput_string);
 
 	if(0 == remove(file_name))
 	{
