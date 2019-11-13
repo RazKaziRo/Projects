@@ -8,26 +8,26 @@
 #include<stdlib.h>
 #include<ctype.h>
 
-int Printchar(char ch)
+int Printchar(int ch)
 {
 	printf("%c pressed \n", ch);
 	return 1;
 
 }
 
-int Terminate(char ch)
+int Terminate(int ch)
 {
 	return 0;
 }
 
-int Invalid(char ch)
+int Invalid(int ch)
 {
 	printf("Invalid key entered. please try again\n");
 	return 1;
 }
 
 /*Initiation and setting up of the look up table*/
-void LutInit( int (*LUT[])(char) )
+void LutInit( int (*LUT[])(int) )
 {
 	int i=0;
 
@@ -41,9 +41,9 @@ void LutInit( int (*LUT[])(char) )
 }
  
 /*keep geting char values from stdin and sending them to the LUT*/ 
-int LutMenu( int (*LUT[])(char))
+void LutMenu( int (*LUT[])(int))
 {
-	char c= 1;	
+	int c= 1;	
 	
 	printf("please enter a char\n");
 	do
@@ -51,12 +51,11 @@ int LutMenu( int (*LUT[])(char))
 		c= getchar();
 	}
 	while ((*LUT[c])(c));
-	
 }
 
 int main()
 {
-	int (*LUT[256])(char);
+	int (*LUT[256])(int);
 
 	system("stty -icanon -echo");
 	LutInit(LUT);

@@ -7,71 +7,67 @@
 
 void Logger(const char *file_name)
 {
+	/*
 	FILE *file;
 
-	int op = 0;
+	
 	char user_input[100];
+	struct operations op[5];
+	Initialize(op);
 
 	printf("Enter String: ");
 	scanf("%s", user_input);
 
-	op = StrToOperation(user_input);
-	StrComparison(file, file_name, user_input, op);
-/*
-	typedef struct str 
-	{
-       char  *input ;
-       void(*ptrcompare)(FILE *file,const char *file_name,const char *user_input);
-
-	} STR;
+	StrComparison(file, file_name, user_input);
 */
+
+
 }
 
 
-int StrToOperation(const char *user_input)
+void *Initialize(Operations op[])
 {
+	op[0].string = "-remove";
+	op[0].ptr_cmp = &StringCompare;
+	op[0].ptr_opr = &RemoveFile;
 
-	if(user_input =="-remove")
+	op[1].string = "-count";
+	op[1].ptr_cmp = &StringCompare;
+	op[1].ptr_opr = &CountLines;
+
+	op[2].string = "-exit";
+	op[2].ptr_cmp = &StringCompare;
+	op[2].ptr_opr = &ExitPrograme;
+
+	op[2].string = "<";
+	op[2].ptr_cmp = &CharCompare;
+	op[2].ptr_opr = &ExitPrograme;
+
+
+}
+
+Return CharCompare(const char *string, const char *user_input)
+{
+	if(*string == *user_input)  	/*check for the first char */
 	{
-		return REMOVE_FILE;
+		return SUSCESS;
 	}
-
-	if(user_input == "-count")
+	else
 	{
-		return COUNT_LINES;
+		return FAIL;
 	}
 }
 
-
-void StrComparison(FILE *file,const char *file_name,const char *user_input, OPERATIONS op)
+Return StringCompare(const char *string, const char *user_input)
 {
-
-	switch(op)
+	if(strcmp(user_input,string))
 	{
-		case (REMOVE_FILE):
-		RemoveFile(file_name);
-		break;
-
-		case(COUNT_LINES):
-		CountLines(file, file_name);
-		break;
-
-		case(EXIT_PROG):
-		ExitPrograme();
-		break;
-
-		case(ADD_LINE_TO_START):
-		AddLineToStart(file, file_name, user_input);
-		break;
-
-		/*
-		default:
-		AddLineToEnd(file, file_name, user_input);
-		break;
-		*/
+		return SUSCESS;
 	}
-
-
+	else
+	{
+		return FAIL;
+	}
 }
 
 FILE *CreateNewFile(const char *file_name) /* Creat New File */
@@ -84,31 +80,33 @@ return new_file;
 }
 
 
-FILE *MergeTmpFile(FILE *old_file,const char *old_file_name, FILE *tmp_file ,const char *tmp_file_name
- ,const char *intput_string) 
+FILE *MergeTmpFile(const char *file_name,const char *tmp_file_name, const char *intput_string) 
 {	
+	FILE *exist_file;
+	FILE *tmp_file;
+
 	char c = 0;
 
-	old_file = fopen(old_file_name, "r"); 				/*Open Exsiting File for reading*/
+	exist_file = fopen(file_name, "r"); 				/*Open Exsiting File for reading*/
 	tmp_file = fopen(tmp_file_name, "w");				/*Open Temp File for writing*/
 	fputs(intput_string, tmp_file);						/* Insert New String */
 	fputs("\n", tmp_file);						
-	c = fgetc(old_file);
+	c = fgetc(exist_file);
 
 	while (c != EOF) 
     { 
         fputc(c, tmp_file); 
-        c = fgetc(old_file); 
+        c = fgetc(exist_file); 
     } 
 
     fclose(tmp_file);
-    fclose(old_file);
+    fclose(exist_file);
 
-return tmp_file;
+	return tmp_file;
 }
 
 
-void AddLineToStart(FILE *file, const char *file_name, const char *intput_string)
+Return AddLineToStart(const char *file_name, const char *intput_string)
 {
 	FILE *tmp_file;
 	char *tmp_file_name = "tmp_file.txt";
@@ -116,24 +114,29 @@ void AddLineToStart(FILE *file, const char *file_name, const char *intput_string
 	char c = 0;
 	
 	tmp_file = CreateNewFile(tmp_file_name);	/*Creat new Temp file */
-	tmp_file = MergeTmpFile(file, file_name, tmp_file, tmp_file_name, intput_string );
-	RemoveFile(file_name);
+	tmp_file = MergeTmpFile(file_name, tmp_file_name, intput_string+1);
+	RemoveFile(file_name, file_name);
 	rename(tmp_file_name,file_name);			/*rename tmp file with old name */
 
+	return SUSCESS;
 }
 
-void AddLineToEnd(FILE *file, const char *file_name, const char *intput_string)
-{
+Return AddLineToEnd(const char *file_name, const char *intput_string)
+{	
+	FILE *file;
 	char c=0;
 	file = fopen(file_name,"a");
 	fputs(intput_string, file);		/*fputs() to insert string data type */
 	fputs("\n", file);				/*Insert New Line for the next input*/
 	fclose(file);
+
+	return SUSCESS;
 	
 }
 
-void CountLines(FILE *file, const char *file_name)
-{
+Return CountLines(const char *file_name, const char *intput_string)
+{	
+	FILE *file;
 	int lines = 0;			/*Line counter */
 	char c; 				/*store characters from file*/
 
@@ -147,18 +150,23 @@ void CountLines(FILE *file, const char *file_name)
 	}
     fclose(file); 
     printf("Numer of lines in \"%s\" File: %d \n", file_name, lines);
+
+  	return SUSCESS;
 }
 
 
 
-void RemoveFile(const char *file_name)
+Return RemoveFile(const char *file_name, const char *intput_string)
 {
 	remove(file_name);
+
+return SUSCESS;
+
 }
 
-int ExitPrograme()
+Return ExitPrograme()
 {
-	return 0;
+	return EXIT;
 }
 
 char *getInput()
@@ -176,6 +184,6 @@ char *getInput()
 	   str[count++] = c;
 	}
 
-return str;
+	return str;
 }
 
