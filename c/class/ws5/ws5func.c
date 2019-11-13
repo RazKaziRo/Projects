@@ -21,7 +21,7 @@ void Logger(const char *file_name)
 {
 
 	char *user_input = NULL;
-	int Logger_Status = SUSCESS, i = 0;
+	int Logger_Status = SUCCESS, i = 0;
 	struct operations op[NUM_OF_OPERATIONS];
 	Initialize(op);
 	
@@ -33,7 +33,7 @@ void Logger(const char *file_name)
 
 		for (i = 0 ; i < 5; i++)
 		{
-			if(SUSCESS ==  op[i].ptr_cmp(op[i].string, user_input))
+			if(SUCCESS ==  op[i].ptr_cmp(op[i].string, user_input))
 			{
 				Logger_Status = op[i].ptr_opr(file_name,user_input);
 				break;
@@ -71,14 +71,18 @@ void Initialize(Operations op[])
 
 LoggerReturnStatus AllTheRest(const char *string, const char *user_input)
 {
-		return SUSCESS;
+		UNUSED(string);
+		UNUSED(user_input);
+
+		return SUCCESS;
 }
 
 LoggerReturnStatus CharCompare(const char *string, const char *user_input)
 {
 	if(*string == *user_input)  	/*check for the first char */
 	{
-		return SUSCESS;
+		return SUCCESS;
+		
 	}
 	else
 	{
@@ -90,7 +94,7 @@ LoggerReturnStatus StringCompare(const char *string, const char *user_input)
 {
 	if(0 == strcmp(user_input,string))
 	{
-		return SUSCESS;
+		return SUCCESS;
 	}
 	else
 	{
@@ -136,11 +140,11 @@ FILE *MergeTmpFile(const char *file_name,const char *tmp_file_name, const char *
 
 LoggerReturnStatus AddLineToStart(const char *file_name, const char *intput_string)
 {
+
 	FILE *tmp_file;
 	char *tmp_file_name = "tmp_file.txt";
+	UNUSED(tmp_file);
 
-	char c = 0;
-	
 	tmp_file = CreateNewFile(tmp_file_name);	/*Creat new Temp file */
 	tmp_file = MergeTmpFile(file_name, tmp_file_name, intput_string+1);
 	RemoveFile(file_name, file_name);
@@ -148,49 +152,67 @@ LoggerReturnStatus AddLineToStart(const char *file_name, const char *intput_stri
 	free((char *)intput_string);	
 	intput_string = NULL;		
 
-	return SUSCESS;
+	return SUCCESS;
 }
 
 LoggerReturnStatus AddLineToEnd(const char *file_name, const char *intput_string)
 {	
 	FILE *file;
-	char c=0;
 	file = fopen(file_name,"a");
 	fputs(intput_string, file);		/*fputs() to insert string data type */
 	fputs("\n",file);
 	fclose(file);
 
-	return SUSCESS;
+	return SUCCESS;
 	
 }
 
 LoggerReturnStatus CountLines(const char *file_name, const char *intput_string)
 {	
+
 	FILE *file;
 	int lines = 0;			/*Line counter */
 	char c; 				/*store characters from file*/
 
+	UNUSED(intput_string);
+
 	file = fopen(file_name, "r");
-	for (c = fgetc(file); c != EOF; c = fgetc(file)) 	/*fgetc() = getc() */
+	if(NULL != file)
 	{
-		if (c == '\n')
+		for (c = fgetc(file); c != EOF; c = fgetc(file)) 	/*fgetc() = getc() */
 		{
+			if (c == '\n')
+			{
 			 ++lines;
+			}
 		}
-	}
+
     fclose(file); 
     printf("Number of lines in \"%s\" File: %d \n", file_name, lines);
 
-  	return SUSCESS;
+	return SUCCESS;
+	}
+	printf("No File Found \n");
+	return FILE_NOT_FOUND;
 }
 
 
 
 LoggerReturnStatus RemoveFile(const char *file_name, const char *intput_string)
 {
-	remove(file_name);
+	UNUSED(file_name);
+	UNUSED(intput_string);
 
-	return SUSCESS;
+	if(0 == remove(file_name))
+	{
+	return SUCCESS;
+	}
+	else
+	{
+	printf("No File To Remove \n");
+	return NO_FILE_TO_REMOVE;
+	}
+
 
 }
 
@@ -201,31 +223,31 @@ LoggerReturnStatus ExitPrograme()
 
 char *getInput()
 {
-	unsigned int len_max = 128; 		/* Minimum Size */
-    unsigned int current_size = 0;
+    size_t len_max = 128;
+    size_t current_size = 0;
     
-    char *input_str = malloc(len_max);
+    char *str_input = malloc(len_max);
     current_size = len_max;
 
-    if(input_str != NULL)
+    if(str_input != NULL)
     {
 	int c = EOF;
 	unsigned int i =0;
 
-	while (( c = getchar() ) != '\n' && c != EOF)
-	{
-		input_str[i++]=(char)c;
-
-		if(i == current_size)
+		while (( c = getchar() ) != '\n' && c != EOF)
 		{
-            current_size = i+len_max;
-			input_str = realloc(input_str, current_size);
+			str_input[i++]=(char)c;
+
+			if(i == current_size)
+			{
+	            current_size = i+len_max;
+				str_input = realloc(str_input, current_size);
+			}
 		}
+
+	str_input[i] = '\0';
 	}
 
-	input_str[i] = '\0';
-
-    }
-  	return input_str;
+	return str_input;
 }
 

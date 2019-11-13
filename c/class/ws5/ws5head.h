@@ -2,11 +2,15 @@
 #define _ws5func_h
 #include <stdio.h>
 
+#define UNUSED(var)  ((void)(var))
+
 typedef enum 
 {
 	FAIL,				/*0*/
-	SUSCESS, 			/*1*/			
-	EXIT				/*2*/
+	SUCCESS, 			/*1*/			
+	EXIT,				/*2*/
+	FILE_NOT_FOUND,		/*3*/
+	NO_FILE_TO_REMOVE	/*4*/
 	
 }LoggerReturnStatus;
 
