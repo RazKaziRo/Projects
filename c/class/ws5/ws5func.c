@@ -6,19 +6,19 @@
 #define NUM_OF_OPERATIONS 5 /*Number of total Operations */
 
 
-void StartInfrastracture()
+void StartLoggerInfrastructure()
 
 {	char *file_name = NULL;
 	printf("Enter File Name: ");
 	file_name = getInput();
 
-	Infrastracture(file_name);
+	LoggerInfrastructure(file_name);
 
 	free(file_name);
 	file_name = NULL;
 }
 
-void Infrastracture(const char *file_name)
+void LoggerInfrastructure(const char *file_name)
 {
 
 	char *user_input = NULL;
@@ -108,7 +108,7 @@ LoggerReturnStatus StringCompare(const char *string, const char *user_input)
 	{
 		return SUCCESS;
 	}
-	
+
 	else
 	{
 		return FAIL;

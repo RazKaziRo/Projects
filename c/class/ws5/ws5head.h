@@ -22,13 +22,13 @@ typedef struct operations
 
 } Operations;
 
-void StartInfrastracture();
+void StartLoggerInfrastructure();
 
 char *getInput();
 
 void Initialize(Operations op[]);
 
-void Infrastracture(const char *file_name);
+void LoggerInfrastructure(const char *file_name);
 
 FILE *CreateNewFile(const char *file_name); 
 

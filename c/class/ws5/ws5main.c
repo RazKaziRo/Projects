@@ -5,7 +5,8 @@
 int main()
 {
 
-	StartInfrastracture();
+	StartLoggerInfrastructure();
+	
 
 	
 /*
