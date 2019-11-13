@@ -18,11 +18,11 @@ typedef struct operations
 
 } Operations;
 
-void *StartLogger();
+void StartLogger();
 
 char *getInput();
 
-void *Initialize(Operations op[]);
+void Initialize(Operations op[]);
 
 void Logger(const char *file_name);
 

@@ -10,27 +10,27 @@ int main()
 	
 /*
 
-FILE *file, *tmp_file;
+	FILE *file, *tmp_file;
+
 	int lines = 0;
 
 	char *file_name = "raz.txt";
 	char *input_string = "New Line 3";
 
-CountLines(file_name, input_string);
+	CountLines(file_name, input_string);
 
-char *tmp_file_name = "tmp_file.txt";
+	char *tmp_file_name = "tmp_file.txt";
 
-char *input_string = "New Line 2";
+	char *input_string = "New Line 2";
 
-CreateNewFile(file_name);
+	CreateNewFile(file_name);
 
-Logger(file_name);
+	Logger(file_name);
 
-AddLineToEnd(file_name,input_string);
-	
-AddLineToStart(file_name,input_string);
+	AddLineToEnd(file_name,input_string);
+		
+	AddLineToStart(file_name,input_string);
 
-/*
 	CountLines(file,file_name);
 
 	Logger(file_name);
@@ -56,4 +56,5 @@ AddLineToStart(file_name,input_string);
 	lines = CountLines(file,file_name);
 	printf("Number Of Lines: %d \n" ,lines);
 */
+	return 0;
 }

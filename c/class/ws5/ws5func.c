@@ -5,13 +5,16 @@
 #define NUM_OF_OPERATIONS 5 /*Number of total Operations */
 
 
-void *StartLogger()
+void StartLogger()
 
 {	char *file_name = NULL;
 	printf("Enter File Name: ");
 	file_name = getInput();
 
 	Logger(file_name);
+
+	free(file_name);
+	file_name = NULL;
 }
 
 void Logger(const char *file_name)
@@ -28,7 +31,6 @@ void Logger(const char *file_name)
 		printf("Enter String: ");
 		user_input = getInput();
 
-
 		for (i = 0 ; i < 5; i++)
 		{
 			if(SUSCESS ==  op[i].ptr_cmp(op[i].string, user_input))
@@ -37,16 +39,14 @@ void Logger(const char *file_name)
 				break;
 			}
 		}
-		
+
 		free(user_input);
 		user_input = NULL;
 	}
-		free(user_input);
-		user_input = NULL;
 }
 
 
-void *Initialize(Operations op[])
+void Initialize(Operations op[])
 {
 	op[0].string = "-remove";
 	op[0].ptr_cmp = &StringCompare;
@@ -67,7 +67,6 @@ void *Initialize(Operations op[])
 	op[4].string = "All The Rest";
 	op[4].ptr_cmp = &AllTheRest;
 	op[4].ptr_opr = &AddLineToEnd;
-
 }
 
 LoggerReturnStatus AllTheRest(const char *string, const char *user_input)
@@ -180,7 +179,7 @@ LoggerReturnStatus CountLines(const char *file_name, const char *intput_string)
 		}
 	}
     fclose(file); 
-    printf("Numer of lines in \"%s\" File: %d \n", file_name, lines);
+    printf("Number of lines in \"%s\" File: %d \n", file_name, lines);
 
   	return SUSCESS;
 }
@@ -191,7 +190,7 @@ LoggerReturnStatus RemoveFile(const char *file_name, const char *intput_string)
 {
 	remove(file_name);
 
-return SUSCESS;
+	return SUSCESS;
 
 }
 
@@ -202,7 +201,7 @@ LoggerReturnStatus ExitPrograme()
 
 char *getInput()
 {
-	unsigned int len_max = 128;
+	unsigned int len_max = 128; 		/* Minimum Size */
     unsigned int current_size = 0;
     
     char *input_str = malloc(len_max);
@@ -227,6 +226,6 @@ char *getInput()
 	input_str[i] = '\0';
 
     }
-    return input_str;
+  	return input_str;
 }
 
