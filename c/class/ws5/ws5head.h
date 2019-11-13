@@ -4,19 +4,21 @@
 
 typedef enum 
 {
-	FAIL,				/*1*/
-	SUSCESS, 			/*0*/			
+	FAIL,				/*0*/
+	SUSCESS, 			/*1*/			
 	EXIT				/*2*/
 	
-}Return;
+}LoggerReturnStatus;
 
 typedef struct operations 
 {
       char *string;
-      Return (*ptr_cmp)(const char *string, const char *user_input);
-      Return (*ptr_opr)(const char *file_name,const char *user_input);
+      LoggerReturnStatus (*ptr_cmp)(const char *string, const char *user_input);
+      LoggerReturnStatus (*ptr_opr)(const char *file_name,const char *user_input);
 
 } Operations;
+
+void *StartLogger();
 
 char *getInput();
 
@@ -30,21 +32,23 @@ int StrToOperation(const char *user_input);
 
 void StrComparison(FILE *file,const char *file_name,const char *user_input);
 
-Return AddLineToStart(const char *file_name, const char *intput_string);
+LoggerReturnStatus AllTheRest(const char *string, const char *user_input);
 
-Return AddLineToEnd(const char *file_name, const char *intput_string);
+LoggerReturnStatus AddLineToStart(const char *file_name, const char *intput_string);
 
-Return CountLines(const char *file_name, const char *intput_string);
+LoggerReturnStatus AddLineToEnd(const char *file_name, const char *intput_string);
 
-Return StringCompare(const char *string, const char *user_input);
+LoggerReturnStatus CountLines(const char *file_name, const char *intput_string);
 
-Return CharCompare(const char *string, const char *user_input);
+LoggerReturnStatus StringCompare(const char *string, const char *user_input);
+
+LoggerReturnStatus CharCompare(const char *string, const char *user_input);
 
 FILE *MergeTmpFile(const char *file_name,const char *tmp_file_name, const char *intput_string);
 
-Return RemoveFile(const char *file_name, const char *intput_string);
+LoggerReturnStatus RemoveFile(const char *file_name, const char *intput_string);
 
-Return ExitPrograme();
+LoggerReturnStatus ExitPrograme();
 
 
 #endif

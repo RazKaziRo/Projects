@@ -4,15 +4,18 @@
 
 int main()
 {
-	FILE *file, *tmp_file;
+
+	StartLogger();
+
+	
+/*
+
+FILE *file, *tmp_file;
 	int lines = 0;
 
 	char *file_name = "raz.txt";
 	char *input_string = "New Line 3";
 
-	
-	
-/*
 CountLines(file_name, input_string);
 
 char *tmp_file_name = "tmp_file.txt";
