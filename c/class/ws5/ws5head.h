@@ -1,3 +1,11 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for CW5 - Logger Infrastructure.
+ * Date: 13.11.2019
+ * Language: C
+ * Reviewer: Itai Marienberg 
+ */
+
 #ifndef _ws5func_h
 #define _ws5func_h
 #include <stdio.h>

@@ -1,3 +1,10 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for CW5 - Logger Infrastructure.
+ * Date: 13.11.2019
+ * Language: C
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include "ws5head.h"
