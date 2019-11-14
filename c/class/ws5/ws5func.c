@@ -42,7 +42,7 @@ void LoggerInfrastructure(const char *file_name)
 		printf("Enter String: ");
 		user_input = getInput();
 
-		for (i = 0 ; i < 5; i++)
+		for (i = 0 ; i < NUM_OF_OPERATIONS; i++)
 		{
 			if(SUCCESS ==  op[i].ptr_cmp(op[i].string, user_input))
 			{
@@ -51,8 +51,7 @@ void LoggerInfrastructure(const char *file_name)
 			}
 		}
 
-		free(user_input);
-		user_input = NULL;
+		free(user_input); user_input = NULL;
 	}
 }
 
@@ -100,7 +99,6 @@ LoggerReturnStatus CharCompare(const char *string, const char *user_input)
 	{
 		return SUCCESS;
 	}
-
 	else
 	{
 		return FAIL;
@@ -116,7 +114,6 @@ LoggerReturnStatus StringCompare(const char *string, const char *user_input)
 	{
 		return SUCCESS;
 	}
-
 	else
 	{
 		return FAIL;
@@ -146,7 +143,7 @@ FILE *MergeTmpFile(const char *file_name,const char *tmp_file_name, const char *
 	assert( 0 != file_name);
 	assert( 0 != intput_string);
 
-	exist_file = fopen(file_name, "r"); 				/*Open Exsiting File for reading*/
+	exist_file = fopen(file_name, "a+"); 				/*Open Exsiting File for reading*/
 	tmp_file = fopen(tmp_file_name, "w");				/*Open Temp File for writing*/
 	fputs(intput_string, tmp_file);						/* Insert New String */				
 	fputs("\n",tmp_file);
@@ -206,7 +203,7 @@ LoggerReturnStatus CountLines(const char *file_name, const char *intput_string)
 
 	FILE *file;
 	int lines = 0;			/*Line counter */
-	char c; 				/*store characters from file*/
+	char c = 0; 				/*store characters from file*/
 
 	UNUSED(intput_string);
 
