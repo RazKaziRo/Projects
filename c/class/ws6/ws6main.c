@@ -24,6 +24,7 @@ void Test(int condition, const char *msg)
 int main()
 {
 
+	PrintFloat(2.25);
 
 
 /* Q1 - Following Code */

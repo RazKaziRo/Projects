@@ -21,8 +21,6 @@
 #define  m8   0x00ff00ff00ff00ff /*binary:  8 zeros,  8 ones ...*/
 #define  m16  0x0000ffff0000ffff /*binary: 16 zeros, 16 ones ...*/
 
-
-
 unsigned long BitWisePow2(unsigned int x, unsigned int y);
 int IsPowOf2NoLoop(unsigned int n);
 int IsPowOf2Loop(unsigned int n);
@@ -37,6 +35,9 @@ unsigned int ClosestDivideBySixteen(const unsigned int n);
 void SwapTwoVariables(unsigned int *x,unsigned int *y);
 unsigned int CountSetOfBitsLoop(unsigned int n);
 unsigned int CountSetOfBitsNOLoop(unsigned const int n);
+void PrintFloat(float num);
+int bit_return(int a, int loc);
+
 
 
 #endif

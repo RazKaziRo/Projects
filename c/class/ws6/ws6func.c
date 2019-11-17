@@ -185,5 +185,29 @@ unsigned int CountSetOfBitsNOLoop(unsigned const int n)
 }
 
 
+int bit_return(int a, int loc)   
+{
+    int buf = a & 1<<loc;
+
+    if (buf == 0) return 0;
+    else return 1; 
+}
+
+void PrintFloat(float num)
+{
+
+    unsigned int  *b;
+    b = (unsigned int *)(&num);
+
+    int i;
+    for (i = 31; i >= 0; i--)
+    {
+        printf("%d",bit_return(*b,i));
+    }
+
+
+}
+
+
 
 
