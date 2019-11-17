@@ -83,7 +83,7 @@ void ThreeBitsOn(unsigned int n[], int size)
 
 unsigned int ByteMirrorLoop(unsigned const int num)
 {	
-    unsigned int  NO_OF_BITS = sizeof(num) * 8; 
+    
     unsigned int reverse_num = 0; 
     unsigned int i = 0; 
 
@@ -103,10 +103,10 @@ unsigned int ByteMirrorLoop(unsigned const int num)
 unsigned int ByteMirrorNOLoop(unsigned int num)
 {	
 
-	num = (((num & 0xaaaaaaaa) >> 1) | ((num & 0x55555555) << 1));
-	num = (((num & 0xcccccccc) >> 2) | ((num & 0x33333333) << 2));
-	num = (((num & 0xf0f0f0f0) >> 4) | ((num & 0x0f0f0f0f) << 4));
-	num = (((num & 0xff00ff00) >> 8) | ((num & 0x00ff00ff) << 8));
+	num = (((num & m3) >> 1) | ((num & m1) << 1));
+	num = (((num & m5) >> 2) | ((num & m2) << 2));
+	num = (((num & m6) >> 4) | ((num & m4) << 4));
+	num = (((num & m7) >> 8) | ((num & m8) << 8));
 	num = ((num >> 16) | (num << 16));
 
 	return num;
