@@ -26,7 +26,12 @@ void Test(int condition, const char *msg)
 int main()
 {
 
-/* Q9 - Count Set Of Bit With Loop
+/* Q1 - Following Code */
+	unsigned int x = 5;
+	printf("%u,%u,%u", x, x<<2, x>>2);
+
+
+/* E9 - Count Set Of Bit With Loop
 	Test(1 == CountSetOfBits(32), "FAILED: Wrong Bit Counting");
 	Test(12 == CountSetOfBits(4567891), "FAILED: Big Numger Bit Counting");
 	Test(0 == CountSetOfBits(0), "FAILED: Equal To 0");
