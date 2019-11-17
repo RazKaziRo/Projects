@@ -11,9 +11,17 @@
 #include <stdio.h>
 
 
-long Pow2(unsigned int x, unsigned int y);
+long BitWisePow2(unsigned int x, unsigned int y);
 int IsPowOf2NoLoop(unsigned int n);
 int IsPowOf2Loop(unsigned int n);
 int AddOneToInt(int n);
+void ThreeBitsOn(unsigned int n[], int size);
+int TwoANDSixON(const unsigned char ch);
+int TwoORSixON(const unsigned char ch);
+unsigned int ClosestDivideBySixteen(const unsigned int n);
+void SwapTwoVariables(unsigned int *x,unsigned int *y);
+int CountSetOfBitsLoop(unsigned int n);
+int CountSetOfBitsNOLoop(unsigned int n);
+
 
 #endif
