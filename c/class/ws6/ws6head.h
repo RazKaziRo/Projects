@@ -13,9 +13,9 @@
 #define NO_OF_BITS sizeof(num) * 8
 #define  m1   0x55555555 /* binary: 0101...*/
 #define  m2   0x33333333 /* binary: 0011...*/
-#define  m3	  0xaaaaaaaa /* binary: 1010 1010...*/
+#define  m3   0xaaaaaaaa /* binary: 1010 1010...*/
 #define  m4   0x0f0f0f0f /*binary:  0000 1111 ...*/
-#define  m5	  0xcccccccc /* binary: 1100 1100...*/
+#define  m5   0xcccccccc /* binary: 1100 1100...*/
 #define  m6   0xf0f0f0f0 /*binary:  1111 0000 ...*/
 #define  m7   0xff00ff00 /*binary:  1111 1111 0000 0000  ...*/
 #define  m8   0x00ff00ff /*binary:  8 zeros,  8 ones ...*/

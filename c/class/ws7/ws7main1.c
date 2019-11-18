@@ -1,8 +1,19 @@
-#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-static int x1 = 3;
-static int x2 = 0;
-static int x3;
-int x4 = 10;
-int x5 = 0;
-int x6;
+void foo()
+{
+	char str1[20];
+	char *str2 = malloc(sizeof(*str2)*20);
+	char *str3 = "whatever";
+	char str4[] = "whatever"; 
+	str3[1] = 'a';
+
+	printf("%s", str3);
+}
+
+int main()
+{	
+	foo();
+	return 0;
+}
