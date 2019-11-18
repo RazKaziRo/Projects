@@ -15,6 +15,11 @@ int isRotation(const char *s1, const char *s2)
 		return 0;
 	}
 
+	if('\0' == *runner_s2 && '\0' == *runner_s1)
+	{
+		return 1;
+	}
+
 	while(length > 0)
 	{
 
@@ -32,7 +37,7 @@ int isRotation(const char *s1, const char *s2)
 		}
 	}
 
-	if(0 == strncmp(runner_s1, runner_s2, length))
+	if(0 == strncmp(runner_s1, runner_s2, length) && '\0' != *runner_s2)
 	{
 
 		return 1;
@@ -64,6 +69,7 @@ int main()
 
 Test(!isRotation("abc","efg") , "FAILED: Not a Rotation ");
 Test(isRotation("1234","4123"), "FAILED: A Rotation ");
+Test(isRotation("121234","123412"), "FAILED: A Rotation ");
 Test(isRotation("",""), "FAILED: Empty Strings ");
 Test(!isRotation("abcd","a"), "FAILED: Different Sizes ");
 
