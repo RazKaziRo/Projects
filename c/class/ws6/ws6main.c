@@ -1,7 +1,7 @@
 /*
  * Author: Raz KaziRo
  * Purpose: Answares for CW6 - Bitwise Operations.
- * Date: 13.11.2019
+ * Date: 17.11.2019
  * Language: C
  */
 
@@ -24,7 +24,7 @@ void Test(int condition, const char *msg)
 int main()
 {
 
-	PrintFloat(2.25);
+	PrintFloat(-2.25);
 
 
 /* Q1 - Following Code */

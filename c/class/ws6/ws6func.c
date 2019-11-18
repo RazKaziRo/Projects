@@ -1,9 +1,9 @@
 /*
  * Author: Raz KaziRo
  * Purpose: Answares for CW6 - Bitwise Operations.
- * Date: 14.11.2019
+ * Date: 17.11.2019
  * Language: C
- * Reviewer: 
+ * Reviewer: Israel Drayfus
  */
 
 #include "ws6head.h"
@@ -179,30 +179,37 @@ unsigned int CountSetOfBitsLoop(unsigned int n)
 unsigned int CountSetOfBitsNOLoop(unsigned const int n)
 
 {	unsigned int bit_counter = n;
-    bit_counter = bit_counter - ((bit_counter >> 1) & 0x55555555);
-    bit_counter = (bit_counter & 0x33333333) + ((bit_counter >> 2) & 0x33333333);
-    return ((bit_counter + (bit_counter >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+    bit_counter = bit_counter - ((bit_counter >> 1) & m1);
+    bit_counter = (bit_counter & m2) + ((bit_counter >> 2) & m2);
+    return ((bit_counter + (bit_counter >> 4) & m6) * m9) >> 24;
 }
 
 
-int bit_return(int a, int loc)   
+int PrintBit(int a, int loc)   
 {
     int buf = a & 1<<loc;
 
-    if (buf == 0) return 0;
-    else return 1; 
+    if (buf == 0)
+    {
+    return 0;
+    } 
+    else
+    {
+    return 1;
+    }  
 }
 
 void PrintFloat(float num)
 {
-
+	int i = 0;
     unsigned int  *b;
     b = (unsigned int *)(&num);
 
-    int i;
+
+    
     for (i = 31; i >= 0; i--)
     {
-        printf("%d",bit_return(*b,i));
+        printf("%d",PrintBit(*b,i));
     }
 
 

@@ -1,9 +1,9 @@
 /*
  * Author: Raz KaziRo
  * Purpose: Answares for CW6 - Bitwise Operations.
- * Date: 13.11.2019
+ * Date: 17.11.2019
  * Language: C
- * Reviewer: 
+ * Reviewer: Israel Drayfus
  */
 
 #ifndef _ws6func_h
@@ -19,6 +19,7 @@
 #define  m6   0xf0f0f0f0f0f0f0f0 /*binary:  1111 0000 ...*/
 #define  m7   0xff00ff00ff00ff00 /*binary:  1111 1111 0000 0000  ...*/
 #define  m8   0x00ff00ff00ff00ff /*binary:  8 zeros,  8 ones ...*/
+#define  m9   0x1010101010101010 /*binary:  8 zeros,  8 ones ...*/
 #define  m16  0x0000ffff0000ffff /*binary: 16 zeros, 16 ones ...*/
 
 unsigned long BitWisePow2(unsigned int x, unsigned int y);
@@ -36,7 +37,7 @@ void SwapTwoVariables(unsigned int *x,unsigned int *y);
 unsigned int CountSetOfBitsLoop(unsigned int n);
 unsigned int CountSetOfBitsNOLoop(unsigned const int n);
 void PrintFloat(float num);
-int bit_return(int a, int loc);
+int PrintBit(int a, int loc);
 
 
 
