@@ -25,7 +25,6 @@ int IsPowOf2Loop(unsigned int n)
 		}
 
 		x = x<<1;
-
 	}
 
 	return 0;
@@ -53,8 +52,9 @@ unsigned int AddOneToInt(unsigned int n)
         n = n ^ m; 
         m <<= 1; 
     } 
-      
+
     n = n ^ m; 
+
     return n; 
 }
 
@@ -63,22 +63,24 @@ void ThreeBitsOn(unsigned int n[], int size)
 	int count = 0, i = 0;
 	unsigned int tmp = 0;
 
-	for(; i<size-1; i++)
+	for(; i<size; i++)
 	{	
+
 	tmp = n[i];
 
-	while(n[i] > 0)
-	{
-		count += n[i] & 1;
-		n[i] >>= 1;
-	}
-	if(count == 3)
-	{
-		printf("Number with 3 bits on: %d \n", tmp);
-	}
-	count = 0;
-}
+		while(n[i] > 0)
+		{
+			count += n[i] & 1;
+			n[i] >>= 1;
+		}
 
+		if(count == 3)
+		{
+			printf("Number with 3 bits on: %d \n", tmp);
+		}
+
+		count = 0;
+	}
 }	
 
 unsigned int ByteMirrorLoop(unsigned const int num)
@@ -110,7 +112,6 @@ unsigned int ByteMirrorNOLoop(unsigned int num)
 	num = ((num >> 16) | (num << 16));
 
 	return num;
-
 }
 
 
@@ -177,41 +178,39 @@ unsigned int CountSetOfBitsLoop(unsigned int n)
 
 
 unsigned int CountSetOfBitsNOLoop(unsigned const int n)
+{	
+	unsigned int bit_counter = n;
 
-{	unsigned int bit_counter = n;
-    bit_counter = bit_counter - ((bit_counter >> 1) & m1);
+	bit_counter = bit_counter - ((bit_counter >> 1) & m1);
     bit_counter = (bit_counter & m2) + ((bit_counter >> 2) & m2);
-    return ((bit_counter + (bit_counter >> 4) & m6) * m9) >> 24;
+    
+    return (((bit_counter + (bit_counter >> 4)) & m4) * m10) >> 24;
 }
 
 
 int PrintBit(int a, int loc)   
 {
-    int buf = a & 1<<loc;
+    int buf = a & 1 << loc;
 
     if (buf == 0)
     {
-    return 0;
+    	return 0;
     } 
     else
     {
-    return 1;
+    	return 1;
     }  
 }
 
 void PrintFloat(float num)
 {
 	int i = 0;
-    unsigned int  *b;
-    b = (unsigned int *)(&num);
+    unsigned int  *b = (unsigned int *)(&num);
 
-
-    
     for (i = 31; i >= 0; i--)
     {
         printf("%d",PrintBit(*b,i));
     }
-
 
 }
 

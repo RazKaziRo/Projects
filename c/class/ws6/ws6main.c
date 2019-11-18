@@ -24,6 +24,7 @@ void Test(int condition, const char *msg)
 int main()
 {
 
+
 	PrintFloat(-2.25);
 
 
@@ -40,8 +41,8 @@ int main()
 	Test(12 == CountSetOfBitsNOLoop(4567891), "FAILED: Big Numger Bit Counting");
 	Test(0 == CountSetOfBitsNOLoop(0), "FAILED: Equal To 0");
 	Test(7 == CountSetOfBitsNOLoop(127), "FAILED: All Bit On");
-*/
 
+*/
 /* EX 9 - Count Set Of Bit Using Loop
 	Test(5 == CountSetOfBitsLoop(796), "FAILED: Wrong Bit Counting");
 	Test(12 == CountSetOfBitsLoop(4567891), "FAILED: Big Numger Bit Counting");
@@ -116,12 +117,13 @@ Test(2147483648 == ByteMirrorLoop(1), "FAILED: 1 Mirror");
 
 */
 /* E4 - Print Only is 3 bits is on */
-	/*
-	unsigned int arr[] = {11,2,3,4,13,2567,7,19,2561,0};
+/*
 	int size = 10;
+	unsigned int arr[] = {11,2,3,4,13,2567,7,19,2561,38};
+	
 	ThreeBitsOn(arr, size);
-
-	*/
+*/
+	
 
 	/* E3 */
 /*
