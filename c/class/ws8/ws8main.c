@@ -1,3 +1,11 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for CW8 - Structs.
+ * Date: 20.11.2019
+ * Language: C
+ * Reviewer: Shye Shapira
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,14 +16,60 @@
 #define MAX3(a,b,c) 	    a>b ? MAX2(a,c) : MAX2(b,c)
 #define SIZEOF_VAR(var)     (char *)(&var + 1) - (char *)(&newvar)
 #define SIZEOF_TYPE(type)   (size_t)(1 + ((type*)0)+1)
-#define MYPRINT(a,b)           printf("%s%d\n",a,b);
-
 
 int main()
 { 
 
-    StructInfrastructure();
+StructInfrastructure();
 
+
+/*
+
+    int x = 123;
+    int y = 456;
+    char str[] = "Hello World";
+    char str2[4];
+    void *p = (void *)malloc(strlen(str));
+    
+    strcpy(p, str);
+
+    AddToChar(p, x);
+
+    printf("%s \n", (char *)p);
+    int x = 123;
+    int y = 456;
+    char str[] = "Hello World";
+    char str2[4];
+    void *p = (void *)malloc(strlen(str));
+    
+    strcpy(p, str);
+
+    AddToChar(p, x);
+
+    printf("%s \n", (char *)p);
+
+
+
+    */
+/*
+    StructInfrastructure();
+    int x = 123;
+
+    strcpy(p, str);
+
+    IntToString(x, str2);
+    strcat(p,str2);
+    AddToChar(p,x);
+    printf("%s \n", (char *)p);
+
+   
+    char str[] = "Hello World";
+    void *p = (void *)malloc(strlen(str));
+    strcpy(p, str);
+
+
+    printf("%s", (char *)p);
+    */
     /*
         StructInfrastructure();
 

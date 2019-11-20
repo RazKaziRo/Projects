@@ -1,3 +1,11 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for CW8 - Structs.
+ * Date: 20.11.2019
+ * Language: C
+ * Reviewer: Shye Shapira
+ */
+
 #ifndef _WS8HEAD_H
 #define _WS8HEAD_H
 
@@ -21,8 +29,8 @@ void PrintChar(void *data);
 void PrintInt(void *data);
 void PrintFloat(void *data);
 
-int AddToInt(void *data , int int_to_add);
-int AddToFloat(void *data, int int_to_add);
+int AddToInt(void *address_to_data, int int_to_add);
+int AddToFloat(void *address_to_data, int int_to_add);
 int AddToChar(void *data, int int_to_add);
 
 int CleanUpChar(void *address_to_data);
@@ -30,6 +38,7 @@ int CleanUpChar(void *address_to_data);
 void AddIntToAll(Struct s[], int num_to_add);
 void PrintAll(Struct s[]);
 void CleanAll(Struct s[]);
+char * IntToString(int num_to_convert, int size);
 
 int InitializeStruct(Struct s[]);
 int StructInfrastructure();
