@@ -20,8 +20,15 @@
 int main()
 { 
 
-StructInfrastructure();
 
+    if(1 == StructInfrastructure())
+    {
+        return 0;
+    }  
+    else
+    {
+        return 1;
+    } 
 
 /*
 
@@ -125,5 +132,4 @@ StructInfrastructure();
 */
     /*printf("%ld \n", (size_t)(((int*)0)+1));*/
 
-	return 0;
 }

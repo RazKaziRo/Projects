@@ -32,17 +32,17 @@ void PrintFloat(void *data);
 int AddToInt(void *address_to_data, int int_to_add);
 int AddToFloat(void *address_to_data, int int_to_add);
 int AddToChar(void *data, int int_to_add);
-
 int CleanUpChar(void *address_to_data);
 
 void AddIntToAll(Struct s[], int num_to_add);
 void PrintAll(Struct s[]);
 void CleanAll(Struct s[]);
+
 char * IntToString(int num_to_convert, int size);
+int CountDigitsOfInt(int num_to_count);
 
 int InitializeStruct(Struct s[]);
 int StructInfrastructure();
 
-int CountDigitsOfInt(int num_to_count);
 
 #endif
