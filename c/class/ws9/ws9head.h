@@ -8,6 +8,8 @@ size_t FillChunk (int c);
 void FillLessThenChunk(char *str_ptr,int intput_char, size_t times_to_fill);
 int MyAtoi(const char *nptr);
 char* MyItoa(int num, char* buffer, int base);
+void ReverseNum(char *buffer, int num_length);
+void CharSwap(char *x, char *y);
 
 
 #endif

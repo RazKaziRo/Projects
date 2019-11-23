@@ -87,42 +87,72 @@ char* MyItoa(int num, char* buffer, int base)
 {	
 
 	char *buff_runner = buffer;
-	int tmp_num = num;
-	
+	int reminder = 0;
+	int abs_num = num;
+	int num_length = 0;
+
 	assert(NULL != buffer);
 
-	UNUSED(base);
-
-	if (0 == num)
+	if (base < 2 || base > 32)
 	{
-		*buff_runner = (num%10)+48;
-		++buff_runner;
+		return buffer;	
 	}
 
-	if (0 > num)
+	if (num < 0 && 10 == base)
 	{
 		*buff_runner = '-';
 		++buff_runner;
-		num *=-1;
 	}
 
-	while (0 != tmp_num)
+	if (abs_num < 0)
 	{
+		abs_num *= -1;
+	}
+
+	while(0 != abs_num)
+	{
+		reminder = abs_num%base;
+
+		if(reminder >=10)
+		{
+			*buff_runner = 65 + (reminder-10); 
+		}
+		else
+		{
+			*buff_runner = reminder+48;
+		}
+
 		++buff_runner;
-		tmp_num /= 10;
+		++num_length;
+		abs_num /= base;
 	}
 
-	*buff_runner = '\0';
-	--buff_runner;
+	++buff_runner;
+	buff_runner = '\0';
 
-	while (num != 0)
-	{
-		*buff_runner = (num%10)+48;
-		--buff_runner;
-		num /=10;
-	}
+	ReverseNum(buffer, num_length);
 
 	return buffer;
+}
+
+void ReverseNum(char *buffer, int num_length)
+{	
+	int j = 0;
+	char *buffer_next_char = buffer;
+	++buffer_next_char;
+
+	while(num_length > j)
+	{
+		CharSwap(buffer, buffer_next_char);
+		++j;
+	}
+}	
+
+void CharSwap(char *x, char *y) 
+{
+	char tmp_char = *x; 
+	*x = *y; 
+	*y = tmp_char;
 }
 
 

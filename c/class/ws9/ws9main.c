@@ -19,8 +19,17 @@ void Test(int condition, const char *msg)
 
 int main () 
 {
-
-
+	char buffer[32] = "21";
+	char *buff_ptr = buffer;
+/*
+	puts(buffer);
+	MyItoa(12, buff_ptr, 10);
+	puts(buffer);
+*/
+	puts(buffer);
+	ReverseNum(buffer, 2);
+	puts(buffer);
+	
 /* EX 2.2 Itoa */
 /*
 	Test(0 == strcmp(MyItoa(10, buff_ptr, 10),"10"), "FAILED: Not Equal 10");
@@ -29,6 +38,7 @@ int main ()
 	Test(0 == strcmp(MyItoa(0, buff_ptr, 10),"0"), "FAILED: Not Equal 0");
 
 */
+
    /* EX 2.1 atoi */
 /*
 	Test(1 == MyAtoi("1"), "FAILED: Not Equal 1");
