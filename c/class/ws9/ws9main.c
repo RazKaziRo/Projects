@@ -23,8 +23,9 @@ int main ()
    char *ptr_str = str;
 
    puts(str);
-   memset(str,'s',18);
+   MyMemset(str,'1',18);
    puts(str);
+
 
 /* EX 1.1 Memset */
 

@@ -6,16 +6,21 @@
 
 void *MyMemset(void *original_str, int intput_char, size_t times_to_fill)
 {	
-	size_t chunk = FillChunk (intput_char);
 	char *str_ptr = original_str;
 
 	while(times_to_fill>=WORD_SIZE)
-	{
-		*(size_t*)str_ptr = chunk;
+	{	
+		*(size_t*)str_ptr= FillChunk (intput_char);
+		str_ptr+=WORD_SIZE;
 		times_to_fill-=WORD_SIZE;
 	}
 
+	if(times_to_fill<WORD_SIZE)
+	{
+		FillLessThenChunk(str_ptr,intput_char, times_to_fill);
+	}
 
+	return original_str;
 }
 
 void FillLessThenChunk(char *str_ptr,int intput_char, size_t times_to_fill)
@@ -30,18 +35,18 @@ void FillLessThenChunk(char *str_ptr,int intput_char, size_t times_to_fill)
 
 size_t FillChunk (int intput_char)
 {
-	size_t num = 0;
+	size_t chunk = 0;
 	int i = 0;
 
 	while(i<WORD_SIZE)
 	{
-		num |= intput_char;
-		num<<=WORD_SIZE;
+		chunk |= intput_char;
+		chunk <<= WORD_SIZE;
 		++i;
 	}
-	num |= intput_char;
+	chunk |= intput_char;
 
-return num;	
+return chunk;	
 }
 
 void AddressAlignment (void *s)
