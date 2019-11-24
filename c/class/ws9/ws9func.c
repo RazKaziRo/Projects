@@ -3,7 +3,7 @@
  * Purpose: Answares for CW9 - Word Boundry Optimization.
  * Date: 22.11.2019
  * Language: C
- * Reviewer: 
+ * Reviewer: Guy Cohen Zedek
  */
 
 #include <stdio.h>  /* size_t */
@@ -255,7 +255,7 @@ void CharSwap(char *x, char *y)
 	*y = tmp_char;
 }
 
-void InitAsciiStructArray(ascii_t asciiArr[])
+static void InitAsciiStructArray(ascii_t asciiArr[])
 {
 
 	int i = 0;
