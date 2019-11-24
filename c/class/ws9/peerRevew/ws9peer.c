@@ -9,9 +9,8 @@
 #include <stdio.h>
 #include <string.h>	/*strcmp()*/
 #include <stdlib.h> 	/*malloc()*/
-#include "ws9head.h"
 
-#define IS_LITTLE_ENDIAN(a) (*(char*)&a) == (0xff&a) ? printf("Little Endian\n") : printf("Big Endian\n")  	
+#define IS_LITTLE_ENDIAN(a) (*(char*)&a) == (0xff & a) ? printf("Little Endian\n") : printf("Big Endian\n")  	
 
 void Test(int condition, const char *msg)
 {

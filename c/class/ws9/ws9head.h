@@ -6,10 +6,10 @@
  * Reviewer: Guy Cohen Zedek
  */
 
-#include <stdio.h> /*size_t*/
-
 #ifndef _WS9HEAD_H_
 #define _WS9HEAD_H_
+
+#include <stdio.h> /*size_t*/
 
 typedef struct 
 {
@@ -25,6 +25,6 @@ int MyAtoi(const char *nptr);
 char* MyItoa(int num, char* buffer, int base);
 void CharSwap(char *x, char *y);
 void isLittleEndian(int x);
-void InFirstTwoArrNotThird(char *arr1,int size_arr1, char *arr2, int size_arr2, char *arr3, int size_arr3);
+void InFirstTwoArrNotThird(char *arr1, int size_arr1, char *arr2, int size_arr2, char *arr3, int size_arr3);
 
 #endif
