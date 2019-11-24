@@ -51,7 +51,6 @@ void *MyMemSet(void *original_str, int intput_char, size_t times_to_fill)
 		times_to_fill -= WORD_SIZE;
 	}
 
-
 	while (times_to_fill<WORD_SIZE && 0 < times_to_fill)
 	{
 		*(char *)str_ptr = intput_char;
@@ -140,7 +139,6 @@ void *MyMemMove(void *dest, const void *src, size_t num_of_chars_to_cpy)
 
 void isLittleEndian(int x)
 {
-
 	int x_first_byte = (0xff&x);
 
 	if (x_first_byte == (*(char *)&x))
@@ -257,7 +255,6 @@ void CharSwap(char *x, char *y)
 
 static void InitAsciiStructArray(ascii_t asciiArr[])
 {
-
 	int i = 0;
 
 	for(; i< ASCII_COUNT; ++i)
