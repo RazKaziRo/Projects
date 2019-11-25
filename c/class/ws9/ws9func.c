@@ -14,8 +14,6 @@
 #define WORD_SIZE 8
 #define ASCII_COUNT 256
 
-#define UNUSED(x) (void)(x)
-
 static size_t FillChunk (int intput_char)
 {
     size_t chunk = 0;
@@ -34,12 +32,15 @@ static size_t FillChunk (int intput_char)
 
 void *MyMemSet(void *original_str, int intput_char, size_t times_to_fill)
 {	
-	char *str_ptr = original_str;
+	char *str_ptr = NULL;;
+
 	assert(NULL != original_str);
 
-	while (0 != (size_t)str_ptr % WORD_SIZE && 0 < times_to_fill) 		/*Address Aligment*/
+	str_ptr = original_str;
+
+	while (0 != ((size_t)str_ptr % WORD_SIZE) && 0 < times_to_fill) 		/*Address Aligment*/
 	{
-		*(char *)str_ptr = intput_char;
+		*str_ptr = (char)intput_char;
 		--times_to_fill;
 		++str_ptr;
 	}
@@ -53,7 +54,7 @@ void *MyMemSet(void *original_str, int intput_char, size_t times_to_fill)
 
 	while (times_to_fill<WORD_SIZE && 0 < times_to_fill)
 	{
-		*(char *)str_ptr = intput_char;
+		*str_ptr = (char)intput_char;
 		++str_ptr;
 		--times_to_fill;
 	}
@@ -63,13 +64,16 @@ void *MyMemSet(void *original_str, int intput_char, size_t times_to_fill)
 
 void *MyMemCpy(void *dest, const void *src, size_t num_of_chars_to_cpy)
 {
-	char *dest_ptr = dest;
-	const char *src_ptr = src;
+	char *dest_ptr = NULL;
+	const char *src_ptr = NULL;
 
     assert(NULL != src);
     assert(NULL != dest);
 
-	while (0 != (size_t )dest_ptr%WORD_SIZE && 0 < num_of_chars_to_cpy) 		/*Address Aligment*/
+	dest_ptr = dest;
+	src_ptr = src;
+
+	while (0 != ((size_t )dest_ptr%WORD_SIZE) && 0 < num_of_chars_to_cpy) 		/*Address Aligment*/
 	{
 		*dest_ptr = *src_ptr;
 		--num_of_chars_to_cpy;
@@ -98,13 +102,16 @@ void *MyMemCpy(void *dest, const void *src, size_t num_of_chars_to_cpy)
 
 static void *MyMemMoveReverse(void *dest, const void *src, size_t num_of_chars_to_cpy)
 {
-    char *dest_ptr = dest;
-    const char *src_ptr = src;
+    char *dest_ptr = NULL;
+    const char *src_ptr = NULL;
 
     assert(NULL != src);
     assert(NULL != dest);
 
+    dest_ptr = dest;
     dest_ptr += num_of_chars_to_cpy-1;
+
+    src_ptr = src;
     src_ptr += num_of_chars_to_cpy-1;
 
     while (0 < num_of_chars_to_cpy)
@@ -114,16 +121,20 @@ static void *MyMemMoveReverse(void *dest, const void *src, size_t num_of_chars_t
         --src_ptr;
         --num_of_chars_to_cpy;
     }
+
     return dest;
 }
 
 void *MyMemMove(void *dest, const void *src, size_t num_of_chars_to_cpy)
 {
-	char *dest_ptr = dest;
-	const char *src_ptr = src;
+	char *dest_ptr = NULL;
+	const char *src_ptr = NULL;
 
     assert(NULL != src);
     assert(NULL != dest);
+
+    dest_ptr = dest;
+    src_ptr = src;
 
 	if (src >= dest)
 	{
@@ -139,9 +150,9 @@ void *MyMemMove(void *dest, const void *src, size_t num_of_chars_to_cpy)
 
 void isLittleEndian(int x)
 {
-	int x_first_byte = (0xff&x);
+	int x_first_byte = (0xff & x);
 
-	if (x_first_byte == (*(char *)&x))
+	if (x_first_byte == (*(char *) & x))
 	{
 		printf("Machine is Little Endian \n");
 	}
@@ -193,14 +204,16 @@ static void ReverseNum(char *buffer, char *end_of_buffer, int num_length)
 
 char* MyItoa(int num, char* buffer, int base)
 {	
-	char *buff_runner = buffer;
+	char *buff_runner = NULL;
 	int reminder = 0;
 	int num_length = 0;
 	int abs_num = num;
 
 	assert(NULL != buffer);
 
-	if (base < 2 || base > 32)
+	buff_runner = buffer;
+
+	if (base < 2 || base > 36)
 	{
 		return buffer;	
 	}
@@ -218,22 +231,22 @@ char* MyItoa(int num, char* buffer, int base)
 
 	do  						/*Take care of the 0 case */
 	{
-	reminder = abs_num%base; 
+		reminder = abs_num%base; 
 
-	if (reminder >= 10)
-	{
-		*buff_runner = 65 + (reminder - 10); 
-	}
-	else
-	{
-		*buff_runner = reminder + 48;
-	}
+		if (reminder >= 10)
+		{
+			*buff_runner = 65 + (reminder - 10); 
+		}
+		else
+		{
+			*buff_runner = reminder + 48;
+		}
 
-	++buff_runner;
-	++num_length;
-	abs_num /= base;
+		++buff_runner;
+		++num_length;
+		abs_num /= base;
 
-	}while(0 != abs_num);
+	}	while(0 != abs_num);
 	
 	*buff_runner = '\0';
 	
@@ -244,11 +257,12 @@ char* MyItoa(int num, char* buffer, int base)
 
 void CharSwap(char *x, char *y) 
 {
-	char tmp_char = *x; 
+	char tmp_char = 0; 
 
     assert (NULL != x);
     assert (NULL != y);
 
+    tmp_char = *x;
 	*x = *y; 
 	*y = tmp_char;
 }
@@ -284,28 +298,28 @@ void InFirstTwoArrNotThird(char *arr1,int size_arr1, char *arr2,int size_arr2, c
 			continue;
 		}
 
-		asciiArr[*arr1 % ASCII_COUNT].status +=1;
+		asciiArr[*arr1 % ASCII_COUNT].status += 1;
 		--size_arr1;
 		++arr1;
 	}
 
 	while (size_arr2 > 0)
 	{
-		if(2 == asciiArr[*arr2 % ASCII_COUNT].status)
+		if (2 == asciiArr[*arr2 % ASCII_COUNT].status)
 		{
 			--size_arr2;
 			++arr2;
 			continue;
 		}
 
-		asciiArr[*arr2 % ASCII_COUNT].status +=1;
+		asciiArr[*arr2 % ASCII_COUNT].status += 1;
 		--size_arr2;
 		++arr2;
 	}
 
 	while (size_arr3 > 0)
 	{
-		asciiArr[*arr3 % ASCII_COUNT].status =-1;
+		asciiArr[*arr3 % ASCII_COUNT].status = -1;
 		--size_arr3;
 		++arr3;
 	}

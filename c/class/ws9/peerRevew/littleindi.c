@@ -1,6 +1,10 @@
-#include<stdio.h>
-
-#define LilEndi(num) *(char*)(&num) == (num & 0xff) 
+/**************************************************************************************
+			Ws09 
+			Ben Zaad
+			24.11.19
+			revirewer- Raz
+**************************************************************************************/
+#include "mem.h"
 
 void LittleEndian()
 {
@@ -15,15 +19,4 @@ void LittleEndian()
 	{
 		printf("BIG Endian\n");	
 	}
-}
-
-int main()
-{
-	int x = 40;
-
-	LittleEndian();
-
-	printf("%d\n",LilEndi(x));
-
-	return 0;
 }

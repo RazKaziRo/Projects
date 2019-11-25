@@ -1,6 +1,10 @@
-#include<stdio.h>    /*prints and what not*/
-#include<string.h>  /*check before release*/
-#include<stdlib.h> /*atoi nd itoa*/
+/**************************************************************************************
+            Ws09 
+            Ben Zaad
+            24.11.19
+            revirewer- Raz
+**************************************************************************************/
+#include "mem.h"
 
 #define BITS_IN_BYTE 8
 
@@ -69,7 +73,7 @@ int MyAtoI(const char *str, int base)
 
 char* MyItoA(int num, char* buffer, int base)
 {
-    int i = 0, num_adapter = 0, counter = 0, sign = 0, len = 0;
+    int counter = 0, sign = 0, len = 0;
     char *buffer_runner = buffer, *header =  buffer;
     char temp = 0;
 
@@ -112,15 +116,4 @@ char* MyItoA(int num, char* buffer, int base)
         *header = '-';
     }
     return header;
-}
-int main()
-{
-    char str[7]={0};
-    char str2[5]= {0};
-    int n= ~0;
-    n *= -1;
-
-    printf("%d\n",MyAtoI("90",10));
-
-    return 0;
 }

@@ -15,13 +15,12 @@ typedef struct
 {
 	char ascii_code;
 	int status;
-
 }ascii_t;
 
 void *MyMemSet(void *s, int c, size_t n);
 void *MyMemCpy(void *dest, const void *src, size_t n);
 void *MyMemMove(void *dest, const void *src, size_t num_of_chars_to_cpy);
-int MyAtoi(const char *nptr);
+int MyAtoi(const char *input_char);
 char* MyItoa(int num, char* buffer, int base);
 void CharSwap(char *x, char *y);
 void isLittleEndian(int x);
