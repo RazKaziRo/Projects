@@ -12,22 +12,22 @@
 #include <stdio.h> /* size_t, printf() */
 
 /* This function sets all bits to 1 */
-size_t BArrSetAllBits(size_t bits); /*DONE*/
+size_t BArrSetAllBits(size_t bits);
 
 /* This function sets all bits to 0 */
-size_t BArrResetAllBits(size_t bits); /*DONE*/
+size_t BArrResetAllBits(size_t bits);
 
 /* This function checks if given bit is 1 */
-int BArrIsOn(size_t bits, int position); /*DONE*/
+int BArrIsOn(size_t bits, int position);
 
 /* This function checks if given bit is 0 */
-int BArrIsOff(size_t bits, int position); /*DONE*/
+int BArrIsOff(size_t bits, int position);
 
 /* This function return the number of the on bits using Hamming Weight */
-size_t BArrCountOn(size_t bits);	/*DONE*/
+size_t BArrCountOn(size_t bits);
 
 /* This function return the number of the off bits */
-size_t BArrCountOff(size_t bits); /*DONE*/
+size_t BArrCountOff(size_t bits);
 
 /* This function sets specific bit to the given status */
 size_t BArrSetBit(size_t bits, int position, int status); 
@@ -52,7 +52,5 @@ size_t BArrFlipBit(size_t bits, int position);
 
 /* This function mirroring a given bits array */
 size_t BArrMirror(size_t bits);
-
-void PrintSize_t(size_t bits);
 
 #endif
