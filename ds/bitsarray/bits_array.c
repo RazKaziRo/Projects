@@ -104,14 +104,18 @@ int BArrIsOff(bitsarr_t bits, int position)
  {
  	switch (status)
  	{
- 		case 1:
- 		return BArrSetOn(bits,position);
- 		break;
-
  		case 0:
- 		return BArrSetOff(bits,position);
- 		break;
- 	}	
+ 			return (BArrSetOff(bits,position));
+ 			break;
+
+ 		case 1:
+ 			return (BArrSetOn(bits,position));
+ 			break;
+
+ 		default:
+ 			return 0;
+ 	}
+ 			
  }
 
  bitsarr_t BArrRotateRight(bitsarr_t bits, int num_of_rotations)
