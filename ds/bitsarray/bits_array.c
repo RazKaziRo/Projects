@@ -1,35 +1,42 @@
-#include <assert.h>
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for DS - BitsArray.
+ * Date: 26.11.2019
+ * Language: C
+ * Reviewer: Eliya Goldfisher
+ */
 
-#include "bits_array.h"
+#include <assert.h> 	/*assert()*/
 
-#define  m0   0x0000000000000000 /* binary: 0000...*/
-#define  m1   0x5555555555555555 /* binary: 0101 0101...*/
-#define  m2   0x3333333333333333 /* binary: 00110011..*/
-#define  m4   0x0f0f0f0f0f0f0f0f /* binary: 4 zeros,  4 ones ...*/
-#define  m8   0x00ff00ff00ff00ff /* binary: 8 zeros,  8 ones ...*/
-#define  m16  0x0000ffff0000ffff /* binary: 16 zeros, 16 ones ...*/
-#define  m32  0x00000000ffffffff /* binary: 32 zeros, 32 ones  */
-#define  m64  0xffffffffffffffff /* binary: 31 ones first 1... */
+#include "bits_array.h" /*bits arr functions ()*/
+
+#define  M0   0x0000000000000000 /* binary: 0000...*/
+#define  M1   0x5555555555555555 /* binary: 0101 0101...*/
+#define  M2   0x3333333333333333 /* binary: 00110011..*/
+#define  M4   0x0f0f0f0f0f0f0f0f /* binary: 4 zeros,  4 ones ...*/
+#define  M8   0x00ff00ff00ff00ff /* binary: 8 zeros,  8 ones ...*/
+#define  M16  0x0000ffff0000ffff /* binary: 16 zeros, 16 ones ...*/
+#define  M32  0x00000000ffffffff /* binary: 32 zeros, 32 ones  */
+#define  M64  0xffffffffffffffff /* binary: 31 ones first 1... */
 
 #define BITS_IN_WORD 64
 
-typedef size_t bitsarr_t;
-
 bitsarr_t BArrSetAllBits(bitsarr_t bits)
 {
-	return bits |= m64;
+	return bits |= M64;
 }
 
 bitsarr_t BArrResetAllBits(bitsarr_t bits)
 
 {
-	return (bits &= m0);
+	return (bits &= M0);
 }
 
 int BArrIsOn(bitsarr_t bits, int position)
 {
 	size_t flag = 1;
-	flag = flag << (position-1); 
+
+	flag <<= (position-1); 
 
 	if(flag == (bits & flag))
 	{
@@ -44,7 +51,8 @@ int BArrIsOn(bitsarr_t bits, int position)
 int BArrIsOff(bitsarr_t bits, int position)
 {
 	size_t flag = 1;
-	flag = flag << (position-1); 
+
+	flag <<= (position-1); 
 
 	if (flag != (bits & flag))
 	{
@@ -54,7 +62,6 @@ int BArrIsOff(bitsarr_t bits, int position)
 	{
 		return 0;
 	}
-
 }
 
  size_t BArrCountOn(bitsarr_t bits)
@@ -66,45 +73,45 @@ int BArrIsOff(bitsarr_t bits, int position)
         count += bits & 1; 
         bits >>= 1; 
     } 
+
     return count; 
  }
 
  size_t BArrCountOff(bitsarr_t bits)
  {
- 	bits = BArrCountOn(~bits);
-
- 	return bits;
+ 	return BArrCountOn(~bits);
  }
 
  bitsarr_t BArrSetOn(bitsarr_t bits, int position)
  {
  	size_t flag = 1;
-	flag = flag << (position-1); 
+
+	flag <<= (position-1); 
 
 	return (bits | flag);
  }
 
-  bitsarr_t BArrSetOff(bitsarr_t bits, int position)
+ bitsarr_t BArrSetOff(bitsarr_t bits, int position)
  {
  	size_t flag = 1;
-	flag = flag << (position-1); 
+ 	
+	flag <<= (position-1); 
 
 	return (bits & ~flag);
  }
 
  bitsarr_t BArrSetBit(bitsarr_t bits, int position, int status)
  {
- 	switch(status)
+ 	switch (status)
  	{
  		case 1:
- 		bits = BArrSetOn(bits,position);
+ 		return BArrSetOn(bits,position);
  		break;
 
  		case 0:
- 		bits = BArrSetOff(bits,position);
+ 		return BArrSetOff(bits,position);
  		break;
  	}	
- 	return bits;
  }
 
  bitsarr_t BArrRotateRight(bitsarr_t bits, int num_of_rotations)
@@ -121,25 +128,21 @@ bitsarr_t BArrFlipBit(bitsarr_t bits, int position)
 {
 	if (1 == BArrIsOn(bits, position))
 	{
-		bits = BArrSetOff(bits, position);
-	}
-	else
-	{
-		bits = BArrSetOn(bits, position);
+		return BArrSetOff(bits, position);
 	}
 
-	return bits;
+	return BArrSetOn(bits, position);
 }
 
 
 bitsarr_t BArrMirror(bitsarr_t bits)
 {
 	bits = ((bits << 32) | (bits >> 32));
-	bits = (((bits & m16) << 16) | ((bits & ~m16) >> 16));
-	bits = (((bits & m8) << 8) | ((bits & ~m8) >> 8));
-	bits = (((bits & m4) << 4) | ((bits & ~m4) >> 4));
-	bits = (((bits & m2) << 2) | ((bits & ~m2) >> 2));
-	bits = (((bits & m1) << 1) | ((bits & ~m1) >> 1));
+	bits = (((bits & M16) << 16) | ((bits & ~M16) >> 16));
+	bits = (((bits & M8) << 8) | ((bits & ~M8) >> 8));
+	bits = (((bits & M4) << 4) | ((bits & ~M4) >> 4));
+	bits = (((bits & M2) << 2) | ((bits & ~M2) >> 2));
+	bits = (((bits & M1) << 1) | ((bits & ~M1) >> 1));
 
 	return bits;
 }
@@ -147,17 +150,21 @@ bitsarr_t BArrMirror(bitsarr_t bits)
 char *BArrToString(bitsarr_t bits, char *buffer)
 {
 	int i = 0;
-	bits = BArrMirror(bits);
+    char *buff_runner = NULL;
 
 	assert(NULL != buffer);
+    
+    bits = BArrMirror(bits);
+    buff_runner = buffer;
 
 	for(; i < BITS_IN_WORD; ++i)
 	{
-	    *buffer = ((bits&1)+48);
-	    ++buffer;
-	    bits>>= 1;
+	    *buff_runner = ((bits & 1) + 48);
+	    ++buff_runner;
+	    bits >>= 1;
 	}
-	*buffer = '\0';
+	
+	*buff_runner = '\0';
 
 	return buffer;
 }
