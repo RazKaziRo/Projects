@@ -3,12 +3,13 @@
  * Purpose: Answares for DS - Stack.
  * Date: 26.11.2019
  * Language: C
- * Reviewer: Ben
+ * Reviewer: Ben Step
  */
-#include <stdlib.h> /*  malloc()	*/
-#include <assert.h> /*	assert()	*/
-#include <string.h> /*	memcpy() 	*/
-#include "stack.h"
+
+#include <stdlib.h> /*  malloc() */
+#include <assert.h> /*	assert() */
+#include <string.h> /*	memcpy() */
+#include "stack.h"  /*	Stack()  */
 
 struct Stack
 {
@@ -21,17 +22,16 @@ struct Stack
 
 stack_t* StackCreate(size_t element_size, size_t capacity)
 {	
-
 	stack_t *newstack = (stack_t*)malloc(sizeof(stack_t));
 
-	if(NULL == newstack)
+	if (NULL == newstack)
 	{
 		return 0;
 	}
 
-	newstack -> start = (void*)malloc(element_size*capacity);
+	newstack -> start = (void *)malloc(element_size*capacity);
 
-	if(NULL == newstack -> start)
+	if (NULL == newstack -> start) 
 	{
 		return 0;
 	}
@@ -54,6 +54,9 @@ void StackDestroy(stack_t* stack)
 
 int StackPush(stack_t* stack, void* data)
 {
+    assert(NULL != stack);
+    assert(NULL != data);
+
 	if (stack -> current < stack -> end)
 	{
 		memcpy(stack -> current, data, stack -> element_size);
@@ -61,32 +64,41 @@ int StackPush(stack_t* stack, void* data)
 
 		return 1;
 	}
-
+    
 	return 0;
 }
 
-int StackIsEmpty(stack_t* stack)
+int StackIsEmpty(const stack_t* stack)
 {
+    assert(NULL != stack);
+
 	return stack -> current == stack -> start;
 }
 
-size_t StackSize(stack_t* stack)
+size_t StackSize(const stack_t* stack)
 {
+    assert(NULL != stack);
+
 	return ((((char *)(stack -> current) - (char *)(stack -> start)) / stack -> element_size));
 }
 
-void *StackPeek(stack_t* stack)
+void *StackPeek(const stack_t* stack)
 {
-	if(!StackIsEmpty(stack))
+    assert(NULL != stack);
+
+	if (!StackIsEmpty(stack))
 	{
-		return((char *)(stack -> current) - stack -> element_size);
+	   return((char *)(stack -> current) - stack -> element_size);
 	}
+
 	return NULL;
 }
 
 void StackPop(stack_t* stack)
 {	
-	if(!StackIsEmpty(stack))
+    assert(NULL != stack);
+
+	if (!StackIsEmpty(stack))
 	{
 		stack -> current = (char *)stack -> current - stack -> element_size;
 	}
