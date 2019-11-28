@@ -2,8 +2,8 @@
  * Author: Raz KaziRo
  * Purpose: Answares for DS - Stack.
  * Date: 26.11.2019
- * Language: C
- * Reviewer: Ben
+ * Language: 
+ * Reviewer: 
  */
 
 #ifndef __STACK_H__

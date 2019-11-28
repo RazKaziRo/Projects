@@ -48,8 +48,8 @@ void StackDestroy(stack_t* stack)
 	assert(NULL != stack -> start);
 	assert(NULL != stack);
 
-	free(stack -> start);
-	free(stack);
+	free(stack -> start); stack -> start = NULL;
+	free(stack);stack = NULL;
 }
 
 int StackPush(stack_t* stack, void* data)
@@ -72,12 +72,16 @@ int StackIsEmpty(stack_t* stack)
 
 size_t StackSize(stack_t* stack)
 {
-	return ((((char *)stack -> current) - ((char *)stack -> start)) / (stack -> element_size));
+	return ((((char *)(stack -> current) - (char *)(stack -> start)) / stack -> element_size));
 }
 
 void *StackPeek(stack_t* stack)
 {
-	return((char *)stack -> current - stack -> element_size);
+	if(!StackIsEmpty(stack))
+	{
+		return((char *)(stack -> current) - stack -> element_size);
+	}
+	return NULL;
 }
 
 void StackPop(stack_t* stack)
