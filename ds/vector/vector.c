@@ -116,8 +116,6 @@ int VectorReserve(vector_t *vector, size_t new_capacity)
     {
         return 1;      /* new_capacity <= 0 */
     }
-
-
 }
 
 size_t VectorCapacity(const vector_t *vector)
@@ -138,7 +136,7 @@ void* VectorGetItemAddress(const vector_t *vector, int position)
 	}
 	else
 	{
-		return ((char *)vector -> start + ((position-1)) * /*pos 1 = 0 = first*/
-		 vector -> element_size);
+		return ((char *)vector -> start + ((position-1))/* pos 1 = 0 = first */
+        * vector -> element_size);
 	}
 }
