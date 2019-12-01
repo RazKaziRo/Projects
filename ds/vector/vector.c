@@ -3,7 +3,7 @@
  * Purpose: Answares for DS - Dynamic Vector WS.
  * Date: 01.12.2019
  * Language: C
- * Reviewer: 
+ * Reviewer: Israel Drayfus
  */
 #include <stdlib.h> /*malloc(), free()*/
 #include <assert.h> /*assert()*/
