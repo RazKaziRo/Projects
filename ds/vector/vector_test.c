@@ -23,7 +23,6 @@
 									printf("\033[0m");\
 								}\
 							}
-
 struct Vector
 {
 	void *start;
@@ -129,8 +128,10 @@ void TestVectorReserve()
 	/*(vector_t *vector, size_t new_capacity)*/
 	vector_t *v = VectorCreate(4,10);
 	RUN_TEST(10 == v -> capacity, "FAIL: Before Reserve Capacity = 10");	
-	VectorReserve(v,1);
-	RUN_TEST(1 == v -> capacity, "FAIL: After Reserve Capacity = 1");
+	VectorReserve(v,5);
+	RUN_TEST(5 == v -> capacity, "FAIL: After Reserve 5 Capacity = 5");
+	VectorReserve(v,0);
+	RUN_TEST(5 == v -> capacity, "FAIL: After Reserve 0 Capacity = 5");
 	VectorDestroy(v);
 	printf("\n");
 }
@@ -158,6 +159,8 @@ void TestVectorSize()
 	RUN_TEST(1 == VectorSize(v), "FAIL: After PUSH Size = 1");
 	VectorPopBack(v);	
 	RUN_TEST(0 == VectorSize(v), "FAIL: After POP Size = 0");
+	VectorPopBack(v);	
+	RUN_TEST(0 == VectorSize(v), "FAIL: After EXTRA POP Size = 0");
 	VectorDestroy(v);
 	printf("\n");
 }

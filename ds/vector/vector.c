@@ -11,6 +11,9 @@
 
 #include "vector.h"
 
+#define SHRINK_FACTOR 4
+#define GROWTH_FACTOR 2
+
 struct Vector
 {
 	void *start;
@@ -40,16 +43,15 @@ vector_t* VectorCreate(size_t element_size, size_t capacity)
 			newVector -> size = 0;
 			newVector -> capacity = capacity;
 			newVector -> element_size = element_size;
-			
+
 			return newVector;
 		}
 		else
 		{
-			return NULL;
+			return NULL; /* vector -> start malloc() FAIL */
 		}
-		
 	}
-	return NULL;
+	return NULL;		 /* newVector malloc() FAIL */
 }
 
 void VectorDestroy(vector_t *vector)
@@ -67,9 +69,9 @@ int VectorPushBack(vector_t *vector, const void *data)
 	assert(NULL != data);
 	assert(NULL != vector);
 
-	if (vector -> size == vector ->capacity)
+	if (VectorSize(vector) == VectorCapacity(vector))
 	{
-		VectorReserve(vector, (VectorCapacity(vector) * 2) );
+		VectorReserve(vector, (VectorCapacity(vector) * GROWTH_FACTOR));
 	}
 
 	current = (char *)vector -> start + (vector->size * vector -> element_size);
@@ -87,24 +89,35 @@ void VectorPopBack(vector_t *vector)
 	{	
 		--(vector -> size);
 
-		if (VectorSize(vector) == (VectorCapacity(vector) / 4))
+		if (VectorSize(vector) == (VectorCapacity(vector) / SHRINK_FACTOR))
 		{
-			VectorReserve(vector,(VectorCapacity(vector) / 2));
+			VectorReserve(vector,(VectorCapacity(vector) / GROWTH_FACTOR));
 		} 
 	}
 }
 
 int VectorReserve(vector_t *vector, size_t new_capacity)
-{
-	vector -> start = (void *)realloc(vector -> start, 
-		(new_capacity * vector -> element_size));
-	vector -> capacity = new_capacity;
+{   
+    if (0 < new_capacity)
+    {
+        vector -> start = (void *)realloc(vector -> start, 
+        (new_capacity * vector -> element_size));
+        vector -> capacity = new_capacity; 
+        if (NULL == vector)
+        {
+            return 1; /*vector -> start realloc FAIL*/
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        return 1;      /* new_capacity <= 0 */
+    }
 
-	if (NULL == vector)
-	{
-		return 1;
-	}
-	return 0;
+
 }
 
 size_t VectorCapacity(const vector_t *vector)
@@ -125,7 +138,7 @@ void* VectorGetItemAddress(const vector_t *vector, int position)
 	}
 	else
 	{
-		return ((char *)vector -> start + ((position-1)) *
+		return ((char *)vector -> start + ((position-1)) * /*pos 1 = 0 = first*/
 		 vector -> element_size);
 	}
 }
