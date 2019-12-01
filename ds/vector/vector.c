@@ -5,11 +5,12 @@
  * Language: C
  * Reviewer: Israel Drayfus
  */
+
 #include <stdlib.h> /*malloc(), free()*/
 #include <assert.h> /*assert()*/
 #include <string.h> /*memcpy()*/
 
-#include "vector.h"
+#include "vector.h" /*API FUNCTIONS()*/
 
 #define SHRINK_FACTOR 4
 #define GROWTH_FACTOR 2
@@ -46,11 +47,8 @@ vector_t* VectorCreate(size_t element_size, size_t capacity)
 
 			return newVector;
 		}
-		else
-		{
-			return NULL; /* vector -> start malloc() FAIL */
-		}
 	}
+
 	return NULL;		 /* newVector malloc() FAIL */
 }
 
@@ -69,9 +67,9 @@ int VectorPushBack(vector_t *vector, const void *data)
 	assert(NULL != data);
 	assert(NULL != vector);
 
-	if (VectorSize(vector) == VectorCapacity(vector))
+	if (vector -> size == vector -> capacity)
 	{
-		VectorReserve(vector, (VectorCapacity(vector) * GROWTH_FACTOR));
+		VectorReserve(vector, (vector -> capacity * GROWTH_FACTOR));
 	}
 
 	current = (char *)vector -> start + (vector->size * vector -> element_size);
@@ -85,13 +83,13 @@ void VectorPopBack(vector_t *vector)
 {	
 	assert(NULL != vector);
 
-	if (VectorSize(vector) > 0)
+	if (vector -> size > 0)
 	{	
 		--(vector -> size);
 
-		if (VectorSize(vector) == (VectorCapacity(vector) / SHRINK_FACTOR))
+		if (vector -> size == (vector -> capacity / SHRINK_FACTOR))
 		{
-			VectorReserve(vector,(VectorCapacity(vector) / GROWTH_FACTOR));
+			VectorReserve(vector, (vector -> capacity / GROWTH_FACTOR));
 		} 
 	}
 }
@@ -101,16 +99,11 @@ int VectorReserve(vector_t *vector, size_t new_capacity)
     if (0 < new_capacity)
     {
         vector -> start = (void *)realloc(vector -> start, 
-        (new_capacity * vector -> element_size));
+        	(new_capacity * vector -> element_size));
+       
         vector -> capacity = new_capacity; 
-        if (NULL == vector)
-        {
-            return 1; /*vector -> start realloc FAIL*/
-        }
-        else
-        {
-            return 0;
-        }
+
+        return (NULL == vector); /* vector -> start realloc fail*/
     }
     else
     {
@@ -119,24 +112,30 @@ int VectorReserve(vector_t *vector, size_t new_capacity)
 }
 
 size_t VectorCapacity(const vector_t *vector)
-{
+{	
+	assert(NULL != vector);
+
 	return (vector -> capacity);
 }
 
 size_t VectorSize(const vector_t *vector)
-{
+{	
+	assert(NULL != vector);
+
 	return (vector -> size);
 }
 
-void* VectorGetItemAddress(const vector_t *vector, int position)
+void* VectorGetItemAddress(const vector_t *vector, size_t position)
 {	
-	if ((size_t)position > VectorSize(vector) || 0 == position)
+	assert(NULL != vector);
+
+	if ((size_t)position > vector -> size || 0 == position)
 	{
 		return NULL;
 	}
 	else
 	{
-		return ((char *)vector -> start + ((position-1))/* pos 1 = 0 = first */
+		return ((char *)vector -> start + (position-1)/* pos 1 = 0 = first */
         * vector -> element_size);
 	}
 }

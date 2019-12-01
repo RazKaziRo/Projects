@@ -7,7 +7,7 @@
  */
 #include <stdio.h> 	/*printf(), sizeof()*/
 #include <stdlib.h> /*free()*/
-#include "vector.h" /*API FUNCTIONS()*/
+#include "vector.h"
 
 #define UNUSED(x)	(void)(x)
 #define RUN_TEST(test, errmsg)\
@@ -42,7 +42,7 @@ void TestVectorCreate()
 	RUN_TEST(4 == v -> element_size, "FAIL: Element Size 4");
 	RUN_TEST(0 == v -> size, "FAIL: Element Size 4");
 	RUN_TEST(NULL == v2, "FAIL: Creat Vector 0,1");
-	RUN_TEST(NULL == v3, "FAIL: Creat Vector 0,1");
+	RUN_TEST(NULL == v3, "FAIL: Creat Vector 1,0");
 	free(v -> start); v->start = NULL;
 	free(v); v =NULL;
 	printf("\n");
@@ -188,8 +188,7 @@ void TestVectorGetItemAddress()
 	RUN_TEST(50 == *(int *)(VectorGetItemAddress(v,5)), "FAIL: Value Index 1 = 50");
 	
 	VectorPopBack(v);
-
-	RUN_TEST(NULL == (VectorGetItemAddress(v,5)), "FAIL: Value Index 1 after POP = 10");
+	RUN_TEST(NULL == (VectorGetItemAddress(v,5)), "FAIL: Value Index 5 after POP = NULL");
 	RUN_TEST(10 == *(int *)(VectorGetItemAddress(v,1)), "FAIL: Value Index 1 after POP = 10");
 	RUN_TEST(40 == *(int *)(VectorGetItemAddress(v,4)), "FAIL: Value Index 1 after POP = 10");
 	RUN_TEST(NULL == (VectorGetItemAddress(v,0)), "FAIL: Value Index 0 after POP = NULL");
