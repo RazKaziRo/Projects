@@ -15,23 +15,24 @@ node_t *SLLCreateNode(node_t *node, const void *data)
 {	
 	node_t *newNode = (node_t *)malloc(sizeof(node_t));
 
-	assert (NULL != data);
+	assert(NULL != data);
 
 	if (NULL != newNode)
 	{
 		newNode->data = (void *)data;
 		newNode->next = node;
 	}
+
 	return newNode;
 }
 
 void SLLDestroy(node_t *current_node)
 {	
-   node_t *tmp_current = NULL;
+    node_t *tmp_current = NULL;
+    
+    assert(NULL != current_node);
 
-   assert (NULL != current_node);
-
-   while (NULL != current_node)
+    while (NULL != current_node)
     {
        tmp_current = current_node;
        current_node = current_node->next;
@@ -43,8 +44,8 @@ int SLLInsert(node_t *node_a, node_t *node_b)
 {
 	void *tmp_data = NULL;;
 
-	assert (NULL != node_a);
-	assert (NULL != node_b);
+	assert(NULL != node_a);
+	assert(NULL != node_b);
 
 	tmp_data = node_a->data;
 	node_a->next = node_b->next;
@@ -68,7 +69,7 @@ size_t SLLSize(const node_t *head)
 	node_t *node_runner = NULL;
 	size_t count = 0;
 
-	assert (NULL != head);
+	assert(NULL != head);
 
 	node_runner = (node_t *)head;
 
@@ -85,7 +86,7 @@ void SLLRemoveNode(node_t *current_node)
 {	
 	node_t *next_node = NULL;
 
-	assert (NULL != current_node);
+	assert(NULL != current_node);
 
 	next_node = current_node->next;	
 
@@ -127,6 +128,7 @@ node_t *SLLGetNode(const node_t *head, match_func match_ptr, void *additional)
 	{
 		node_runner = node_runner->next;
 	}
+	
 	return node_runner;
 }
 
@@ -154,7 +156,7 @@ node_t *SLLFlip(node_t *head)
 	node_t *next_node = NULL;
 	node_t *prev_node = NULL;
 
-	assert (NULL != head);
+	assert(NULL != head);
 
 	current_node = head;
 
@@ -174,7 +176,7 @@ int SLLHasLoop(const node_t *head)
 {		
 	const node_t *slow_p = NULL, *fast_p = NULL;
 
-	assert (NULL != head);
+	assert(NULL != head);
 
 	slow_p = head;
 	fast_p = head->next;
@@ -185,7 +187,7 @@ int SLLHasLoop(const node_t *head)
         fast_p = fast_p->next->next;
     }
 
-    return(slow_p == fast_p);
+    return (slow_p == fast_p);
 }
 
 node_t *SLLFindIntersection(const node_t *head1, const node_t *head2)
@@ -197,8 +199,8 @@ node_t *SLLFindIntersection(const node_t *head1, const node_t *head2)
 	size_t size2 = 0;
 	size_t steps = 0, i = 0;
 
-	assert (NULL != head1);
-	assert (NULL != head2);
+	assert(NULL != head1);
+	assert(NULL != head2);
 
 	head1_runner = head1;
 	head2_runner = head2;
@@ -209,14 +211,14 @@ node_t *SLLFindIntersection(const node_t *head1, const node_t *head2)
 
 	if (size1 > size2)
 	{
-		for(; i<steps; ++i)
+		for(; i < steps; ++i)
 		{
 			head1_runner = head1->next;
 		}
 	}
 	else
 	{
-		for (; i<steps; ++i)
+		for (; i < steps; ++i)
 		{
 			head2_runner = head2->next;
 		}
