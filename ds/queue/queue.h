@@ -10,6 +10,7 @@
 #define __QUEUE_H__
 
 #include <stddef.h> /* size_t */
+
 #include "slinkedlist.h"
 
 typedef struct Queue queue_t;
