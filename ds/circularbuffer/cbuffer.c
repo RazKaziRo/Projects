@@ -10,7 +10,7 @@
 #include <stdlib.h> /*malloc()*/
 #include <string.h> /*memcpy*/
 
-#include "circularbuffer.h" /*Circular Buffer API Functions*/
+#include "cbuffer.h" /*Circular Buffer API Functions*/
 
 #define START_POSITION 1
 #define FREE(ptr) free(ptr); ptr = NULL;
@@ -45,7 +45,7 @@ void CBufferDestroy(cbuffer_t *cb)
 	FREE(cb);
 }
 
-ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
+ssize_t CBufferRead(void *buffer , cbuffer_t *cb, size_t count)
 {	
 	size_t remain_to_read = 0;
 
@@ -53,15 +53,16 @@ ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 	{
 		count = cb->size;
 	}
-	remain_to_read = count;
 
-	if (count + cb->size > cb->capacity)
+	remain_to_read = count;
+	if (cb->read_index + count > cb->capacity)
 	{
-		remain_to_read = cb->capacity - cb->read_index;
+		remain_to_read = count - cb->read_index;
 		memcpy(buffer, &cb->arr[cb->read_index], remain_to_read);
 		buffer = (byte_t *)buffer + remain_to_read;
 		cb->size -= remain_to_read;
 		cb->read_index = 0;
+		remain_to_read = count - remain_to_read;
 	}
 
 	memcpy(buffer, &cb->arr[cb->read_index], remain_to_read);
@@ -73,25 +74,24 @@ ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 
 ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count)
 {	
-	size_t max_count = 0;
+	size_t remain_to_write = 0;
 
 	if(CBufferFreeSpace(cb) < count)
 	{
 		count = CBufferFreeSpace(cb);
 	}
 
-	max_count = count;
-
-	if (max_count + cb->size > cb->capacity)
+	remain_to_write = count;
+	if (count + cb->size > cb->capacity)
 	{	
-		max_count = cb->capacity - (cb->read_index + cb->size);
-		memcpy(&cb->arr[cb->size+cb->read_index%cb->capacity], buffer, max_count);
-		cb->size += max_count;
-	    buffer = (byte_t *)buffer + max_count;
-		max_count = cb->capacity - cb->size;
+		remain_to_write = cb->capacity - cb->size;
+		memcpy(&cb->arr[cb->size], buffer, remain_to_write);
+		cb->size += remain_to_write;
+	    buffer = (byte_t *)buffer + remain_to_write;
+		remain_to_write = cb->capacity - cb->size;
 	}
-	memcpy(&cb->arr[(cb->size+cb->read_index)%cb->capacity], buffer, max_count);
-	cb->size += max_count;
+	memcpy(&cb->arr[cb->size+cb->read_index%cb->capacity], buffer, remain_to_write);
+	cb->size += remain_to_write;
 
 	return count;
 }
@@ -110,3 +110,4 @@ size_t CBufferFreeSpace(const cbuffer_t *cb)
 {
 	return(cb->capacity-cb->size);
 }
+
