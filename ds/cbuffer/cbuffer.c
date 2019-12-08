@@ -56,9 +56,9 @@ ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 
 	remain_to_read = count;
 
-	if (cb->read_index + count > cb->capacity)
+	if (cb->read_index % cb->capacity + count > cb->capacity)
 	{
-		remain_to_read = count - cb->read_index;
+		remain_to_read = cb->capacity - cb->read_index;
 		memcpy(buffer, &cb->arr[cb->read_index], remain_to_read);
 		buffer = (byte_t *)buffer + remain_to_read;
 		cb->size -= remain_to_read;
@@ -66,7 +66,7 @@ ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 		remain_to_read = count - remain_to_read;
 	}
 
-	memcpy(buffer, &cb->arr[cb->read_index], remain_to_read);
+	memcpy(buffer, &cb->arr[cb->read_index%cb->capacity], remain_to_read);
 	cb->read_index += remain_to_read;
 	cb->size -= remain_to_read;
 
@@ -84,13 +84,13 @@ ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count)
 
 	remain_to_write = count;
 
-	if (count + cb->size > cb->capacity)
+	if (count + (cb->size +cb->read_index) % cb->capacity > cb->capacity)
 	{	
-		remain_to_write = cb->capacity - cb->size;
-		memcpy(&cb->arr[cb->size], buffer, remain_to_write);
+		remain_to_write = cb->capacity - (cb->size +cb->read_index) % cb->capacity;
+		memcpy(&cb->arr[(cb->size +cb->read_index) % cb->capacity], buffer, remain_to_write);
 		cb->size += remain_to_write;
 	    buffer = (byte_t *)buffer + remain_to_write;
-		remain_to_write = cb->capacity - cb->size;
+		remain_to_write = count - remain_to_write;
 	}
 
 	memcpy(&cb->arr[(cb->size+cb->read_index)%cb->capacity], buffer, remain_to_write);
