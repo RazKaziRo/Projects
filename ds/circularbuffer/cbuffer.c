@@ -27,7 +27,7 @@ struct CBuffer
 
 cbuffer_t *CBufferCreate(size_t capacity)
 {
-	cbuffer_t *newCBuffer = (cbuffer_t*)malloc(offsetof(cbuffer_t, arr) + capacity);
+	cbuffer_t *newCBuffer = malloc(offsetof(cbuffer_t, arr) + capacity);
 	if (NULL != newCBuffer)
 	{
 		newCBuffer->read_index = 0;
@@ -45,16 +45,17 @@ void CBufferDestroy(cbuffer_t *cb)
 	FREE(cb);
 }
 
-ssize_t CBufferRead(void *buffer , cbuffer_t *cb, size_t count)
+ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 {	
 	size_t remain_to_read = 0;
 
-	if(count > cb->size)
+	if (count > cb->size)
 	{
 		count = cb->size;
 	}
 
 	remain_to_read = count;
+
 	if (cb->read_index + count > cb->capacity)
 	{
 		remain_to_read = count - cb->read_index;
@@ -76,12 +77,13 @@ ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count)
 {	
 	size_t remain_to_write = 0;
 
-	if(CBufferFreeSpace(cb) < count)
+	if (CBufferFreeSpace(cb) < count)
 	{
 		count = CBufferFreeSpace(cb);
 	}
 
 	remain_to_write = count;
+
 	if (count + cb->size > cb->capacity)
 	{	
 		remain_to_write = cb->capacity - cb->size;
@@ -90,7 +92,8 @@ ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count)
 	    buffer = (byte_t *)buffer + remain_to_write;
 		remain_to_write = cb->capacity - cb->size;
 	}
-	memcpy(&cb->arr[cb->size+cb->read_index%cb->capacity], buffer, remain_to_write);
+
+	memcpy(&cb->arr[(cb->size+cb->read_index)%cb->capacity], buffer, remain_to_write);
 	cb->size += remain_to_write;
 
 	return count;
@@ -98,7 +101,7 @@ ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count)
 
 size_t CBufferCapacity(const cbuffer_t *cb)
 {
-	return cb->capacity;
+	return (cb->capacity);
 }
 
 int CBufferIsEmpty(const cbuffer_t *cb)
@@ -110,4 +113,3 @@ size_t CBufferFreeSpace(const cbuffer_t *cb)
 {
 	return(cb->capacity-cb->size);
 }
-

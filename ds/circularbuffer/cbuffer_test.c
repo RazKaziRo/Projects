@@ -29,8 +29,6 @@
 #define UNUSED(x) (void)(x)
 #define FREE(ptr) free(ptr); ptr = NULL;
 
-
-
 typedef char byte_t;
 
 struct CBuffer
@@ -65,13 +63,13 @@ void TestCBufferWrite()
 	char *writebuffer = "Hello1234";
 
 	RUN_TEST(6 == CBufferWrite(newCBuffer, writebuffer, 6), "FAIL: WRONG WRITE (6)");
-	RUN_TEST(0 == strcmp("Hello1",newCBuffer->arr), "FAIL: WRONG WRITE (Hello)");
+	RUN_TEST(0 == strncmp("Hello1",newCBuffer->arr,6), "FAIL: WRONG WRITE (Hello)");
 	RUN_TEST(6 == newCBuffer->size, "FAIL: WRONG SIZE (6)");
 	RUN_TEST(10 == newCBuffer->capacity, "FAIL: WRONG CAPACITY (10)");
 	RUN_TEST(4 == CBufferWrite(newCBuffer, writebuffer, 6), "FAIL: WRONG WRITE (4)");
 	RUN_TEST(10 == newCBuffer->size, "FAIL: WRONG SIZE (10)");
 	RUN_TEST(0 == CBufferWrite(newCBuffer, writebuffer, 1), "FAIL: WRONG WRITE (4)");
-	RUN_TEST(0 == strcmp("Hello1Hell",newCBuffer->arr), "FAIL: WRONG WRITE (HelloHello)");
+	RUN_TEST(0 == strncmp("Hello1Hell",newCBuffer->arr,10), "FAIL: WRONG WRITE (HelloHello)");
 
 	CBufferDestroy(newCBuffer);
 	printf("\n");
@@ -83,15 +81,58 @@ void TestCBufferRead()
 	char *writebuffer = "Hello1234";
 	char readBuffer1[7];
 	char readBuffer2[3];
-
+    char readBuffer3[1];
 
 	CBufferWrite(newCBuffer,writebuffer,9);
-
 	RUN_TEST(7 == CBufferRead(readBuffer1,newCBuffer,7), "FAIL TO Read (10)");
-	RUN_TEST(0 == strcmp(readBuffer1, "Hello12"), "FAIL Wrong String (Hello12)");
+	RUN_TEST(0 == strncmp(readBuffer1, "Hello12",7), "FAIL Wrong String (Hello12)");
 	RUN_TEST(2 == CBufferRead(readBuffer2,newCBuffer,7), "FAIL TO Read (10)");
+	RUN_TEST(0 == strncmp(readBuffer2, "34",2), "FAIL Wrong String (34)");
+    CBufferWrite(newCBuffer,writebuffer,1);
+    RUN_TEST(1 == newCBuffer->size, "Wrong Size (1)");
+    RUN_TEST(1 == CBufferRead(readBuffer3,newCBuffer,7), "FAIL TO Read (1)");
+    RUN_TEST(0 == strncmp(readBuffer3, "H",1), "FAIL Wrong String (H)");
+    RUN_TEST(0 == newCBuffer->size, "Wrong Size (1)");
+
 	CBufferDestroy(newCBuffer);
 	printf("\n");
+}
+
+void TestCBufferCapacity()
+{
+    cbuffer_t *newCBuffer = CBufferCreate(10);
+    RUN_TEST(10 == CBufferCapacity(newCBuffer), "FAIL: Wrong Capacity (10)");
+    CBufferDestroy(newCBuffer);
+    printf("\n");
+}
+
+void TestCBufferIsEmpty()
+{
+    cbuffer_t *newCBuffer = CBufferCreate(10);
+    char *writebuffer = "Hello1234";
+
+    RUN_TEST(1 == CBufferIsEmpty(newCBuffer), "FAIL: Buffer Is Empty");
+    CBufferWrite(newCBuffer, writebuffer, 1);
+    RUN_TEST(0 == CBufferIsEmpty(newCBuffer), "FAIL: Buffer Is Empty");
+
+    CBufferDestroy(newCBuffer);
+    printf("\n");
+}
+
+void TestCBufferFreeSpace()
+{
+    cbuffer_t *newCBuffer = CBufferCreate(10);
+    char *writebuffer = "Hello1234";
+
+    RUN_TEST(10 == CBufferFreeSpace(newCBuffer), "FAIL: FREE Space(10)");
+    CBufferWrite(newCBuffer, writebuffer, 1);
+    RUN_TEST(9 == CBufferFreeSpace(newCBuffer), "FAIL: FREE Space(10)");
+    CBufferWrite(newCBuffer, writebuffer, 11);
+    RUN_TEST(0 == CBufferFreeSpace(newCBuffer), "FAIL: FREE Space(10)");
+
+    CBufferDestroy(newCBuffer);
+    printf("\n");
+
 }
 
 int main(int argc, char const *argv[])
@@ -106,9 +147,17 @@ int main(int argc, char const *argv[])
 	printf("TestCBufferWrite()\n");
 	TestCBufferWrite();
 
-	printf("TestCBufferWrite()\n");
+	printf("TestCBufferRead()\n");
 	TestCBufferRead();
 
+    printf("TestCBufferCapacity()\n");
+    TestCBufferCapacity();
+
+    printf("TestCBufferIsEmpty()\n");
+    TestCBufferIsEmpty();
+
+    printf("TestCBufferFreeSpace()\n");
+    TestCBufferFreeSpace();
 
 	UNUSED(argv);
 	UNUSED(argc);
