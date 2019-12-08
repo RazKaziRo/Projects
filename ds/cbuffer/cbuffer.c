@@ -3,12 +3,13 @@
  * Purpose: Answares for DS - Circular Buffer.
  * Date: 05.12.2019
  * Language: C
- * Reviewer: 
+ * Reviewer: Yoav Hattav
  */
 
 #include <stddef.h> /*size_t, offsetoff*/
 #include <stdlib.h> /*malloc()*/
 #include <string.h> /*memcpy*/
+#include <assert.h> /*assert()*/
 
 #include "cbuffer.h" /*Circular Buffer API Functions*/
 
@@ -41,13 +42,18 @@ cbuffer_t *CBufferCreate(size_t capacity)
 }
 
 void CBufferDestroy(cbuffer_t *cb)
-{
+{	
+	assert(NULL != cb);
+
 	FREE(cb);
 }
 
 ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 {	
 	size_t remain_to_read = 0;
+
+	assert(NULL != cb);
+	assert(NULL != buffer);
 
 	if (count > cb->size)
 	{
@@ -56,10 +62,10 @@ ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 
 	remain_to_read = count;
 
-	if (cb->read_index % cb->capacity + count > cb->capacity)
+	if (cb->read_index + count > cb->capacity)
 	{
 		remain_to_read = cb->capacity - cb->read_index;
-		memcpy(buffer, &cb->arr[cb->read_index], remain_to_read);
+		memcpy(buffer, &cb->arr[cb->read_index % cb->capacity], remain_to_read);
 		buffer = (byte_t *)buffer + remain_to_read;
 		cb->size -= remain_to_read;
 		cb->read_index = 0;
@@ -76,6 +82,9 @@ ssize_t CBufferRead(void *buffer, cbuffer_t *cb, size_t count)
 ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count)
 {	
 	size_t remain_to_write = 0;
+
+	assert(NULL != cb);
+	assert(NULL != buffer);
 
 	if (CBufferFreeSpace(cb) < count)
 	{
@@ -100,16 +109,22 @@ ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count)
 }
 
 size_t CBufferCapacity(const cbuffer_t *cb)
-{
+{	
+	assert(NULL != cb);
+
 	return (cb->capacity);
 }
 
 int CBufferIsEmpty(const cbuffer_t *cb)
 {
+	assert(NULL != cb);
+
 	return(0 == cb->size);
 }
 
 size_t CBufferFreeSpace(const cbuffer_t *cb)
 {
+	assert(NULL != cb);
+	
 	return(cb->capacity-cb->size);
 }

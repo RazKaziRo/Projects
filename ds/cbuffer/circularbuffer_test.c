@@ -67,7 +67,7 @@ int main()
 	CBufferWrite(cbuffer, char_test, 1); /* [1,2,1,1,2,3,1,2,3,4] */
 	TEST(char_test[0] == cbuffer->cbuffer[0], "Write(), write index + count > capacity");
 	CBufferRead(char_buffer,cbuffer, 9);/* [-,-,1,-,-,-,-,-,-,-] */
-	bTEST(char_test[0] == cbuffer->cbuffer[2], "Read(), read index + count > capacity");
+	TEST(char_test[0] == cbuffer->cbuffer[2], "Read(), read index + count > capacity");
 	TEST(char_test[0] == char_buffer[0], "Read(), char_buffer initialized");
 	CBufferWrite(cbuffer, char_test, 9); /* [8,9,1,1,2,3,4,5,6,7] */
 	printf("read index : %lu\n",cbuffer->read_index);
