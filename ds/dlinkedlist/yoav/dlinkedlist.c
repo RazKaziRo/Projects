@@ -98,6 +98,7 @@ iterator_t DLLInsert(dll_t *dll, iterator_t it, void *data)
 		return it;
 	}
 
+	UNUSED(dll);
 	return DLLEnd(dll);
 }
 
@@ -143,7 +144,7 @@ size_t DLLSize(const dll_t *dll)
 
 	it = DLLBegin(dll);
 
-	while (NULL != it->next)
+	while (NULL != it && NULL != it->next)
 	{
 		++count;
 		it = it->next;
@@ -172,17 +173,27 @@ iterator_t DLLRemove(iterator_t it)
 
 iterator_t DLLPushBack(dll_t *dll, void *data)
 {	
+	iterator_t newIt = NULL;
+
 	assert(NULL != dll);
 	assert(NULL != data);
 
-	return (DLLInsert(dll, DLLEnd(dll), data));
+	newIt = DLLEnd(dll);
+	newIt = DLLInsert(dll, newIt, data);
+
+	return newIt;
 }	
 
 iterator_t DLLPushFront(dll_t *dll, void *data)
 {
+	iterator_t newIt = NULL;
+
 	assert(NULL != dll);
 
-	return DLLInsert(dll, DLLBegin(dll), data);;
+	newIt = DLLBegin(dll);
+	newIt = DLLInsert(dll, newIt, data);
+
+	return newIt;
 }
 
 void *DLLPopBack(dll_t *dll)
@@ -193,6 +204,7 @@ void *DLLPopBack(dll_t *dll)
 
 	 newIt = DLLEnd(dll);
 	 newIt = newIt->previous;
+
 	 newIt = DLLRemove(newIt);
 
 	 return data_hodlder;
@@ -200,11 +212,13 @@ void *DLLPopBack(dll_t *dll)
 
 void *DLLPopFront(dll_t *dll)
 {	
+	iterator_t newIt = NULL;
 	void *data_hodlder = dll->head.next->data;
-	
+
 	assert(NULL != dll);
 
-	DLLRemove(DLLBegin(dll));
+	newIt = DLLBegin(dll);
+	newIt = DLLRemove(newIt);
 
 	return data_hodlder;
 }
@@ -221,32 +235,30 @@ iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where)
 	return where;
 }
 
-int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap)
+int DLLForEach(iterator_t start, iterator_t end, action_func a_ptr, void *ap)
 {	
 	iterator_t it_runner = start;
-	int res = 0;
+	int res = 1;
 
 	assert(NULL != ap);
 
-	while (!DLLIsSameIter(it_runner,end))
+	while (!DLLIsSameIter(it_runner,end) && 0 != res)
 	{
-		if(1 != res)
-		{
-			res = a_ptr(it_runner->data, ap);
-			it_runner = it_runner->next;
-		}
+		res = a_ptr(it_runner->data, ap);
+		it_runner = it_runner->next;
 	}
 
 	return res;
 }
 
-iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *ap)
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func m_ptr, void *ap)
 {	
 	iterator_t it_runner = start;
 
 	assert(NULL != ap);
 
-	while ((0 == DLLIsSameIter(it_runner, end)) && (0 == m_ptr(it_runner->data, ap)))
+	while ((0 == DLLIsSameIter(it_runner, end)) 
+		&& 0 == m_ptr(it_runner->data, ap))
 	{
 		it_runner = it_runner->next;
 	}

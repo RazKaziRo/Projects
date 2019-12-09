@@ -4,10 +4,11 @@
 #include <stddef.h> /* size_t */
 
 typedef struct DLLNode* iterator_t;
+typedef struct DLLNode dllnode_t;
 typedef struct DLL dll_t;
 
-typedef int (*action_func_ptr)(void *iterator_data, void *ap);
-typedef int (*match_func_ptr)(void *iterator_data, void *ap);
+typedef int (*action_func)(void *iterator_data, void *ap);
+typedef int (*match_func)(void *iterator_data, void *ap);
 
 /**********************************************/
 /* Returns pointer to the DLL data structure  */
@@ -66,7 +67,7 @@ size_t DLLSize(const dll_t *dll);/*DONE*/
 /* Returns the first iterator                  */
 /* complexity O(1)                             */
 /***********************************************/
-iterator_t DLLBegin(const dll_t *dll); /*DONE*/
+iterator_t DLLBegin(dll_t *dll); /*DONE*/
 
 /***********************************************/
 /* Returns the last iterator                   */
@@ -125,14 +126,14 @@ iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where);
 /* return 0 if succeeds or 1 if fails                               */
 /* complexity O(n)                                                  */
 /********************************************************************/
-int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap);
+int DLLForEach(iterator_t start, iterator_t end, action_func a_ptr, void *ap);
 
 /********************************************************************/
 /* Traverse the list and returns the first iterator that matchs     */
 /* a condition defined by the function                              */
 /* complexity O(n)                                                  */
 /********************************************************************/
-iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *ap);
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func m_ptr, void *ap);
 
 #endif
 
