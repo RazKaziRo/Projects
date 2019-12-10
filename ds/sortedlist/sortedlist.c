@@ -30,6 +30,7 @@ void SortLLDestroy(sll_t *sll)
 	FREE(sll);
 }
 
+
 sll_iterator_t SortLLInsert(sll_t *sll, void *data)
 {	
 	sll_iterator_t sll_runner_it;
@@ -117,11 +118,13 @@ void *SLLPopFront(sll_t *sll)
 	return(DLLPopFront(sll->list));
 }
 
-/*
+
 sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end)
 {
-
+	sll_iterator_t sll_runner_it;
+	sll_iterator_t sll_end_node;
+	sll_iterator_t sll_return;
 }
 
-*/
+
 
