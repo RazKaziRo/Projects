@@ -30,6 +30,26 @@ void SortLLDestroy(sll_t *sll)
 	FREE(sll);
 }
 
+sll_iterator_t SortLLInsert(sll_t *sll, void *data)
+{	
+	sll_iterator_t sll_runner_it;
+	sll_iterator_t sll_end_node;
+	sll_iterator_t sll_return;
+
+	sll_runner_it.current = DLLBegin(sll->list);
+	sll_end_node.current = DLLEnd(sll->list);
+
+	while (!SLLIsEmpty(sll) && !SLLIsSameIter(sll_runner_it,sll_end_node) && 
+		0 == sll-> cmp_func(SLLGetData(sll_runner_it),data, NULL))
+	{
+		sll_runner_it = SLLNext(sll_runner_it);
+	}
+
+	sll_return.current = DLLInsert(sll->list,sll_runner_it.current, data);
+
+	return(sll_return);
+}
+
 int SLLIsEmpty(const sll_t *sll)
 {
 	return(DLLIsEmpty(sll->list));
@@ -97,10 +117,11 @@ void *SLLPopFront(sll_t *sll)
 	return(DLLPopFront(sll->list));
 }
 
+/*
 sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end)
 {
 
 }
 
-
+*/
 

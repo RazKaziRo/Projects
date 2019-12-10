@@ -31,7 +31,7 @@ void SortLLDestroy(sll_t *sll); /*DONE*/
 /* Returns the current iterator          */
 /* complexity O(n)                       */
 /*****************************************/
-sll_iterator_t SortLLinsert(sll_t *sll, void *data);
+sll_iterator_t SortLLInsert(sll_t *sll, void *data);
 
 /*********************************************************************/    
 /* Removes the iterator sent to it and returns the iterator next     */
