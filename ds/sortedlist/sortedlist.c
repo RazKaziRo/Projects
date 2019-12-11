@@ -100,8 +100,6 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start,
 int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr,
  void *ap)
 {	
-	assert(NULL != ap);
-
 	return (DLLForEach(start.current, end.current, a_ptr, ap));
 }
 

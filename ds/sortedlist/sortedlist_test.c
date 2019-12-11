@@ -6,7 +6,6 @@
  * Reviewer: 
  */
 
-#include <stdio.h>
 #include <stdlib.h> /*free()*/
 
 #include "sortedlist.h" /* Queue API Functions*/
@@ -25,7 +24,6 @@
 								}\
 							}
 #define UNUSED(x) (void)(x)
-#define FREE(ptr) free(ptr); ptr = NULL;
 
 int isBefore(const void *data1, const void *data2, void *param)
 {

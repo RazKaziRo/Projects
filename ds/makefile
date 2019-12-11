@@ -39,7 +39,7 @@ directories:
 
 project: $(OBJECTS)
 	@echo "\n\033[1;34mCompiling & linking $@: \033[0m"
-	$(CC) $(CFLAGS) $(OBJECTS) $(SRC_DIR)/mavpilot/main.cpp $(INCLUDE_DIRS) -o $(BUILD_DIR)/mavpilot
+	$(CC) $(CFLAGS) $(OBJECTS) $(SRC_DIR)main.c $(INCLUDE_DIRS) -o $(BUILD_DIR)
 	@echo "\033[1;32mCompilation successful. \033[0m"
 
 $(BUILD_DIR)/doublelist.o: $(SRC_DIR)/doublelist.c
