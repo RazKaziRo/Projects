@@ -3,6 +3,7 @@
 #include "sortedlist.h"
 
 #define FREE(ptr) free(ptr); ptr=NULL;
+#define UNUSED(x) (void)(x)
 
 struct SLL
 {
@@ -30,15 +31,14 @@ void SortLLDestroy(sll_t *sll)
 	FREE(sll);
 }
 
-
-sll_iterator_t SortLLInsert(sll_t *sll, void *data)
-{	
+static sll_iterator_t SortLLRequierdIterator(sll_t *sll, 
+	sll_iterator_t start, sll_iterator_t end, void *data)
+{
 	sll_iterator_t sll_runner_it;
 	sll_iterator_t sll_end_node;
-	sll_iterator_t sll_return;
 
-	sll_runner_it.current = DLLBegin(sll->list);
-	sll_end_node.current = DLLEnd(sll->list);
+	sll_runner_it.current = start.current;
+	sll_end_node.current = end.current;
 
 	while (!SLLIsEmpty(sll) && !SLLIsSameIter(sll_runner_it,sll_end_node) && 
 		0 == sll-> cmp_func(SLLGetData(sll_runner_it),data, NULL))
@@ -46,9 +46,55 @@ sll_iterator_t SortLLInsert(sll_t *sll, void *data)
 		sll_runner_it = SLLNext(sll_runner_it);
 	}
 
-	sll_return.current = DLLInsert(sll->list,sll_runner_it.current, data);
+	return sll_runner_it;
+}
 
-	return(sll_return);
+sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end)
+{
+	sll_iterator_t sll_returned_iterator;
+
+	sll_returned_iterator = 
+	SortLLRequierdIterator((sll_t *)sll, start, end, (void *)data);
+	sll_returned_iterator.current = DLLGetPrev(sll_returned_iterator.current);
+
+	if(!SLLIsSameIter(sll_returned_iterator,SLLPrev(SLLBegin(sll))) 
+		&& (0 == sll->cmp_func(data,SLLGetData(sll_returned_iterator),NULL)))
+	{
+		return sll_returned_iterator;
+	}
+
+	return end;
+}
+
+sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t end,
+                                        match_func_ptr m_ptr ,const void *data)
+{
+	sll_iterator_t sll_returned_iterator;
+
+	sll_returned_iterator.current = 
+	DLLFind(start.current, end.current, m_ptr, (void *)data);
+
+	UNUSED(sll);
+
+	return(sll_returned_iterator);
+}
+
+int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr, void *ap)
+{
+	return (DLLForEach(start.current, end.current, a_ptr, ap));
+}
+
+sll_iterator_t SortLLInsert(sll_t *sll, void *data)
+{	
+	sll_iterator_t sll_returned_iterator;
+
+	sll_returned_iterator = 
+	SortLLRequierdIterator(sll,SLLBegin(sll),SLLEnd(sll), data);
+
+	sll_returned_iterator.current = 
+	DLLInsert(sll->list,sll_returned_iterator.current, data);
+
+	return sll_returned_iterator;
 }
 
 int SLLIsEmpty(const sll_t *sll)
@@ -119,12 +165,6 @@ void *SLLPopFront(sll_t *sll)
 }
 
 
-sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end)
-{
-	sll_iterator_t sll_runner_it;
-	sll_iterator_t sll_end_node;
-	sll_iterator_t sll_return;
-}
 
 
 

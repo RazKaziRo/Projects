@@ -115,14 +115,14 @@ int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr, 
 /* run on the iterators from the start up to end(not include)       */
 /* complexity O(n)                                                  */
 /********************************************************************/
-sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end);
+sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end); /*DONE*/
 
 /********************************************************************/
 /* Traverse the list and returns the first iterator that matchs     */
 /* a condition defined by the function                              */
 /* complexity O(n)                                                  */
 /********************************************************************/
-sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t end,
+sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t end, /*DONE*/
                                         match_func_ptr m_ptr ,const void *data);
 
 /**************************************/
