@@ -1,134 +1,139 @@
-#ifndef __SORT_LIST_H__
-#define __SORT_LIST_H__
+#ifndef __D_LINKED_LIST_H__
+#define __D_LINKED_LIST_H__
 
 #include <stddef.h> /* size_t */
 
-#include "../doublelist/doublelist.h"
+typedef struct DLLNode* iterator_t;
+typedef struct DLLNode dllnode_t;
+typedef struct DLL dll_t;
 
-typedef struct Iterator
-{
-	struct DLLNode *current;
-}sll_iterator_t;
-
-typedef struct SLL sll_t;
-typedef int (*is_before)(const void *data1, const void *data2, void *param);
+typedef int (*action_func)(void *iterator_data, void *ap);
+typedef int (*match_func)(void *iterator_data, void *ap);
 
 /**********************************************/
-/* Returns pointer to the sll data structure  */
+/* Returns pointer to the DLL data structure  */
 /* complexity of malloc                       */
 /**********************************************/
-sll_t *SortLLCreate(is_before func, void *param); /*DONE*/
+dll_t *DLLCreate(); /*DONE*/
 
 /*************************************************/
-/* Destroys the sll data and free it from memory */
+/* Destroys the DLL data and free it from memory */
 /* complexity of free                            */
 /*************************************************/
-void SortLLDestroy(sll_t *sll); /*DONE*/
+void DLLDestroy(dll_t *dll); /*DONE*/
 
 /*****************************************/
 /* Gets a iterator                       */
-/* Returns the current iterator          */
-/* complexity O(n)                       */
+/* Returns the next iterator             */
+/* complexity O(1)                       */
 /*****************************************/
-sll_iterator_t SortLLInsert(sll_t *sll, void *data);
+iterator_t DLLGetNext(iterator_t it); /*DONE*/
+
+/*****************************************/
+/* Gets a iterator                       */
+/* Returns the pervious iterator         */
+/* complexity O(1)                       */
+/*****************************************/
+iterator_t DLLGetPrev(iterator_t it); /*DONE*/
+
+/*********************************************************************/
+/* Gets a pointer to a data structure, a iterator and a data pointer */
+/* and inserts a iterator after the iterator sent with its data      */
+/* complexity O(1)                                                   */
+/*********************************************************************/    
+iterator_t DLLInsert(dll_t *dll, iterator_t prev, void *data); /*DONE*/
 
 /*********************************************************************/    
 /* Removes the iterator sent to it and returns the iterator next     */
 /* to the iterator removed                                           */
 /* complexity O(1)                                                   */
 /*********************************************************************/    
-sll_iterator_t SortLLRemove(sll_iterator_t sll_it); /*DONE*/
+iterator_t DLLRemove(iterator_t it);/*DONE*/
 
 /***********************************************/
-/* Checks if the SLL is empty                  */
+/* Checks if the DLL is empty                  */
 /* returns 1 if its empty or 0 if not empty    */
 /* complexity O(1)                             */
 /***********************************************/
-int SLLIsEmpty(const sll_t *sll); /*DONE*/
+int DLLIsEmpty(const dll_t *dll); /*DONE*/
 
 /***********************************************/
-/* Returns the size of the SLL                 */
+/* Returns the size of the DLL                 */
 /* complexity O(n)                             */
 /***********************************************/
-size_t SLLSize(const sll_t *sll); /*DONE*/
+size_t DLLSize(const dll_t *dll);/*DONE*/
 
 /***********************************************/
 /* Returns the first iterator                  */
 /* complexity O(1)                             */
 /***********************************************/
-sll_iterator_t SLLBegin(const sll_t *sll); /*DONE*/
+iterator_t DLLBegin(dll_t *dll); /*DONE*/
 
 /***********************************************/
 /* Returns the last iterator                   */
 /* complexity O(1)                             */
 /***********************************************/
-sll_iterator_t SLLEnd(const sll_t *sll); /*DONE*/
-
-/***********************************************/
-/* Returns the next iterator                   */
-/* complexity O(1)                             */
-/***********************************************/
-sll_iterator_t SLLNext(sll_iterator_t it); /*DONE*/
-
-/***********************************************/
-/* Returns the previos iterator                */
-/* complexity O(1)                             */
-/***********************************************/
-sll_iterator_t SLLPrev(sll_iterator_t it); /*DONE*/
+iterator_t DLLEnd(dll_t *dll); /*DONE*/
 
 /***********************************************/
 /* Returns the data of the current iterator    */
 /* complexity O(1)                             */
 /***********************************************/
-void *SLLGetData(sll_iterator_t it); /*DONE*/
+void *DLLGetData(iterator_t it); /*DONE*/
 
 /*********************************************************/
 /* Returns 1 if the iterators are equal or 0 otherwise   */
 /* complexity O(1)                                       */
 /*********************************************************/
-int SLLIsSameIter(const sll_iterator_t it1, const sll_iterator_t it2); /*DONE*/
+int DLLIsSameIter(const iterator_t it1, const iterator_t it2); /*DONE*/
+
+/*******************************************************/
+/* Adds an iterator with the data sent to the function */
+/* to the end of the data structure                    */
+/* complexity O(1)                                     */
+/*******************************************************/
+iterator_t DLLPushBack(dll_t *dll, void *data); /*DONE*/
 
 /**********************************************************************/
 /* Removes the iterator sent to it from the end of the data structure */
 /* complexity O(1)                                                    */
 /**********************************************************************/
-void* SLLPopBack(sll_t *sll); /*DONE*/
+void *DLLPopBack(dll_t *dll);/*DONE*/
+
+/******************************************************/
+/* Adds a iterator with the data sent to the function */
+/* to the head of the data structure                   */
+/* complexity O(1)                                    */
+/******************************************************/
+iterator_t DLLPushFront(dll_t *dll, void *data);/*DONE*/
 
 /***********************************************************************/
 /* Removes the iterator sent to it from the head of the data structure */
 /* complexity O(1)                                                     */
 /***********************************************************************/
-void* SLLPopFront(sll_t *sll); /*DONE*/
+void *DLLPopFront(dll_t *dll); /*DONE*/
+
+/*************************************************************************/
+/* Returns a new list that contains the elements between the iterators   */
+/* start and end                                                         */
+/* complexity O(1)                                                       */  
+/*************************************************************************/    
+iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where);
 
 /********************************************************************/
 /* Performs an action defined by a pointer to a function on all the */ 
-/* run on the iterators from the start up to end(not include)       */
+/* iterators from the start to end.                                 */
 /* return 0 if succeeds or 1 if fails                               */
 /* complexity O(n)                                                  */
 /********************************************************************/
-int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr, void *ap); /*DONE*/
-
-/********************************************************************/
-/* Traverse the list and returns the first iterator that matchs     */
-/* a condition defined by the function that sent in create          */ 
-/* run on the iterators from the start up to end(not include)       */
-/* complexity O(n)                                                  */
-/********************************************************************/
-sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end); /*DONE*/
+int DLLForEach(iterator_t start, iterator_t end, action_func a_ptr, void *ap);
 
 /********************************************************************/
 /* Traverse the list and returns the first iterator that matchs     */
 /* a condition defined by the function                              */
 /* complexity O(n)                                                  */
 /********************************************************************/
-sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t end, /*DONE*/
-                                        match_func_ptr m_ptr ,const void *data);
-
-/**************************************/
-/* Gets 2 lists                       */
-/* Return merged list into dest       */
-/* complexity:                        */
-/**************************************/                                        
-void SLLMerge(sll_t *dest, sll_t *src);                                        
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func m_ptr, void *ap);
 
 #endif
+
