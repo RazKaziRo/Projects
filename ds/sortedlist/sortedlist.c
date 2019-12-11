@@ -35,13 +35,10 @@ static sll_iterator_t SortLLRequierdIterator(sll_t *sll,
 	sll_iterator_t start, sll_iterator_t end, void *data)
 {
 	sll_iterator_t sll_runner_it;
-	sll_iterator_t sll_end_node;
+	sll_runner_it = start;
 
-	sll_runner_it.current = start.current;
-	sll_end_node.current = end.current;
-
-	while (!SLLIsEmpty(sll) && !SLLIsSameIter(sll_runner_it,sll_end_node) && 
-		0 == sll-> cmp_func(SLLGetData(sll_runner_it),data, NULL))
+	while ((!SLLIsEmpty(sll)) && (!SLLIsSameIter(sll_runner_it, end)) && 
+		(0 == sll-> cmp_func(SLLGetData(sll_runner_it),data, NULL)))
 	{
 		sll_runner_it = SLLNext(sll_runner_it);
 	}
@@ -162,6 +159,48 @@ void *SLLPopBack(sll_t *sll)
 void *SLLPopFront(sll_t *sll)
 {
 	return(DLLPopFront(sll->list));
+}
+
+void SLLMerge(sll_t *dest, sll_t *src)
+{	
+	sll_iterator_t sll_src_start_runner;
+	sll_iterator_t sll_src_end_runner;
+	sll_iterator_t sll_src_end;
+
+	sll_iterator_t sll_dest_end;
+	sll_iterator_t sll_dest_start;
+
+	sll_iterator_t sll_dest_where_runner;
+
+
+	sll_src_start_runner = SLLBegin(src);
+	sll_dest_start = SLLBegin(dest);
+	sll_dest_end = SLLEnd(dest);
+	sll_src_end = SLLEnd(src);
+
+	while(!SLLIsSameIter(sll_src_start_runner, sll_src_end))
+	{	
+		sll_dest_where_runner = 
+		SortLLRequierdIterator(dest,sll_dest_start,sll_dest_end, SLLGetData(sll_src_start_runner));
+
+		sll_dest_start = sll_dest_where_runner;
+		sll_dest_where_runner = SLLPrev(sll_dest_where_runner);
+
+		if(SLLIsSameIter(sll_dest_start, sll_dest_end))
+		{
+			sll_src_end_runner = SLLNext(sll_src_end_runner);
+		}
+		else
+		{
+			sll_src_end_runner = 
+			SortLLRequierdIterator(src,sll_src_start_runner, sll_src_end, SLLGetData(sll_dest_start));
+		}
+
+		sll_dest_where_runner.current =
+		DLLSplice(sll_src_start_runner.current, sll_src_end_runner.current, sll_dest_where_runner.current);
+
+		sll_src_start_runner = sll_src_end_runner;
+	}
 }
 
 

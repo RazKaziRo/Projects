@@ -39,7 +39,7 @@ static int FindData(void *iterator_data, void *ap)
 }
 
 static int AddNum(void *iterator_data, void *ap)
-{
+{	
 	*(int *)iterator_data += *(int *)ap;
 
 	return 0;
@@ -47,7 +47,6 @@ static int AddNum(void *iterator_data, void *ap)
 
 void TestSortLLCreate()
 {	
-
 	sll_t *newSll = SortLLCreate (&isBefore, NULL);
 	RUN_TEST(1 == SLLIsEmpty(newSll), "FAIL SLL IS EMPTY(1)");
 	SortLLDestroy(newSll);
@@ -195,8 +194,68 @@ void TestSLLFindBy()
 
 void TestSLLForEach()
 {
+	int a = 5;
+	int b = 20;
+	int c = 10;
+	int d = 1;
 
+	sll_t *newSll = SortLLCreate(&isBefore, NULL);
+	sll_iterator_t newSllItStart;
+	sll_iterator_t newSllItEnd;
+
+	SortLLInsert(newSll,&a);
+	SortLLInsert(newSll,&b);
+	SortLLInsert(newSll,&c);
+
+	newSllItStart = SLLBegin(newSll);
+	newSllItEnd = SLLEnd(newSll);
+
+	RUN_TEST(0 == SLLForEach(newSllItStart, newSllItEnd, &AddNum, &d), "FAIL: add num For Each");
+	RUN_TEST(6 == *(int *)SLLGetData(newSllItStart), "FAIL: Wrong Data (6)" );
+	RUN_TEST(11 == *(int *)SLLGetData(SLLNext(newSllItStart)), "FAIL: Wrong Data (11)" );
+	RUN_TEST(21 == *(int *)SLLGetData(SLLNext((SLLNext(newSllItStart)))), "FAIL: Wrong Data (21)" );
+
+	SortLLDestroy(newSll);
+	printf("\n");
 }
+
+void TestSLLMerge()
+{
+	int a = 3;
+	int b = 5;
+	int c = 7;
+
+	int d = 2;
+	int e = 4;
+	int f = 1;
+	int g = 6;
+	int h = 22;
+
+
+	sll_t *newSll1 = SortLLCreate(&isBefore, NULL);
+	sll_t *newSll2 = SortLLCreate(&isBefore, NULL);
+
+	SortLLInsert(newSll1,&a);
+	SortLLInsert(newSll1,&b);
+	SortLLInsert(newSll1,&c);
+
+	SortLLInsert(newSll2,&d);
+	SortLLInsert(newSll2,&e);
+	SortLLInsert(newSll2,&f);
+	SortLLInsert(newSll2,&g);
+	SortLLInsert(newSll2,&h);
+
+	SLLMerge(newSll1, newSll2);
+	SLLForEach(SLLBegin(newSll1),SLLEnd(newSll1),&AddNum, &a);
+
+	RUN_TEST(8 == SLLSize(newSll1), "FAIL WRONG SIZE (8)");
+	RUN_TEST(f == *(int *)SLLGetData(SLLBegin(newSll1)), "FAIL: Wrong Data (f)");
+
+	SortLLDestroy(newSll1);
+	SortLLDestroy(newSll2);
+	printf("\n");
+
+}	
 						
 int main(int argc, char const *argv[])
 {	
@@ -227,6 +286,9 @@ int main(int argc, char const *argv[])
 
 	printf("TestSLLForEach()\n");
 	TestSLLForEach();
+
+	printf("TestSLLMerge()\n");
+	TestSLLMerge();
 
 	UNUSED(argc);
 	UNUSED(argv);

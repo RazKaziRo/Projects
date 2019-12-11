@@ -107,7 +107,7 @@ void* SLLPopFront(sll_t *sll); /*DONE*/
 /* return 0 if succeeds or 1 if fails                               */
 /* complexity O(n)                                                  */
 /********************************************************************/
-int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr, void *ap);
+int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr, void *ap); /*DONE*/
 
 /********************************************************************/
 /* Traverse the list and returns the first iterator that matchs     */
