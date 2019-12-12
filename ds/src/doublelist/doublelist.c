@@ -11,7 +11,7 @@
 #include "doublelist.h" /*DLL API Functions()*/
 
 #define UNUSED(x) (void)(x)
-#define FREE(ptr) free(ptr); ptr=NULL;
+#define FREE(ptr) {free(ptr); ptr=NULL;}
 
 typedef struct DLLNode
 {
@@ -83,10 +83,9 @@ iterator_t DLLInsert(dll_t *dll, iterator_t it, void *data)
 	dll_node_t *newNode = NULL;
 
 	assert(NULL != dll);
-	assert(NULL != data);
 
 	newNode = malloc(sizeof(dll_node_t));
-	if(NULL != newNode)
+	if (NULL != newNode)
 	{
 		newNode->data = data;
 		newNode->next = it;
@@ -112,13 +111,13 @@ iterator_t DLLBegin(const dll_t *dll)
 	return it;
 }
 
-iterator_t DLLEnd(dll_t *dll)
+iterator_t DLLEnd(const dll_t *dll)
 {	
 	iterator_t it = NULL;
 
 	assert(NULL != dll);
 
-	it =  &dll->tail;
+	it =  (iterator_t)&dll->tail;
 
 	return it;
 }
@@ -130,7 +129,8 @@ int DLLIsEmpty(const dll_t *dll)
 }
 
 void *DLLGetData(iterator_t it)
-{
+{ 	
+	assert(NULL != it);
 	return (it->data);
 }
 
@@ -160,12 +160,11 @@ int DLLIsSameIter(const iterator_t it1, const iterator_t it2)
 iterator_t DLLRemove(iterator_t it)
 {	
 	dll_node_t *node_holder = it->next;
-	if (NULL != it->next && NULL != it->previous)
-	{
+
 		it->previous->next = it->next;
 		it->next->previous = it->previous;
 		FREE(it);
-	}
+	
 	it = node_holder;
 	return it;
 }
@@ -173,7 +172,6 @@ iterator_t DLLRemove(iterator_t it)
 iterator_t DLLPushBack(dll_t *dll, void *data)
 {	
 	assert(NULL != dll);
-	assert(NULL != data);
 
 	return (DLLInsert(dll, DLLEnd(dll), data));
 }	
@@ -211,6 +209,8 @@ void *DLLPopFront(dll_t *dll)
 
 iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where)
 {	
+	assert(NULL != start); /*+end +wheer*/
+
 	start->previous->next = end;
 	end->previous->next = where->next;
 	where->next->previous = end->previous;
@@ -230,10 +230,14 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap
 
 	while (!DLLIsSameIter(it_runner,end))
 	{
-		if(1 != res)
+		if (0 == res)
 		{
 			res = a_ptr(it_runner->data, ap);
 			it_runner = it_runner->next;
+		}
+		else
+		{
+			break;
 		}
 	}
 

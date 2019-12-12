@@ -32,7 +32,7 @@ DEPENDENCIES = $(OBJECTS:%.o=%.d)
 # Build object: 
 define COMPILE_OBJECT
 @echo "\n\033[1;34mBuilding $@: \033[0m"
-$(CC) $(CFLAGS) -c $< -I$(SRC_DIR) -I$(H_DIR) -o $@
+@$(CC) $(CFLAGS) -c $< -I$(SRC_DIR) -I$(H_DIR) -o $@
 @echo "\033[0;32mDone. \033[0m"
 endef
 
@@ -47,7 +47,7 @@ directories:
 
 output: $(REQ_OBJECTS)
 	@echo "Compiling & linking $@..."
-	$(CC) $(CFLAGS) $(TEST_DIR)/priorityq_test.c $(REQ_SRC) -I$(H_DIR) -o $(BUILD_DIR)/$(TARGET)
+	@$(CC) $(CFLAGS) $(TEST_DIR)/priorityq_test.c $(REQ_SRC) -I$(H_DIR) -o $(BUILD_DIR)/$(TARGET)
 	@echo "Compilation Successful!"
 
 $(OBJ_DIR)/doublelist.o: $(SRC_DIR)/doublelist/doublelist.c

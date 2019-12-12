@@ -6,8 +6,8 @@
 typedef struct DLLNode *iterator_t;
 typedef struct DLL dll_t;
 
-typedef int (*action_func_ptr)(void *iterator_data, void *ap);
-typedef int (*match_func_ptr)(void *iterator_data, void *ap);
+typedef int (*action_func_ptr)(void *iterator_data, void *action_param);
+typedef int (*match_func_ptr)(void *iterator_data, void *action_param);
 
 /**********************************************/
 /* Returns pointer to the DLL data structure  */
@@ -72,7 +72,7 @@ iterator_t DLLBegin(const dll_t *dll); /*DONE*/
 /* Returns the last iterator                   */
 /* complexity O(1)                             */
 /***********************************************/
-iterator_t DLLEnd(dll_t *dll); /*DONE*/
+iterator_t DLLEnd(const dll_t *dll); /*DONE*/
 
 /***********************************************/
 /* Returns the data of the current iterator    */
@@ -121,18 +121,18 @@ iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where);
 
 /********************************************************************/
 /* Performs an action defined by a pointer to a function on all the */ 
-/* iterators from the start to end.                                 */
+/* iterators from the start to end. not include end                 */
 /* return 0 if succeeds or 1 if fails                               */
 /* complexity O(n)                                                  */
 /********************************************************************/
-int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap);
+int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *action_param);
 
 /********************************************************************/
 /* Traverse the list and returns the first iterator that matchs     */
 /* a condition defined by the function                              */
 /* complexity O(n)                                                  */
 /********************************************************************/
-iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *ap);
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *action_param);
 
 #endif
 

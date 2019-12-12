@@ -6,19 +6,20 @@
 typedef struct PQueue pq_t;
 
 typedef int (*compare_func)(const void *data1, const void *data2, void *param);
+typedef int (*match_func)(void *iterator_data, void *action_param);
 
 /**********************************************/
 /* Returns pointer to the PQ  data structure  */
 /* complexity of malloc                       */
 /**********************************************/
-pq_t *PQCreate(compare_func cmp_ptr, void *param);
+pq_t *PQCreate(compare_func cmp_ptr, void *param); /*DONE*/
 
 /*************************************************/
 /* Destroys the PQ  datastructure and frees it   */
 /* from memory                                   */
 /* complexity of free                            */
 /*************************************************/
-void PQDestroy(pq_t *pq);
+void PQDestroy(pq_t *pq); /*DONE*/ 
 
 /*****************************************/
 /* Gets the PQ structure and pops the    */
@@ -26,14 +27,14 @@ void PQDestroy(pq_t *pq);
 /* Returns the data removed              */
 /* complexity O(1)                       */
 /*****************************************/
-void *PQDequeue(pq_t *pq);
+void *PQDequeue(pq_t *pq); /*DONE*/
 
 /*****************************************/
 /* Gets the PQ structure and             */
 /* Returns the pervious iterator         */
 /* complexity O(1)                       */
 /*****************************************/
-int PQEnqueue(pq_t *pq, void *data); 
+int PQEnqueue(pq_t *pq, void *data); /*DONE*/ 
 
 /*********************************************************************/
 /* gets the data structure and returns the data wof the highest      */
@@ -60,13 +61,13 @@ int PQIsEmpty(const pq_t *pq); /*DONE*/
 /* elements                                    */
 /* complexity O(n)                             */
 /***********************************************/
-void PQClear(pq_t *pq);
+void PQClear(pq_t *pq); /*DONE*/
 
 /************************************************/
 /* gets the data structure and a data to search,*/
 /* once the element is found, its removed       */
 /* complexity O(1)                              */
 /************************************************/
-void *PQErase(pq_t *pq, compare_func m_ptr, void *param);
+void *PQErase(pq_t *pq, match_func m_ptr, const void *data); /*DONE*/
 
 #endif

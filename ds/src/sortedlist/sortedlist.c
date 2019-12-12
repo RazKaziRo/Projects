@@ -51,7 +51,7 @@ static sll_iterator_t SLLRequierdIterator(sll_t *sll,
 	sll_runner_it = start;
 
 	while ((!SLLIsEmpty(sll)) && (!SLLIsSameIter(sll_runner_it, end)) && 
-		(0 == sll-> cmp_func(SLLGetData(sll_runner_it),data, NULL)))
+		(0 == sll-> cmp_func(SLLGetData(sll_runner_it),data, sll->param)))
 	{
 		sll_runner_it = SLLNext(sll_runner_it);
 	}
@@ -73,7 +73,7 @@ sll_iterator_t SLLFind(const sll_t *sll, const void *data,
 	sll_returned_iterator.current = DLLGetPrev(sll_returned_iterator.current);
 
 	if (!SLLIsSameIter(sll_returned_iterator,SLLPrev(SLLBegin(sll))) 
-		&& (0 == sll->cmp_func(data,SLLGetData(sll_returned_iterator),NULL)))
+		&& (0 == sll->cmp_func(data,SLLGetData(sll_returned_iterator),sll->param)))
 	{
 		return sll_returned_iterator;
 	}
