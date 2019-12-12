@@ -39,14 +39,17 @@ static int PQCompareWrapper(const void *data1,const void *data2, void *param)
 
 pq_t *PQCreate(compare_func user_cmp_ptr, void *param)
 {	
-	
-
 	pq_t *newPQueue = (pq_t *)malloc(sizeof(pq_t));
 	assert(NULL != user_cmp_ptr);
 
 	if (NULL != newPQueue)
 	{
 		newPQueue->queue = SortLLCreate(&PQCompareWrapper, &newPQueue->wrapper);
+		if (NULL == newPQueue->queue)
+		{
+			FREE(newPQueue);
+		}
+
 		newPQueue->wrapper.user_cmp = user_cmp_ptr;
 		newPQueue->wrapper.param = param;
 	}
@@ -85,8 +88,6 @@ void *PQPeek(const pq_t *pq)
 
 size_t PQSize(const pq_t *pq)
 {	
-	assert(NULL != pq);
-
 	return (SLLSize(pq->queue));
 }
 
