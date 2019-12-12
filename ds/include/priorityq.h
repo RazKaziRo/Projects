@@ -5,13 +5,13 @@
 
 typedef struct PQueue pq_t;
 
-typedef int (*compare_func_ptr)(const void *data1, const void *data2, void *param);
+typedef int (*compare_func)(const void *data1, const void *data2, void *param);
 
 /**********************************************/
 /* Returns pointer to the PQ  data structure  */
 /* complexity of malloc                       */
 /**********************************************/
-pq_t *PQCreate(compare_func_ptr cmp_ptr, void *param);
+pq_t *PQCreate(compare_func cmp_ptr, void *param);
 
 /*************************************************/
 /* Destroys the PQ  datastructure and frees it   */
@@ -67,6 +67,6 @@ void PQClear(pq_t *pq);
 /* once the element is found, its removed       */
 /* complexity O(1)                              */
 /************************************************/
-void *PQErase(pq_t *pq, compare_func_ptr m_ptr, void *param);
+void *PQErase(pq_t *pq, compare_func m_ptr, void *param);
 
 #endif

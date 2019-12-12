@@ -16,7 +16,12 @@ TARGET = output
 REQ_OBJECTS =\
 $(OBJ_DIR)/doublelist.o\
 $(OBJ_DIR)/sortedlist.o\
-$(OBJ_DIR)/priorityq.o
+$(OBJ_DIR)/priorityq.o\
+
+REQ_SRC =\
+$(SRC_DIR)/doublelist/doublelist.c\
+$(SRC_DIR)/sortedlist/sortedlist.c\
+$(SRC_DIR)/priorityq/priorityq.c\
 
 # Combine Requiers Objects: 
 OBJECTS = $(REQ_OBJECTS)
@@ -38,12 +43,12 @@ all: directories output
 -include $(DEPENDENCIES)
 
 directories:
-	mkdir -p $(BUILD_DIR) $(OBJ_DIR)
+	@mkdir -p $(BUILD_DIR) $(OBJ_DIR)
 
 output: $(REQ_OBJECTS)
-	@echo "\n\033[1;34mCompiling & linking $@: \033[0m"
-	$(CC) $(CFLAGS) $(TEST_DIR)/priorityq_test.c -I$(H_DIR) $(REQ_OBJECTS) -o $(BUILD_DIR)/$(TARGET)
-	@echo "\033[1;32mCompilation Successful. \033[0m"
+	@echo "Compiling & linking $@..."
+	$(CC) $(CFLAGS) $(TEST_DIR)/priorityq_test.c $(REQ_SRC) -I$(H_DIR) -o $(BUILD_DIR)/$(TARGET)
+	@echo "Compilation Successful!"
 
 $(OBJ_DIR)/doublelist.o: $(SRC_DIR)/doublelist/doublelist.c
 	$(COMPILE_OBJECT)
