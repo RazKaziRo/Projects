@@ -3,7 +3,7 @@
 
 #include <stddef.h> /* size_t */
 
-typedef struct DLLNode* iterator_t;
+typedef struct DLLNode *iterator_t;
 typedef struct DLL dll_t;
 
 typedef int (*action_func_ptr)(void *iterator_data, void *ap);

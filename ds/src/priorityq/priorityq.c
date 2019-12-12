@@ -7,7 +7,7 @@
  */
 #include <stdlib.h> /*malloc()*/
 
-#include "../sortedlist/sortedlist.h" /*Sorted List API()*/
+#include "sortedlist.h" /*Sorted List API()*/
 #include "priorityq.h"
 
 #define FREE(ptr) free(ptr); ptr = NULL;
