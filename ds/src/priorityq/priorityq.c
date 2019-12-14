@@ -8,6 +8,7 @@
 
 #include <stdlib.h> /*malloc()*/
 #include <assert.h> /*assert()*/
+
 #include "../../include/sortedlist.h" /*Sorted List API()*/
 #include "../../include/priorityq.h"  /*Priority Queue API()*/
 
@@ -25,12 +26,12 @@ struct PQueue
 	wrapper_t wrapper;
 };
 
-static int PQCompareWrapper(const void *data1,const void *data2, void *param)
+static int PQCompareWrapper(const void *data1, const void *data2, void *param)
 {	
 	wrapper_t *wrapper = NULL;
 
-	assert(NULL !=data1);
-	assert(NULL !=data2);
+	assert(NULL != data1);
+	assert(NULL != data2);
 
 	wrapper = (wrapper_t *)param;
 
@@ -45,13 +46,15 @@ pq_t *PQCreate(compare_func user_cmp_ptr, void *param)
 	if (NULL != newPQueue)
 	{
 		newPQueue->queue = SortLLCreate(&PQCompareWrapper, &newPQueue->wrapper);
-		if (NULL == newPQueue->queue)
+		if (NULL != newPQueue->queue)
+		{
+			newPQueue->wrapper.user_cmp = user_cmp_ptr;
+			newPQueue->wrapper.param = param;
+		}
+		else
 		{
 			FREE(newPQueue);
 		}
-
-		newPQueue->wrapper.user_cmp = user_cmp_ptr;
-		newPQueue->wrapper.param = param;
 	}
 
 	return newPQueue;
@@ -126,8 +129,3 @@ void *PQErase(pq_t *pq, match_func m_ptr, const void *data)
 
 	return returned_data;
 }
-
-
-
-
-
