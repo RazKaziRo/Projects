@@ -14,14 +14,10 @@ CFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
 TARGET = output
 
 REQ_OBJECTS =\
-$(OBJ_DIR)/doublelist.o\
-$(OBJ_DIR)/sortedlist.o\
-$(OBJ_DIR)/priorityq.o\
+$(OBJ_DIR)/uid.o
 
 REQ_SRC =\
-$(SRC_DIR)/doublelist/doublelist.c\
-$(SRC_DIR)/sortedlist/sortedlist.c\
-$(SRC_DIR)/priorityq/priorityq.c\
+$(SRC_DIR)/uid/uid.c
 
 # Combine Requiers Objects: 
 OBJECTS = $(REQ_OBJECTS)
@@ -31,7 +27,7 @@ DEPENDENCIES = $(OBJECTS:%.o=%.d)
 
 # Build object: 
 define COMPILE_OBJECT
-@echo "\n\033[1;34mBuilding $@: \033[0m"
+@echo "\n\033[1;31mBuilding $@: \033[0m"
 @$(CC) $(CFLAGS) -c $< -I$(SRC_DIR) -I$(H_DIR) -o $@
 @echo "\033[0;32mDone. \033[0m"
 endef
@@ -47,16 +43,10 @@ directories:
 
 output: $(REQ_OBJECTS)
 	@echo "Compiling & linking $@..."
-	@$(CC) $(CFLAGS) $(TEST_DIR)/priorityq_test.c $(REQ_SRC) -I$(H_DIR) -o $(BUILD_DIR)/$(TARGET)
+	@$(CC) $(CFLAGS) $(TEST_DIR)/uid_test.c $(REQ_SRC) -I$(H_DIR) -o $(BUILD_DIR)/$(TARGET)
 	@echo "Compilation Successful!"
 
-$(OBJ_DIR)/doublelist.o: $(SRC_DIR)/doublelist/doublelist.c
-	$(COMPILE_OBJECT)
-
-$(OBJ_DIR)/sortedlist.o: $(SRC_DIR)/sortedlist/sortedlist.c
-	$(COMPILE_OBJECT)
-
-$(OBJ_DIR)/priorityq.o: $(SRC_DIR)/priorityq/priorityq.c
+$(OBJ_DIR)/uid.o: $(SRC_DIR)/uid/uid.c
 	$(COMPILE_OBJECT)
 
 clean: 

@@ -4,10 +4,9 @@
 #include <stddef.h>	/*size_t*/
 #include <time.h>	/*time_t*/
 
-#include "uid.h" 	/*UID functions*/
+#include "task.h"	/*Task Functions*/
 
 typedef struct Scheduler scheduler_t;
-typedef int (*task_func)(void *param);
 
 /*
 * SchedulerCreate() - 
@@ -30,7 +29,7 @@ void SchedulerDestroy(scheduler_t *s);
 * Returns: 0 - Success | ~0 - Failure
 * complexity of malloc();               
 */
-int SchedulerAddTask(scheduler_t *s, task_func, time_t interval, void *param);
+int SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, void *param);
 
 /*
 * SchedulerRemoveTask()-
