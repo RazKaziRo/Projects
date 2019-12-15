@@ -9,15 +9,15 @@ typedef int (*compare_func)(const void *data1, const void *data2, void *param);
 typedef int (*match_func)(void *iterator_data, void *action_param);
 
 /**********************************************/
-/* Returns pointer to the PQ  data structure  */
+/* Returns pointer to the PQ data structure  */
 /* complexity of malloc                       */
 /**********************************************/
 pq_t *PQCreate(compare_func cmp_ptr, void *param); /*DONE*/
 
 /*************************************************/
-/* Destroys the PQ  datastructure and frees it   */
-/* from memory                                   */
-/* complexity of free                            */
+/* Destroys the PQ  datastructure and frees it   
+/* from memory                                   
+/* complexity of free                            
 /*************************************************/
 void PQDestroy(pq_t *pq); /*DONE*/ 
 

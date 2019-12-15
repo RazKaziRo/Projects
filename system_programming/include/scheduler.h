@@ -4,28 +4,76 @@
 #include <stddef.h>/*size_t*/
 #include <time.h>/*time_t*/
 
-#include "uid.h" /*uid functions*/
+#include "uid.h" /*UID functions*/
 
 typedef struct Scheduler scheduler_t;
 typedef int (*task_func)(void *param);
 
 /*
-* 
-*
-*
+* SchedulerCreate() - 
+* Returns pointer to the Scheduler. 
+* complexity of malloc();       
 */
-
 scheduler_t *SchedulerCreate();
 
-
-
+/*
+* SchedulerDestroy() -
+* Destroys and frees Scheduler from memory.
+* complexity of free();                  
+*/
 void SchedulerDestroy(scheduler_t *s);
+
+/*
+* SchedulerAddTask()-
+* Gets pointer to Scheduler, interval between each occurrence 
+* + function to operate this task, and additional paramter
+* Returns: 0 - Success | ~0 - Failure
+* complexity of malloc();               
+*/
 int SchedulerAddTask(scheduler_t *s, task_func, time_t interval, void *param);
+
+/*
+* SchedulerRemoveTask()-
+* Gets pointer to Scheduler and spesific UID for remove.
+* if there is active task need to be removed Scheduler will wait for it to finish 
+* complexity of O(n)               
+*/
 void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid);
+
+/*
+* SchedulerRun() - 
+* Active the Scheduler and start the tasks functions Scheduling
+* complexity of O(infinite);              
+*/
 void SchedulerRun(const scheduler_t *s);
+
+/*
+* SchedulerStop() - 
+* Stop the Scheduler and stop all tasks functions Scheduling
+* complexity of O(1);              
+*/
 void SchedulerStop(const scheduler_t *s);
+
+/*
+* SchedulerSize() - 
+* Return number of tasks in the Scheduler
+* complexity of O(n);              
+*/
 size_t SchedulerSize(const scheduler_t *s);
+
+/*
+* SchedulerIsEmpty() - 
+* Return 1 - Scheduler is empty | 0 - Scheduler not empty.
+* complexity of O(1);              
+*/
 int SchedulerIsEmpty(const scheduler_t *s);
+
+/*
+* SchedulerClear() - 
+* Clear/Empty the Scheduler from tasks
+* if there is active task it will wait for it finish and then clear the Scheduler
+* complexity of O(n);              
+*/
 void SchedulerClear(scheduler_t *s);
 
 #endif
