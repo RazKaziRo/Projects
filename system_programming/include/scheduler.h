@@ -1,10 +1,10 @@
 #ifndef __SHCEDULER_H__
 #define __SHCEDULER_H__
 
-#include <stddef.h>/*size_t*/
-#include <time.h>/*time_t*/
+#include <stddef.h>	/*size_t*/
+#include <time.h>	/*time_t*/
 
-#include "uid.h" /*UID functions*/
+#include "uid.h" 	/*UID functions*/
 
 typedef struct Scheduler scheduler_t;
 typedef int (*task_func)(void *param);
@@ -26,7 +26,7 @@ void SchedulerDestroy(scheduler_t *s);
 /*
 * SchedulerAddTask()-
 * Gets pointer to Scheduler, interval between each occurrence 
-* + function to operate this task, and additional paramter
+* + function to operate this task and additional paramter
 * Returns: 0 - Success | ~0 - Failure
 * complexity of malloc();               
 */
@@ -35,7 +35,8 @@ int SchedulerAddTask(scheduler_t *s, task_func, time_t interval, void *param);
 /*
 * SchedulerRemoveTask()-
 * Gets pointer to Scheduler and spesific UID for remove.
-* if there is active task need to be removed Scheduler will wait for it to finish 
+* if there is an active task need to be removed 
+* + Scheduler will wait for it to finish 
 * complexity of O(n)               
 */
 void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid);
