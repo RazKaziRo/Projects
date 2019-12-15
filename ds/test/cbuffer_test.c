@@ -6,7 +6,7 @@
  * Reviewer: 
  */
 
-#include <stdio.h>
+#include <stdio.h> /*printf()*/
 #include <stdlib.h> /*free()*/
 #include <string.h> /*strcmp()*/
 

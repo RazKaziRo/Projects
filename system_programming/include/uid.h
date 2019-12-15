@@ -1,22 +1,21 @@
 #ifndef __UID_H__
 #define __UID_H__
 
-#include <time.h>
 #include <stddef.h>
-#include <sys/types.h>
 
-typedef struct Uid ilrd_uid_t;
+typedef struct UID ilrd_uid_t;
 
-/*****************************************/
-/* Returns pointer to the uid struct     */
-/* complexity of malloc                  */
-/*****************************************/
+/*
+* Returns pointer to the uid struct    
+* complexity of                 
+*/
+
 ilrd_uid_t UIDCreate();
 
 /*****************************************/
-/* Returns 1 if the struct is bad        */
+/* Retur      						     */
 /* (not valid) or 0 if not               */
-/* complexity of strcmp                  */
+/* complexity of                		 */
 /*****************************************/
 int UIDIsBad(ilrd_uid_t);
 
