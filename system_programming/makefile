@@ -25,6 +25,8 @@ $(DS_OBJ_DIR)/*.o
 
 REQ_SRC =\
 $(SRC_DIR)/uid/uid.c\
+$(SRC_DIR)/scheduler/scheduler.c\
+$(SRC_DIR)/task/task.c\
 $(DS_SRC_DIR)/sortedlist/sortedlist.c\
 $(DS_SRC_DIR)/doublelist/doublelist.c\
 $(DS_SRC_DIR)/priorityq/priorityq.c

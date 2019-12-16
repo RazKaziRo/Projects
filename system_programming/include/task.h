@@ -2,11 +2,19 @@
 #define __TASK_H__
 
 #include <time.h> /*time_t*/
-
 #include "uid.h" /*UID Functions*/
 
-typedef struct Task task_t;
 typedef int (*task_func)(void *param);
+
+typedef struct Task
+{
+	ilrd_uid_t uid;
+	task_func to_do;
+	time_t run_time;
+	time_t interval;
+	void *param;
+
+}task_t;
 
 /*
 * TaskCreate() - 
@@ -41,20 +49,20 @@ int TaskIsMatch(const task_t *t1, const task_t *t2);
 * Return time to start task function. 
 * complexity of O(1);       
 */
-time_t TaskGetTimeToRun(const task_t *t);
+time_t TaskGetTimeToRun(const task_t *t);/*DONE*/
 
 /*
 * TaskRun() - 
 * Return Value from the called function hold by task. 
 * complexity of the called function();       
 */
-int TaskRun(const task_t *t);
+int TaskRun(const task_t *t);/*DONE*/
 
 /*
 * TaskUpdateTimeToRun() - 
 * Update task next time to run
 * complexity of O(1);       
 */
-void TaskUpdateTimeToRun(task_t *t);
+void TaskUpdateTimeToRun(task_t *t); /*DONE*/
 
 #endif

@@ -17,7 +17,6 @@ typedef struct UID
 * Returns pointer to the uid struct    
 * complexity of                 
 */
-
 ilrd_uid_t UIDCreate();
 
 /*****************************************/
@@ -33,5 +32,6 @@ int UIDIsBad(ilrd_uid_t);
 /* complexity of strcmp                  */
 /*****************************************/
 int UIDIsSame(ilrd_uid_t uid1, ilrd_uid_t uid2);
+
 
 #endif
