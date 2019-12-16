@@ -2,8 +2,16 @@
 #define __UID_H__
 
 #include <stddef.h>
+#include <time.h> /*time_t*/
+#include <sys/types.h> /*pid_t()*/
 
-typedef struct UID ilrd_uid_t;
+typedef struct UID
+{
+	time_t time_stamp;
+	size_t counter;
+	pid_t pid;
+
+}ilrd_uid_t;
 
 /*
 * Returns pointer to the uid struct    

@@ -1,7 +1,6 @@
 #include <stdio.h> /*printf()*/
 #include <time.h> /*time_t*/
 #include <unistd.h> /*getpid()*/
-#include <sys/types.h> /*pid_t()*/
 
 #include "uid.h"
 
@@ -21,12 +20,6 @@
 
 #define UNUSED(x) (void)(x)
 #define FREE(ptr) free(ptr); ptr = NULL;
-struct UID
-{
-	time_t time_stamp;
-	size_t counter;
-	pid_t pid;
-};
 
 void TestUIDCreate()
 {	
@@ -76,9 +69,9 @@ void TestUIDIsSame()
 	newPID4 = UIDCreate();
 	newPID4.time_stamp = newPID1.counter;
 
-	RUN_TEST(1 == UIDIsSame(newPID1, newPID2), "FAIL: UID IS THE SAME");
-	RUN_TEST(0 == UIDIsSame(newPID1, newPID3), "FAIL: UID IS NOT THE SAME");
-	RUN_TEST(0 == UIDIsSame(newPID1, newPID4), "FAIL: UID IS NOT THE SAME");
+	RUN_TEST((1 == UIDIsSame(newPID1, newPID2)), "FAIL: UID IS THE SAME");
+	RUN_TEST((0 == UIDIsSame(newPID1, newPID3)), "FAIL: UID IS NOT THE SAME");
+	RUN_TEST((0 == UIDIsSame(newPID1, newPID4)), "FAIL: UID IS NOT THE SAME");
 
 }
 

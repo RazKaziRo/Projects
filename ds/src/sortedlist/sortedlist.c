@@ -9,7 +9,7 @@
 #include <stdlib.h> /* malloc() */
 #include <assert.h> /* assert() */
 
-#include "../../include/sortedlist.h" /* SLL API Functions() */
+#include "sortedlist.h" /* SLL API Functions() */
 
 #define FREE(ptr) free(ptr); ptr=NULL;
 #define UNUSED(x) (void)(x)

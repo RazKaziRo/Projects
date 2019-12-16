@@ -10,14 +10,7 @@
 #include <unistd.h> /*getpid()*/
 #include <sys/types.h> /*pid_t()*/
 
-#include "uid.h" /*UID Functions()*/
-
-struct UID
-{
-	time_t time_stamp;
-	size_t counter;
-	pid_t pid;
-};
+#include "../../include/uid.h" /*UID Functions()*/
 
 ilrd_uid_t UIDCreate()
 {	
@@ -41,19 +34,4 @@ int UIDIsSame(ilrd_uid_t uid1, ilrd_uid_t uid2)
 	return(uid1.time_stamp == uid2.time_stamp 
 		&& uid1.counter == uid2.counter
 		&& uid1.pid == uid2.pid);
-}
-
-static time_t UIDGetTimeStamp(ilrd_uid_t uid)
-{
-	return(uid.time_stamp);
-}
-
-static size_t UIDGetCounter(ilrd_uid_t uid)
-{
-	return(uid.counter);
-}
-
-static pid_t UIDGetPID(ilrd_uid_t uid)
-{
-	return(uid.pid);
 }

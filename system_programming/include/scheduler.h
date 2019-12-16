@@ -20,7 +20,7 @@ scheduler_t *SchedulerCreate();
 * Destroys and frees Scheduler from memory.
 * complexity of free();                  
 */
-void SchedulerDestroy(scheduler_t *s);
+void SchedulerDestroy(scheduler_t *s); /*DONE*/
 
 /*
 * SchedulerAddTask()-
@@ -52,21 +52,21 @@ void SchedulerRun(const scheduler_t *s);
 * Stop the Scheduler and stop all tasks functions Scheduling
 * complexity of O(1);              
 */
-void SchedulerStop(const scheduler_t *s);
+void SchedulerStop(scheduler_t *s);
 
 /*
 * SchedulerSize() - 
 * Return number of tasks in the Scheduler
 * complexity of O(n);              
 */
-size_t SchedulerSize(const scheduler_t *s);
+size_t SchedulerSize(const scheduler_t *s);/*DONE*/
 
 /*
 * SchedulerIsEmpty() - 
 * Return 1 - Scheduler is empty | 0 - Scheduler not empty.
 * complexity of O(1);              
 */
-int SchedulerIsEmpty(const scheduler_t *s);
+int SchedulerIsEmpty(const scheduler_t *s);/*DONE*/
 
 /*
 * SchedulerClear() - 

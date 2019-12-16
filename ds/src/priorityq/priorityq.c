@@ -9,8 +9,8 @@
 #include <stdlib.h> /*malloc()*/
 #include <assert.h> /*assert()*/
 
-#include "../../include/sortedlist.h" /*Sorted List API()*/
-#include "../../include/priorityq.h"  /*Priority Queue API()*/
+#include "sortedlist.h" /*Sorted List API()*/
+#include "priorityq.h"  /*Priority Queue API()*/
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 
