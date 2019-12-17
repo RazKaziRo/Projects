@@ -43,28 +43,28 @@ static int TimeCompare(const void *data1,const void *data2, void *param)
 
 scheduler_t *SchedulerCreate()
 {	
-	scheduler_t *newScheduler = malloc(sizeof(scheduler_t));
-	if (NULL != newScheduler)
+	scheduler_t *new_scheduler = malloc(sizeof(scheduler_t));
+	if (NULL != new_scheduler)
 	{
-		newScheduler->queue = PQCreate(&TimeCompare, NULL);
-		if (NULL != newScheduler->queue)
+		new_scheduler->queue = PQCreate(&TimeCompare, NULL);
+		if (NULL != new_scheduler->queue)
 		{
-			newScheduler->remove_current = 0;
-			newScheduler->stop = 0;
-			newScheduler->current_task = NULL;
+			new_scheduler->remove_current = 0;
+			new_scheduler->stop = 0;
+			new_scheduler->current_task = NULL;
 		}
 		else
 		{
-			FREE(newScheduler);
+			FREE(new_scheduler);
 		}
 	}
 
-	return newScheduler;
+	return new_scheduler;
 }
 
 void SchedulerRun(scheduler_t *s)
 {	
-	task_t *task_to_run;
+	task_t *task_to_run = NULL;
 
 	assert(NULL != s);
 	
@@ -95,16 +95,16 @@ void SchedulerRun(scheduler_t *s)
 
 ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, void *param)
 {
-	task_t *newTask = TaskCreate(to_do, interval, param);
+	task_t *new_task = TaskCreate(to_do, interval, param);
 	ilrd_uid_t bad_uid = {0};
 
 	assert(NULL != s);
 
-	if (NULL != newTask)
+	if (NULL != new_task)
 	{
-		if (PQEnqueue(s->queue, newTask))
+		if (PQEnqueue(s->queue, new_task))
 		{
-			return (TaskGetUid(newTask));
+			return (TaskGetUid(new_task));
 		}
 	}
 

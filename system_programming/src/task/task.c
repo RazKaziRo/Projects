@@ -15,24 +15,24 @@
 
 task_t *TaskCreate(task_func to_do, time_t interval, void *param)
 {
-	task_t *newTask = malloc(sizeof(task_t));
-	if (NULL != newTask)
+	task_t *new_task = malloc(sizeof(task_t));
+	if (NULL != new_task)
 	{
-		newTask->uid = UIDCreate();
-		if (!UIDIsBad(newTask->uid))
+		new_task->uid = UIDCreate();
+		if (!UIDIsBad(new_task->uid))
 		{
-			newTask->to_do = to_do;
-			newTask->run_time = time(NULL) + interval;
-			newTask->interval = interval;
-			newTask->param = param;
+			new_task->to_do = to_do;
+			new_task->run_time = time(NULL) + interval;
+			new_task->interval = interval;
+			new_task->param = param;
 		}
 		else
 		{
-			FREE(newTask);
+			FREE(new_task);
 		}
 	}
 
-	return newTask;
+	return new_task;
 }
 
 void TaskDestroy(task_t *t)
