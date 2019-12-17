@@ -1,16 +1,25 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for System Programing - Scheduler.
+ * Date: 17.12.2019
+ * Language: C
+ * Reviewer: Shye Shapira 
+ */
+
 #include <stdlib.h> /*malloc(), free()*/
 #include <assert.h> /*assert()*/
 #include <unistd.h> /*sleep()*/
 
-#include "../../include/scheduler.h"
-#include "../../include/uid.h"
-#include "../../include/task.h"
-#include "../../../ds/include/priorityq.h"
+#include "../../include/scheduler.h"  	   /*Scheduler API Functions*/
+#include "../../include/uid.h"			   /*UID API Functions*/
+#include "../../include/task.h"		 	   /*Task API Functions*/
+#include "../../../ds/include/priorityq.h" /*Priority Queue API Functions*/
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 #define UNUSED(x) (void)(x)
 #define FLAG_ON 1
 #define FLAG_OFF 0
+
 struct Scheduler
 {
 	pq_t *queue;
@@ -24,6 +33,9 @@ static int TimeCompare(const void *data1,const void *data2, void *param)
 	task_t *t1 = (task_t *)data1;
 	task_t *t2 = (task_t *)data2;
 
+	assert(NULL != data1);
+	assert(NULL != data2);
+
 	UNUSED(param);
 
 	return(TaskGetTimeToRun(t2) - TaskGetTimeToRun(t1));
@@ -32,10 +44,10 @@ static int TimeCompare(const void *data1,const void *data2, void *param)
 scheduler_t *SchedulerCreate()
 {	
 	scheduler_t *newScheduler = malloc(sizeof(scheduler_t));
-	if(NULL != newScheduler)
+	if (NULL != newScheduler)
 	{
 		newScheduler->queue = PQCreate(&TimeCompare, NULL);
-		if(NULL != newScheduler->queue)
+		if (NULL != newScheduler->queue)
 		{
 			newScheduler->remove_current = 0;
 			newScheduler->stop = 0;
@@ -51,10 +63,14 @@ scheduler_t *SchedulerCreate()
 }
 
 void SchedulerRun(scheduler_t *s)
-{
+{	
 	task_t *task_to_run;
 
-	while(!s->stop)
+	assert(NULL != s);
+	
+	s->stop = FLAG_OFF;
+
+	while (!s->stop)
 	{
 		task_to_run = PQDequeue(s->queue);
 		s->current_task = task_to_run;
@@ -64,10 +80,10 @@ void SchedulerRun(scheduler_t *s)
 			while (sleep(TaskGetTimeToRun(task_to_run) - time(NULL)));
 		}
 
-		if(0 == TaskRun(task_to_run) && 0 == s->remove_current)
+		if (0 == TaskRun(task_to_run) && 0 == s->remove_current)
 		{
 			TaskUpdateTimeToRun(task_to_run);
-			PQEnqueue(s->queue,task_to_run); /*what to do if failed?*/
+			PQEnqueue(s->queue,task_to_run); /*suppose no need to check if failed*/
 		}
 		else
 		{
@@ -82,11 +98,13 @@ ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, vo
 	task_t *newTask = TaskCreate(to_do, interval, param);
 	ilrd_uid_t bad_uid = {0};
 
+	assert(NULL != s);
+
 	if (NULL != newTask)
 	{
-		if(PQEnqueue(s->queue, newTask))
+		if (PQEnqueue(s->queue, newTask))
 		{
-			return(TaskGetUid(newTask));
+			return (TaskGetUid(newTask));
 		}
 	}
 
@@ -97,14 +115,19 @@ static int IsSame(void *data1, void *data2)
 {
 	task_t *t1 = (task_t *)data1;
 
-	return(UIDIsSame(TaskGetUid(t1),*(ilrd_uid_t *)data2));
+	assert(NULL != data1);
+	assert(NULL != data2);
+
+	return (UIDIsSame(TaskGetUid(t1),*(ilrd_uid_t *)data2));
 }
 
 void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
 {	
 	task_t *task_holder = NULL;
 
-	if(NULL == s->current_task || !UIDIsSame(uid,TaskGetUid(s->current_task)))
+	assert(NULL != s);
+
+	if (NULL == s->current_task || !UIDIsSame(uid,TaskGetUid(s->current_task)))
 	{
 		task_holder = PQErase(s->queue, &IsSame, &uid);
 		TaskDestroy(task_holder);
@@ -117,6 +140,8 @@ void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
 
 void SchedulerDestroy(scheduler_t *s)
 {	
+	assert(NULL != s);
+
 	SchedulerClear(s);
 	PQDestroy(s->queue);
 	FREE(s);
@@ -124,17 +149,23 @@ void SchedulerDestroy(scheduler_t *s)
 
 size_t SchedulerSize(const scheduler_t *s)
 {
+	assert(NULL != s);
+
 	return(PQSize(s->queue));
 }
 
 int SchedulerIsEmpty(const scheduler_t *s)
 {
+	assert(NULL != s);
+
 	return(PQIsEmpty(s->queue));
 }
 
 void SchedulerClear(scheduler_t *s)
 {
-	while(!PQIsEmpty(s->queue))
+	assert(NULL != s);
+
+	while (!PQIsEmpty(s->queue))
 	{
 		TaskDestroy(PQDequeue(s->queue));
 	}
@@ -142,5 +173,7 @@ void SchedulerClear(scheduler_t *s)
 
 void SchedulerStop(scheduler_t *s)
 {
+	assert(NULL != s);
+
 	s->stop = FLAG_ON;
 }

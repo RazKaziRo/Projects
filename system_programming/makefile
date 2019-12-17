@@ -21,6 +21,7 @@ TARGET = output
 REQ_OBJECTS =\
 $(OBJ_DIR)/uid.o\
 $(OBJ_DIR)/scheduler.o\
+$(OBJ_DIR)/task.o\
 $(DS_OBJ_DIR)/*.o
 
 REQ_SRC =\
@@ -62,6 +63,9 @@ $(OBJ_DIR)/uid.o: $(SRC_DIR)/uid/uid.c
 	$(COMPILE_OBJECT)
 
 $(OBJ_DIR)/scheduler.o: $(SRC_DIR)/scheduler/scheduler.c
+		$(COMPILE_OBJECT)
+
+$(OBJ_DIR)/task.o: $(SRC_DIR)/task/task.c
 		$(COMPILE_OBJECT)
 
 clean: 
