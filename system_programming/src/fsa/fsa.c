@@ -1,9 +1,17 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for System Programing - Fixed Size Allocator.
+ * Date: 18.12.2019
+ * Language: C
+ * Reviewer: Ben Zaad
+ */
+
 #include <stdio.h> /*printf()*/
 
-#include "../../include/fsa.h"
+#include "../../include/fsa.h" /*Fixed Size Allocator functions*/
 
 #define WORD_SIZE 8
-#define BYTE (char *)
+#define BYTE char *
 
 struct FixedSizeAllocator
 {
@@ -30,7 +38,7 @@ size_t FSASuggestBlockSize(const size_t block_size)
 static void FSAInitFillHelper(fsa_t *fsa)
 {	
 	size_t next_available = fsa->next_available_index;
-	char *fsa_runner = (char *)fsa;
+	BYTE fsa_runner = BYTE fsa;
 
 	while(next_available < fsa->segment_size)
 	{	
