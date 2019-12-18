@@ -19,18 +19,11 @@ CFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
 TARGET = output
 
 REQ_OBJECTS =\
-$(OBJ_DIR)/uid.o\
-$(OBJ_DIR)/scheduler.o\
-$(OBJ_DIR)/task.o\
-$(DS_OBJ_DIR)/*.o
+$(OBJ_DIR)/fsa.o\
 
 REQ_SRC =\
-$(SRC_DIR)/uid/uid.c\
-$(SRC_DIR)/scheduler/scheduler.c\
-$(SRC_DIR)/task/task.c\
-$(DS_SRC_DIR)/sortedlist/sortedlist.c\
-$(DS_SRC_DIR)/doublelist/doublelist.c\
-$(DS_SRC_DIR)/priorityq/priorityq.c
+$(SRC_DIR)/fsa/fsa.c\
+
 
 # Combine Requiers Objects: 
 OBJECTS = $(REQ_OBJECTS)
@@ -56,17 +49,11 @@ directories:
 
 output: $(REQ_OBJECTS)
 	@echo "Compiling & linking $@..."
-	@$(CC) $(CFLAGS) $(TEST_DIR)/scheduler_test.c $(REQ_SRC) -I$(H_DIR) -I$(DS_INC_DIR) -o $(BUILD_DIR)/$(TARGET)
+	@$(CC) $(CFLAGS) $(TEST_DIR)/fsa_test.c $(REQ_SRC) -I$(H_DIR) -I$(DS_INC_DIR) -o $(BUILD_DIR)/$(TARGET)
 	@echo "Compilation Successful!"
 
-$(OBJ_DIR)/uid.o: $(SRC_DIR)/uid/uid.c
+$(OBJ_DIR)/fsa.o: $(SRC_DIR)/fsa/fsa.c
 	$(COMPILE_OBJECT)
-
-$(OBJ_DIR)/scheduler.o: $(SRC_DIR)/scheduler/scheduler.c
-		$(COMPILE_OBJECT)
-
-$(OBJ_DIR)/task.o: $(SRC_DIR)/task/task.c
-		$(COMPILE_OBJECT)
 
 clean: 
 	@echo "\n\033[1;34mRemoving All Build files: \033[0m"
