@@ -33,7 +33,7 @@ DEPENDENCIES = $(OBJECTS:%.o=%.d)
 
 # Build object: 
 define COMPILE_OBJECT
-@echo "\n\033[1;31mBuilding $@: \033[0m"
+@echo "\n\033[1;34mBuilding $@: \033[0m"
 @$(CC) $(CFLAGS) -c $< $(SRC_DIR) -I$(H_DIR) -o $@
 @echo "\033[0;32mDone. \033[0m"
 endef

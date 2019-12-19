@@ -6,12 +6,12 @@
  * Reviewer: Ben Zaad
  */
 
-#include <stdio.h> /*printf()*/
-
+#include <stdio.h> 	/*printf()*/
+#include <assert.h> /*assert()*/
 #include "../../include/fsa.h" /*Fixed Size Allocator functions*/
 
+#define BYTE (char *)
 #define WORD_SIZE 8
-#define BYTE char *
 
 struct FixedSizeAllocator
 {
@@ -37,10 +37,14 @@ size_t FSASuggestBlockSize(const size_t block_size)
 
 static void FSAInitFillHelper(fsa_t *fsa)
 {	
-	size_t next_available = fsa->next_available_index;
-	BYTE fsa_runner = BYTE fsa;
+	size_t next_available = 0; 
+	char *fsa_runner = (char *)fsa;
 
-	while(next_available < fsa->segment_size)
+	assert(NULL != fsa);
+
+	next_available = fsa->next_available_index;
+	
+	while (next_available < fsa->segment_size)
 	{	
 		block_header_t new_header = {0};
 
@@ -51,7 +55,6 @@ static void FSAInitFillHelper(fsa_t *fsa)
 		*(block_header_t*)fsa_runner = new_header;
 		fsa_runner = (char *)fsa;
 	}
-
 }
 
 fsa_t *FSAInit(void *allocated, const size_t segment_size, const size_t block_size)
@@ -59,7 +62,9 @@ fsa_t *FSAInit(void *allocated, const size_t segment_size, const size_t block_si
 	fsa_t *fsa_ptr_location = NULL;
 	fsa_ptr_location = allocated;
 
-	while(0 != (size_t)fsa_ptr_location % WORD_SIZE)
+	assert(NULL != allocated);
+
+	while (0 != (size_t)fsa_ptr_location % WORD_SIZE)
 	{
 		++fsa_ptr_location;
 	}
@@ -85,9 +90,11 @@ void *FSAAlloc(fsa_t *fsa)
 	char *returned_pointer = NULL;
 	char *fsa_runner = (char *)fsa;
 
+	assert(NULL != fsa);
+
 	next_available = fsa->next_available_index;
 
-	if(fsa->segment_size > fsa->next_available_index)
+	if (fsa->segment_size > fsa->next_available_index)
 	{
 		fsa_runner += next_available;
 		fsa->next_available_index = 
@@ -102,10 +109,14 @@ void *FSAAlloc(fsa_t *fsa)
 size_t FSACountFree(const fsa_t *fsa)
 {	
 	char *fsa_runner = (char *)fsa;
-	size_t next_available = fsa->next_available_index;
+	size_t next_available = 0 ;
 	size_t counter = 0;
 
-	while(next_available < fsa->segment_size)
+	assert(NULL != fsa);
+
+	next_available = fsa->next_available_index;
+
+	while (next_available < fsa->segment_size)
 	{	
 		fsa_runner += next_available;
 		next_available = ((block_header_t*)fsa_runner)->next_free_index;
@@ -122,6 +133,8 @@ void FSAFree(void *block)
 	size_t head_next_available_holder = 0;
 	size_t fsa_next_available_holder = 0;
 
+	assert(NULL != block);
+
 	fsa_runner -= sizeof(block_header_t);
 	head_next_available_holder = ((block_header_t*)fsa_runner)->next_free_index;
 	fsa_runner -= head_next_available_holder;
@@ -130,3 +143,4 @@ void FSAFree(void *block)
 	fsa_runner += head_next_available_holder;
 	((block_header_t*)fsa_runner)->next_free_index = fsa_next_available_holder;
 }
+
