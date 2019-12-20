@@ -19,10 +19,10 @@ CFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
 TARGET = output
 
 REQ_OBJECTS =\
-$(OBJ_DIR)/fsa.o\
+$(OBJ_DIR)/vsa.o\
 
 REQ_SRC =\
-$(SRC_DIR)/fsa/fsa.c\
+$(SRC_DIR)/vsa/vsa.c\
 
 
 # Combine Requiers Objects: 
@@ -49,10 +49,10 @@ directories:
 
 output: $(REQ_OBJECTS)
 	@echo "Compiling & linking $@..."
-	@$(CC) $(CFLAGS) $(TEST_DIR)/fsa_test.c $(REQ_SRC) -I$(H_DIR) -I$(DS_INC_DIR) -o $(BUILD_DIR)/$(TARGET)
+	@$(CC) $(CFLAGS) $(TEST_DIR)/vsa_test.c $(REQ_SRC) -I$(H_DIR) -I$(DS_INC_DIR) -o $(BUILD_DIR)/$(TARGET)
 	@echo "Compilation Successful!"
 
-$(OBJ_DIR)/fsa.o: $(SRC_DIR)/fsa/fsa.c
+$(OBJ_DIR)/vsa.o: $(SRC_DIR)/vsa/vsa.c
 	$(COMPILE_OBJECT)
 
 clean: 
