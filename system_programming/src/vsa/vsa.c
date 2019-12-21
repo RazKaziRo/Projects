@@ -11,6 +11,7 @@
 
 #define MAGIC_NUMBER 0xDEADBEEF
 #define LAST_HEADER 0x8000000000000000
+#define HEAD_SIZE   sizeof(vsa_t)
 
 typedef char byte_t;
 
@@ -39,7 +40,7 @@ vsa_t *VSAInit(void *allocated, size_t segment_size)
 	#ifndef NDEBUG
 	start_block_header.unique = MAGIC_NUMBER;
 	end_block_header.unique = MAGIC_NUMBER;
-	 #endif
+	#endif
 
 	*(vsa_t *)vsa_runner = start_block_header;
 	vsa_runner += segment_size - sizeof(vsa_t);
@@ -48,9 +49,18 @@ vsa_t *VSAInit(void *allocated, size_t segment_size)
 	return new_vsa;
 }
 
-static long AbsoluteNUmber (long num)
+static long AbsoluteNumber (long block_size)
 {
-	return num *-1;
+	return block_size *-1;
+}
+
+static void SetHeaderBlockSize (vsa_t *vsa, long block_size)
+{
+	vsa->block_size = block_size;
+
+	#ifndef NDEBUG
+	vsa->unique = MAGIC_NUMBER;
+	#endif
 }
 
 void *VSAAlloc(vsa_t *vsa, size_t requested_block_size)
@@ -63,17 +73,48 @@ void *VSAAlloc(vsa_t *vsa, size_t requested_block_size)
 
 	while(block_size_holder < 0 && block_size_holder != LAST_HEADER)
 	{
-		vsa_runner += AbsoluteNUmber(block_size_holder);
+		vsa_runner += AbsoluteNumber(block_size_holder) + HEAD_SIZE;
 		block_size_holder = ((vsa_t*)vsa_runner)->block_size;
 	}
 
-	if(block_size_holder != LAST_HEADER && 
-		((vsa_t*)vsa_runner)->block_size >= requested_block_size)
-	{	
-		((vsa_t*)vsa_runner)->block_size = block_size_holder -requested_block_size;
-		((vsa_t*)vsa_runner)->unique = MAGIC_NUMBER;
+	while(block_size_holder != LAST_HEADER)
+	{
+		if( ((vsa_t*)vsa_runner)->block_size >= requested_block_size)
+		{	
+			SetHeaderBlockSize(((vsa_t*)vsa_runner), -requested_block_size);
+			block_size_holder = ((vsa_t*)vsa_runner)->block_size -requested_block_size;
+
+			vsa_runner += requested_block_size + HEAD_SIZE;
+			SetHeaderBlockSize(((vsa_t*)vsa_runner), block_size_holder);
+
+			vsa_runner -= block_size_holder + HEAD_SIZE;
+			return vsa_runner;
+		}
+		else
+		{
+			vsa_runner += ((vsa_t*)vsa_runner)->block_size;
+			block_size_holder = ((vsa_t*)vsa_runner)->block_size;
+		}
 	}
-	vsa_runner += sizeof(vsa_t);
+
+	return NULL;
+}
+
+void VSAFree(void *block)
+{
 	
-	return vsa_runner;
+	byte_t *block_runner = (byte_t *)block;
+	block_runner -= HEAD_SIZE;
+
+	#ifndef NDEBUG
+	if((MAGIC_NUMBER == ((vsa_t*)block_runner)->unique))
+	{
+		((vsa_t*)block_runner)->block_size = AbsoluteNumber(((vsa_t*)block_runner)->block_size);
+	}
+	#endif
+}
+
+size_t VSALargestChunkSize(vsa_t *vsa)
+{
+
 }
