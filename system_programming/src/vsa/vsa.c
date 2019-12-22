@@ -171,4 +171,3 @@ void VSAFree(void *block)
 	((vsa_t*)block_runner)->block_size = 
 	AbsNum(((vsa_t*)block_runner)->block_size);
 }
-
