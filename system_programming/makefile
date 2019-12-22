@@ -13,7 +13,8 @@ TEST_DIR    = $(PROJECT_DIR)/test#test Files
 
 # Compiler:
 CC = gcc
-CFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
+GDFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
+GCFLAGS = -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3
 
 #Output File Name
 TARGET = output
@@ -34,7 +35,7 @@ DEPENDENCIES = $(OBJECTS:%.o=%.d)
 # Build object: 
 define COMPILE_OBJECT
 @echo "\n\033[1;34mBuilding $@: \033[0m"
-@$(CC) $(CFLAGS) -c $< $(SRC_DIR) -I$(H_DIR) -o $@
+@$(CC) $(GDFLAGS) -c $< $(SRC_DIR) -I$(H_DIR) -o $@
 @echo "\033[0;32mDone. \033[0m"
 endef
 
@@ -49,7 +50,7 @@ directories:
 
 output: $(REQ_OBJECTS)
 	@echo "Compiling & linking $@..."
-	@$(CC) $(CFLAGS) $(TEST_DIR)/vsa_test.c $(REQ_SRC) -I$(H_DIR) -I$(DS_INC_DIR) -o $(BUILD_DIR)/$(TARGET)
+	@$(CC) $(GDFLAGS) $(TEST_DIR)/vsa_test.c $(REQ_SRC) -I$(H_DIR) -I$(DS_INC_DIR) -o $(BUILD_DIR)/$(TARGET)
 	@echo "Compilation Successful!"
 
 $(OBJ_DIR)/vsa.o: $(SRC_DIR)/vsa/vsa.c

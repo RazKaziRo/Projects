@@ -5,12 +5,13 @@
  * Language: C
  * Reviewer: Yonatan Zaken
  */
+
 #include <assert.h> /* assert */
 
-#include "../../include/vsa.h" /* API functions */
+#include "vsa.h"
 
 #define MAGIC_NUMBER 0xDEADBEEF
-#define LAST_HEADER 0x8000000000000000
+#define LAST_HEADER (long)0xFFFFFFFFFFFFFFFF
 #define HEAD_SIZE   sizeof(vsa_t)
 
 typedef char byte_t;
@@ -24,6 +25,45 @@ struct BlockHeader
     #endif
 };
 
+static long AbsNum (long block_size)
+{
+	return block_size *-1;
+}
+
+static void BlockDefragmentation(vsa_t *vsa)
+{	
+	byte_t *vsa_start_runner = (byte_t *)vsa;
+	byte_t *vsa_runner = (byte_t *)vsa;
+
+	long chunk_collector = 0;
+	size_t head_count = 0; 
+
+	while (((vsa_t*)vsa_runner)->block_size != LAST_HEADER)
+	{	
+		chunk_collector = 0;
+		head_count = 0; 
+
+		while (((vsa_t*)vsa_runner)->block_size < 0 && 
+			LAST_HEADER != ((vsa_t*)vsa_runner)->block_size) 
+		{
+			vsa_runner += AbsNum(((vsa_t*)vsa_runner)->block_size) + HEAD_SIZE;
+		}
+
+		vsa_start_runner = vsa_runner;
+
+		while (((vsa_t*)vsa_runner)->block_size >= 0 && 
+			LAST_HEADER != ((vsa_t*)vsa_runner)->block_size)
+		{
+			chunk_collector += ((vsa_t*)vsa_runner)->block_size;
+			vsa_runner += ((vsa_t*)vsa_runner)->block_size + HEAD_SIZE;
+			++head_count;
+		}
+	}
+
+	((vsa_t*)vsa_start_runner)->block_size = chunk_collector
+	 + HEAD_SIZE * (head_count - 1);
+}
+
 vsa_t *VSAInit(void *allocated, size_t segment_size)
 {
 	vsa_t start_block_header = {0};
@@ -34,7 +74,7 @@ vsa_t *VSAInit(void *allocated, size_t segment_size)
 
 	assert(NULL != allocated);
 
-	start_block_header.block_size = segment_size - sizeof(vsa_t)*2;
+	start_block_header.block_size = segment_size - HEAD_SIZE * 2;
 	end_block_header.block_size = LAST_HEADER;
 
 	#ifndef NDEBUG
@@ -43,57 +83,75 @@ vsa_t *VSAInit(void *allocated, size_t segment_size)
 	#endif
 
 	*(vsa_t *)vsa_runner = start_block_header;
-	vsa_runner += segment_size - sizeof(vsa_t);
+	vsa_runner += segment_size - HEAD_SIZE;
 	*(vsa_t *)vsa_runner = end_block_header;
 
 	return new_vsa;
 }
 
-static long AbsoluteNumber (long block_size)
-{
-	return block_size *-1;
-}
+size_t VSALargestChunkSize(vsa_t *vsa)
+{	
+	byte_t *vsa_runner = (byte_t *)vsa;
+	long largest_chunk = 0;
 
-static void SetHeaderBlockSize (vsa_t *vsa, long block_size)
-{
-	vsa->block_size = block_size;
+	BlockDefragmentation(vsa);
 
-	#ifndef NDEBUG
-	vsa->unique = MAGIC_NUMBER;
-	#endif
+	while (((vsa_t*)vsa_runner)->block_size != LAST_HEADER)
+	{	
+
+		while (((vsa_t*)vsa_runner)->block_size < 0 && 
+			LAST_HEADER != ((vsa_t*)vsa_runner)->block_size) 
+		{
+			vsa_runner += AbsNum(((vsa_t*)vsa_runner)->block_size) + HEAD_SIZE;
+		}
+
+		if (largest_chunk < ((vsa_t*)vsa_runner)->block_size)
+		{
+			largest_chunk = ((vsa_t*)vsa_runner)->block_size - HEAD_SIZE;
+		}
+
+		vsa_runner += ((vsa_t*)vsa_runner)->block_size + HEAD_SIZE;
+	}
+	return largest_chunk;
 }
 
 void *VSAAlloc(vsa_t *vsa, size_t requested_block_size)
 {
 	long block_size_holder = 0;
-	vsa_t new_block_header = {0};
-
-	block_size_holder = vsa->block_size;
 	byte_t *vsa_runner = (byte_t *)vsa;
 
-	while(block_size_holder < 0 && block_size_holder != LAST_HEADER)
+	block_size_holder = vsa->block_size;
+
+	BlockDefragmentation(vsa);
+
+	while (((vsa_t*)vsa_runner)->block_size < 0 && 
+		((vsa_t*)vsa_runner)->block_size != LAST_HEADER)
 	{
-		vsa_runner += AbsoluteNumber(block_size_holder) + HEAD_SIZE;
-		block_size_holder = ((vsa_t*)vsa_runner)->block_size;
+		vsa_runner += AbsNum(((vsa_t*)vsa_runner)->block_size) + HEAD_SIZE;
 	}
 
-	while(block_size_holder != LAST_HEADER)
+	while (((vsa_t*)vsa_runner)->block_size > 0 && 
+		((vsa_t*)vsa_runner)->block_size != LAST_HEADER)
 	{
-		if( ((vsa_t*)vsa_runner)->block_size >= requested_block_size)
-		{	
-			SetHeaderBlockSize(((vsa_t*)vsa_runner), -requested_block_size);
-			block_size_holder = ((vsa_t*)vsa_runner)->block_size -requested_block_size;
-
+		if (((vsa_t*)vsa_runner)->block_size >= (long)requested_block_size)
+		{
+			block_size_holder = ((vsa_t*)vsa_runner)->block_size;
+			((vsa_t*)vsa_runner)->block_size = -requested_block_size;
 			vsa_runner += requested_block_size + HEAD_SIZE;
-			SetHeaderBlockSize(((vsa_t*)vsa_runner), block_size_holder);
+			((vsa_t*)vsa_runner)->block_size = 
+			block_size_holder - requested_block_size - HEAD_SIZE;
 
-			vsa_runner -= block_size_holder + HEAD_SIZE;
+			#ifndef NDEBUG
+			((vsa_t*)vsa_runner)->unique = MAGIC_NUMBER;
+			#endif
+			vsa_runner -= requested_block_size;
+
 			return vsa_runner;
 		}
+
 		else
 		{
-			vsa_runner += ((vsa_t*)vsa_runner)->block_size;
-			block_size_holder = ((vsa_t*)vsa_runner)->block_size;
+			vsa_runner += ((vsa_t*)vsa_runner)->block_size + HEAD_SIZE;
 		}
 	}
 
@@ -102,19 +160,15 @@ void *VSAAlloc(vsa_t *vsa, size_t requested_block_size)
 
 void VSAFree(void *block)
 {
-	
-	byte_t *block_runner = (byte_t *)block;
+	byte_t *block_runner = block;
+
+	assert(NULL != block);
+
 	block_runner -= HEAD_SIZE;
 
-	#ifndef NDEBUG
-	if((MAGIC_NUMBER == ((vsa_t*)block_runner)->unique))
-	{
-		((vsa_t*)block_runner)->block_size = AbsoluteNumber(((vsa_t*)block_runner)->block_size);
-	}
-	#endif
+	assert(MAGIC_NUMBER == ((vsa_t*)block_runner)->unique);
+
+	((vsa_t*)block_runner)->block_size = 
+	AbsNum(((vsa_t*)block_runner)->block_size);
 }
 
-size_t VSALargestChunkSize(vsa_t *vsa)
-{
-
-}
