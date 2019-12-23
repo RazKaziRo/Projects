@@ -36,12 +36,10 @@ static void BlockDefragmentation(vsa_t *vsa)
 	byte_t *vsa_runner = (byte_t *)vsa;
 
 	long chunk_collector = 0;
-	size_t head_count = 0; 
 
 	while (((vsa_t*)vsa_runner)->block_size != LAST_HEADER)
 	{	
 		chunk_collector = 0;
-		head_count = 0; 
 
 		while (((vsa_t*)vsa_runner)->block_size < 0 && 
 			LAST_HEADER != ((vsa_t*)vsa_runner)->block_size) 
@@ -54,14 +52,13 @@ static void BlockDefragmentation(vsa_t *vsa)
 		while (((vsa_t*)vsa_runner)->block_size >= 0 && 
 			LAST_HEADER != ((vsa_t*)vsa_runner)->block_size)
 		{
-			chunk_collector += ((vsa_t*)vsa_runner)->block_size;
+			chunk_collector += ((vsa_t*)vsa_runner)->block_size + HEAD_SIZE;
 			vsa_runner += ((vsa_t*)vsa_runner)->block_size + HEAD_SIZE;
-			++head_count;
 		}
 	}
 
 	((vsa_t*)vsa_start_runner)->block_size = chunk_collector
-	 + HEAD_SIZE * (head_count - 1);
+	 - HEAD_SIZE;
 }
 
 vsa_t *VSAInit(void *allocated, size_t segment_size)
@@ -94,11 +91,12 @@ size_t VSALargestChunkSize(vsa_t *vsa)
 	byte_t *vsa_runner = (byte_t *)vsa;
 	long largest_chunk = 0;
 
+	assert(NULL != vsa);
+
 	BlockDefragmentation(vsa);
 
 	while (((vsa_t*)vsa_runner)->block_size != LAST_HEADER)
 	{	
-
 		while (((vsa_t*)vsa_runner)->block_size < 0 && 
 			LAST_HEADER != ((vsa_t*)vsa_runner)->block_size) 
 		{
