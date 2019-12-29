@@ -53,7 +53,7 @@ output: $(REQ_OBJECTS)
 	@$(CC) $(GDFLAGS) $(TEST_DIR)/vsa_test.c $(REQ_SRC) -I$(H_DIR) -I$(DS_INC_DIR) -o $(BUILD_DIR)/$(TARGET)
 	@echo "Compilation Successful!"
 
-$(OBJ_DIR)/vsa.o: $(SRC_DIR)/vsa/vsa.c
+$(OBJ_DIR)/vsa.o: $(SRC_DIR)/vsa/vsa.c $(H_DIR)/vsa.h
 	$(COMPILE_OBJECT)
 
 clean: 
