@@ -1,27 +1,34 @@
 # Directories: 
-PROJECT_DIR = .
-BUILD_DIR   = $(PROJECT_DIR)/build#Executable File
-SRC_DIR     = $(PROJECT_DIR)/src#.c Files
-OBJ_DIR     = $(PROJECT_DIR)/obj#.o Files
-H_DIR       = $(PROJECT_DIR)/include#.h Files
-TEST_DIR    = $(PROJECT_DIR)/test#test Files
+DS_DIR =.
+DS_SRC_DIR   = $(DS_DIR)/src#DS .c Files
+DS_INC_DIR   = $(DS_DIR)/include#DS .h Files
+DS_OBJ_DIR   = $(DS_DIR)/obj#DS .o Files
+DS_TEST_DIR  = $(DS_DIR)/test#DS test Files
+DS_BUILD_DIR = $(DS_DIR)/build#Executable File
+DS_LIB_DIR   = $(DS_DIR)/lib#Libraries
 
 # Compiler:
 CC = gcc
-CFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
+GDFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
+GCFLAGS = -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3
+LDFLAGS = -shared 
+PICFLAG = -fPIC
+RPATH = -Wl,-rpath,"./lib"
 
 #Output File Name
 TARGET = output
 
 REQ_OBJECTS =\
-$(OBJ_DIR)/doublelist.o\
-$(OBJ_DIR)/sortedlist.o\
-$(OBJ_DIR)/priorityq.o\
+$(DS_OBJ_DIR)/doublelist.o\
 
 REQ_SRC =\
-$(SRC_DIR)/doublelist/doublelist.c\
-$(SRC_DIR)/sortedlist/sortedlist.c\
-$(SRC_DIR)/priorityq/priorityq.c\
+$(DS_SRC_DIR)/doublelist/doublelist.c\
+
+REQ_LIB =\
+$(DS_LIB_DIR)/libdoublelist.so\
+
+LIB_NAME = doublelist
+
 
 # Combine Requiers Objects: 
 OBJECTS = $(REQ_OBJECTS)
@@ -31,8 +38,15 @@ DEPENDENCIES = $(OBJECTS:%.o=%.d)
 
 # Build object: 
 define COMPILE_OBJECT
-@echo "\n\033[1;34mBuilding $@: \033[0m"
-@$(CC) $(CFLAGS) -c $< -I$(SRC_DIR) -I$(H_DIR) -o $@
+@echo "\n\033[1;34mBuilding Objects $@: \033[0m"
+@$(CC) $(GDFLAGS) $(PICFLAG) -c $< $(DS_SRC_DIR) -I$(DS_INC_DIR) -o $@
+@echo "\033[0;32mDone. \033[0m"
+endef
+
+# Build object: 
+define COMPILE_SHARED_LIB
+@echo "\n\033[1;34mBuilding Shared Libraries $@: \033[0m"
+@$(CC) $(LDFLAGS) $< -o $@
 @echo "\033[0;32mDone. \033[0m"
 endef
 
@@ -43,21 +57,18 @@ all: directories output
 -include $(DEPENDENCIES)
 
 directories:
-	@mkdir -p $(BUILD_DIR) $(OBJ_DIR)
+	@mkdir -p $(DS_BUILD_DIR) $(DS_OBJ_DIR)
 
-output: $(REQ_OBJECTS)
+output: $(REQ_OBJECTS) $(REQ_LIB)
 	@echo "Compiling & linking $@..."
-	@$(CC) $(CFLAGS) $(TEST_DIR)/priorityq_test.c $(REQ_SRC) -I$(H_DIR) -o $(BUILD_DIR)/$(TARGET)
+	@$(CC) $(GDFLAGS) $(DS_TEST_DIR)/doublelist_test.c -l$(LIB_NAME) -L./$(DS_LIB_DIR) $(RPATH) -I$(DS_INC_DIR) -o $(DS_BUILD_DIR)/$(TARGET)
 	@echo "Compilation Successful!"
 
-$(OBJ_DIR)/doublelist.o: $(SRC_DIR)/doublelist/doublelist.c
+$(DS_OBJ_DIR)/doublelist.o: $(DS_SRC_DIR)/doublelist/doublelist.c $(DS_INC_DIR)/doublelist.h
 	$(COMPILE_OBJECT)
 
-$(OBJ_DIR)/sortedlist.o: $(SRC_DIR)/sortedlist/sortedlist.c
-	$(COMPILE_OBJECT)
-
-$(OBJ_DIR)/priorityq.o: $(SRC_DIR)/priorityq/priorityq.c
-	$(COMPILE_OBJECT)
+$(DS_LIB_DIR)/libdoublelist.so: $(DS_OBJ_DIR)/doublelist.o
+	$(COMPILE_SHARED_LIB)
 
 clean: 
 	@echo "\n\033[1;34mRemoving All Build files: \033[0m"
