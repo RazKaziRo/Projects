@@ -10,10 +10,10 @@
 #include <assert.h> /*assert()*/
 #include <unistd.h> /*sleep()*/
 
-#include "../../include/scheduler.h"  	   /*Scheduler API Functions*/
-#include "../../include/uid.h"			   /*UID API Functions*/
-#include "../../include/task.h"		 	   /*Task API Functions*/
-#include "../../../ds/include/priorityq.h" /*Priority Queue API Functions*/
+#include "scheduler.h"  	   /*Scheduler API Functions*/
+#include "uid.h"			   /*UID API Functions*/
+#include "task.h"		 	   /*Task API Functions*/
+#include "priorityq.h" /*Priority Queue API Functions*/
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 #define UNUSED(x) (void)(x)

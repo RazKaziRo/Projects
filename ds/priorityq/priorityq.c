@@ -72,33 +72,33 @@ void *PQDequeue(pq_t *pq)
 {	
 	assert(NULL != pq);
 
-	return(SLLPopFront(pq->queue));
+	return(SortLLPopFront(pq->queue));
 }
 
 int PQEnqueue(pq_t *pq, void *data)
 {
 	assert(NULL != pq);
 
-	return !(SLLIsSameIter(SortLLInsert(pq->queue, data),SLLEnd(pq->queue)));
+	return !(SortLLIsSameIter(SortLLInsert(pq->queue, data),SortLLEnd(pq->queue)));
 }
 
 void *PQPeek(const pq_t *pq)
 {	
 	assert(NULL != pq);
 
-	return (SLLGetData(SLLBegin(pq->queue)));
+	return (SortLLGetData(SortLLBegin(pq->queue)));
 }
 
 size_t PQSize(const pq_t *pq)
 {	
-	return (SLLSize(pq->queue));
+	return (SortLLSize(pq->queue));
 }
 
 int PQIsEmpty(const pq_t *pq)
 {	
 	assert(NULL != pq);
 
-	return (SLLIsEmpty(pq->queue));	
+	return (SortLLIsEmpty(pq->queue));	
 }
 
 void PQClear(pq_t *pq)
@@ -119,10 +119,10 @@ void *PQErase(pq_t *pq, match_func m_ptr, const void *data)
 	assert(NULL != pq);
 	assert(NULL != m_ptr);
 
-	it = SLLFindBy(pq->queue, SLLBegin(pq->queue), SLLEnd(pq->queue), m_ptr, data);
-	returned_data = SLLGetData(it);
+	it = SortLLFindBy(pq->queue, SortLLBegin(pq->queue), SortLLEnd(pq->queue), m_ptr, data);
+	returned_data = SortLLGetData(it);
 
-	if (!SLLIsSameIter(it,SLLEnd(pq->queue)))
+	if (!SortLLIsSameIter(it,SortLLEnd(pq->queue)))
 	{
 		SortLLRemove(it);
 	}

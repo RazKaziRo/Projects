@@ -10,7 +10,7 @@
 #include <unistd.h>	   /*getpid()*/
 #include <sys/types.h> /*pid_t()*/
 
-#include "../../include/uid.h" /*UID Functions()*/
+#include "uid.h" /*UID Functions()*/
 
 ilrd_uid_t UIDCreate()
 {	

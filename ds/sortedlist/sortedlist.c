@@ -40,7 +40,7 @@ void SortLLDestroy(sll_t *sll)
 	FREE(sll);
 }
 
-static sll_iterator_t SLLRequierdIterator(sll_t *sll, 
+static sll_iterator_t SortLLRequierdIterator(sll_t *sll, 
 	sll_iterator_t start, sll_iterator_t end, void *data)
 {
 	sll_iterator_t sll_runner_it;
@@ -50,16 +50,16 @@ static sll_iterator_t SLLRequierdIterator(sll_t *sll,
 
 	sll_runner_it = start;
 
-	while ((!SLLIsEmpty(sll)) && (!SLLIsSameIter(sll_runner_it, end)) && 
-		(0 == sll-> cmp_func(SLLGetData(sll_runner_it),data, sll->param)))
+	while ((!SortLLIsEmpty(sll)) && (!SortLLIsSameIter(sll_runner_it, end)) && 
+		(0 == sll-> cmp_func(SortLLGetData(sll_runner_it),data, sll->param)))
 	{
-		sll_runner_it = SLLNext(sll_runner_it);
+		sll_runner_it = SortLLNext(sll_runner_it);
 	}
 
 	return sll_runner_it;
 }
 
-sll_iterator_t SLLFind(const sll_t *sll, const void *data,
+sll_iterator_t SortLLFind(const sll_t *sll, const void *data,
  sll_iterator_t start, sll_iterator_t end)
 {
 	sll_iterator_t sll_returned_iterator;
@@ -68,12 +68,12 @@ sll_iterator_t SLLFind(const sll_t *sll, const void *data,
 	assert(NULL != data);
 
 	sll_returned_iterator = 
-	SLLRequierdIterator((sll_t *)sll, start, end, (void *)data);
+	SortLLRequierdIterator((sll_t *)sll, start, end, (void *)data);
 	
 	sll_returned_iterator.current = DLLGetPrev(sll_returned_iterator.current);
 
-	if (!SLLIsSameIter(sll_returned_iterator,SLLPrev(SLLBegin(sll))) 
-		&& (0 == sll->cmp_func(data,SLLGetData(sll_returned_iterator),sll->param)))
+	if (!SortLLIsSameIter(sll_returned_iterator,SortLLPrev(SortLLBegin(sll))) 
+		&& (0 == sll->cmp_func(data,SortLLGetData(sll_returned_iterator),sll->param)))
 	{
 		return sll_returned_iterator;
 	}
@@ -81,7 +81,7 @@ sll_iterator_t SLLFind(const sll_t *sll, const void *data,
 	return end;
 }
 
-sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start,
+sll_iterator_t SortLLFindBy(const sll_t *sll, sll_iterator_t start,
  sll_iterator_t end, match_func_ptr m_ptr ,const void *data)
 {
 	sll_iterator_t sll_returned_iterator;
@@ -97,7 +97,7 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start,
 	return (sll_returned_iterator);
 }
 
-int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr,
+int SortLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr,
  void *ap)
 {	
 	return (DLLForEach(start.current, end.current, a_ptr, ap));
@@ -111,7 +111,7 @@ sll_iterator_t SortLLInsert(sll_t *sll, void *data)
 	assert(NULL != data);
 
 	sll_returned_iterator = 
-	SLLRequierdIterator(sll,SLLBegin(sll),SLLEnd(sll), data);
+	SortLLRequierdIterator(sll,SortLLBegin(sll),SortLLEnd(sll), data);
 
 	sll_returned_iterator.current = 
 	DLLInsert(sll->list,sll_returned_iterator.current, data);
@@ -119,21 +119,21 @@ sll_iterator_t SortLLInsert(sll_t *sll, void *data)
 	return sll_returned_iterator;
 }
 
-int SLLIsEmpty(const sll_t *sll)
+int SortLLIsEmpty(const sll_t *sll)
 {	
 	assert(NULL != sll);
 
 	return (DLLIsEmpty(sll->list));
 }
 
-size_t SLLSize(const sll_t *sll)
+size_t SortLLSize(const sll_t *sll)
 {	
 	assert(NULL != sll);
 
 	return (DLLSize(sll->list));
 }
 
-sll_iterator_t SLLBegin(const sll_t *sll)
+sll_iterator_t SortLLBegin(const sll_t *sll)
 {
 	sll_iterator_t sll_it;
 
@@ -144,7 +144,7 @@ sll_iterator_t SLLBegin(const sll_t *sll)
 	return (sll_it);
 }
 
-sll_iterator_t SLLEnd(const sll_t *sll)
+sll_iterator_t SortLLEnd(const sll_t *sll)
 {
 	sll_iterator_t sll_it;
 
@@ -155,14 +155,14 @@ sll_iterator_t SLLEnd(const sll_t *sll)
 	return (sll_it);
 }
 
-sll_iterator_t SLLNext(sll_iterator_t sll_it)
+sll_iterator_t SortLLNext(sll_iterator_t sll_it)
 {	
 	sll_it.current = DLLGetNext(sll_it.current);
 
 	return (sll_it);
 }
 
-sll_iterator_t SLLPrev(sll_iterator_t sll_it)
+sll_iterator_t SortLLPrev(sll_iterator_t sll_it)
 {
 	sll_it.current = DLLGetPrev(sll_it.current);
 
@@ -176,27 +176,27 @@ sll_iterator_t SortLLRemove(sll_iterator_t sll_it)
 	return (sll_it);
 }
 
-void *SLLGetData(sll_iterator_t sll_it)
+void *SortLLGetData(sll_iterator_t sll_it)
 {
 	return (DLLGetData(sll_it.current));
 }
 
-int SLLIsSameIter(const sll_iterator_t sll_it1, const sll_iterator_t sll_it2)
+int SortLLIsSameIter(const sll_iterator_t sll_it1, const sll_iterator_t sll_it2)
 {
 	return (DLLIsSameIter(sll_it1.current, sll_it2.current));
 }
 
-void *SLLPopBack(sll_t *sll)
+void *SortLLPopBack(sll_t *sll)
 {
 	return (DLLPopBack(sll->list));
 }
 
-void *SLLPopFront(sll_t *sll)
+void *SortLLPopFront(sll_t *sll)
 {
 	return (DLLPopFront(sll->list));
 }
 
-void SLLMerge(sll_t *dest, sll_t *src)
+void SortLLMerge(sll_t *dest, sll_t *src)
 {	
 	sll_iterator_t sll_src_start_runner, sll_src_end_runner, sll_src_end,
 	 sll_dest_end, sll_dest_start, sll_dest_where_runner;
@@ -204,29 +204,29 @@ void SLLMerge(sll_t *dest, sll_t *src)
 	assert(NULL != src);
 	assert(NULL != dest);
 
-	sll_src_start_runner = SLLBegin(src);
-	sll_dest_start = SLLBegin(dest);
-	sll_dest_end = SLLEnd(dest);
-	sll_src_end = SLLEnd(src);
+	sll_src_start_runner = SortLLBegin(src);
+	sll_dest_start = SortLLBegin(dest);
+	sll_dest_end = SortLLEnd(dest);
+	sll_src_end = SortLLEnd(src);
 
-	while (!SLLIsSameIter(sll_src_start_runner, sll_src_end))
+	while (!SortLLIsSameIter(sll_src_start_runner, sll_src_end))
 	{	
 		sll_dest_where_runner = 
-		SLLRequierdIterator(dest,sll_dest_start,sll_dest_end, 
-			SLLGetData(sll_src_start_runner));
+		SortLLRequierdIterator(dest,sll_dest_start,sll_dest_end, 
+			SortLLGetData(sll_src_start_runner));
 
 		sll_dest_start = sll_dest_where_runner;
-		sll_dest_where_runner = SLLPrev(sll_dest_where_runner);
+		sll_dest_where_runner = SortLLPrev(sll_dest_where_runner);
 
-		if (SLLIsSameIter(sll_dest_start, sll_dest_end))
+		if (SortLLIsSameIter(sll_dest_start, sll_dest_end))
 		{
-			sll_src_end_runner = SLLNext(sll_src_end_runner);
+			sll_src_end_runner = SortLLNext(sll_src_end_runner);
 		}
 		else
 		{
 			sll_src_end_runner = 
-			SLLRequierdIterator(src,sll_src_start_runner, sll_src_end, 
-				SLLGetData(sll_dest_start));
+			SortLLRequierdIterator(src,sll_src_start_runner, sll_src_end, 
+				SortLLGetData(sll_dest_start));
 		}
 
 		sll_dest_where_runner.current =

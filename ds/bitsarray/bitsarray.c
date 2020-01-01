@@ -8,7 +8,7 @@
 
 #include <assert.h> 	/*assert()*/
 
-#include "bits_array.h" /*bits arr functions ()*/
+#include "bitsarray.h" /*bits arr functions ()*/
 
 #define  M0   0x0000000000000000 /* binary: 0000...*/
 #define  M1   0x5555555555555555 /* binary: 0101 0101...*/

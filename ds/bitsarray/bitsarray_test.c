@@ -9,7 +9,7 @@
 #include <stdlib.h> /*malloc()*/
 #include <string.h> /*strcmp()*/
 
-#include "bits_array.h"
+#include "bitsarray.h"
 
 #define RUN_TEST(test, errmsg)\
 							{\

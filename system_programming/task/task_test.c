@@ -22,6 +22,7 @@
 int ToDo(void *data)
 {
 	printf("Hello World \n");
+	UNUSED(data);
 	return 0;
 }
 

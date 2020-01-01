@@ -9,7 +9,7 @@
 #include <assert.h> /*assert()*/
 #include <stdlib.h> /*malloc(), free()*/
 
-#include "../../include/task.h" /*Task API Functions()*/
+#include "task.h" /*Task API Functions()*/
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 

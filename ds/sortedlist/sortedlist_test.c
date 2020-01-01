@@ -7,8 +7,9 @@
  */
 
 #include <stdlib.h> /*free()*/
+#include <stdio.h> /*printf()*/
 
-#include "sortedlist.h" /* Queue API Functions*/
+#include "sortedlist.h"
 
 #define RUN_TEST(test, errmsg)\
 							{\
@@ -46,48 +47,48 @@ static int AddNum(void *iterator_data, void *ap)
 void TestSortLLCreate()
 {	
 	sll_t *newSll = SortLLCreate (&isBefore, NULL);
-	RUN_TEST(1 == SLLIsEmpty(newSll), "FAIL SLL IS EMPTY(1)");
+	RUN_TEST(1 == SortLLIsEmpty(newSll), "FAIL SLL IS EMPTY(1)");
 	SortLLDestroy(newSll);
 	printf("\n");
 }
 
-void TestSLLIsEmpty()
+void TestSortLLIsEmpty()
 {
 	sll_t *newSll = SortLLCreate (&isBefore, NULL);
-	RUN_TEST(1 == SLLIsEmpty(newSll), "FAIL SLL IS EMPTY(1)");
+	RUN_TEST(1 == SortLLIsEmpty(newSll), "FAIL SLL IS EMPTY(1)");
 
 	SortLLDestroy(newSll);
 	printf("\n");
 }
 
-void TestSLLSize()
+void TestSortLLSize()
 {
 	sll_t *newSll = SortLLCreate (&isBefore, NULL);
-	RUN_TEST(0 == SLLSize(newSll), "FAIL SLL IS EMPTY(0)");
+	RUN_TEST(0 == SortLLSize(newSll), "FAIL SLL IS EMPTY(0)");
 
 	SortLLDestroy(newSll);
 	printf("\n");
 }
 
-void TestSLLBegin()
+void TestSortLLBegin()
 {
 	sll_t *newSll = SortLLCreate (&isBefore, NULL);
 	sll_iterator_t newSllIt;
-	newSllIt = SLLBegin(newSll);
+	newSllIt = SortLLBegin(newSll);
 
-	RUN_TEST((SLLEnd(newSll).current) == (newSllIt.current), "FAIL SLL IS EMPTY(0)");
+	RUN_TEST((SortLLEnd(newSll).current) == (newSllIt.current), "FAIL SLL IS EMPTY(0)");
 
 	SortLLDestroy(newSll);
 	printf("\n");
 }
 
-void TestSLLEnd()
+void TestSortLLEnd()
 {
 	sll_t *newSll = SortLLCreate(&isBefore, NULL);
 	sll_iterator_t newSllIt;
-	newSllIt = SLLEnd(newSll);
+	newSllIt = SortLLEnd(newSll);
 
-	RUN_TEST((SLLEnd(newSll).current) == (newSllIt.current), "FAIL SLL IS EMPTY(0)");
+	RUN_TEST((SortLLEnd(newSll).current) == (newSllIt.current), "FAIL SLL IS EMPTY(0)");
 
 	SortLLDestroy(newSll);
 	printf("\n");
@@ -101,32 +102,32 @@ void TestSortLLInsert()
 
 	sll_t *newSll = SortLLCreate(&isBefore, NULL);
 	sll_iterator_t newSllIt;
-	newSllIt = SLLBegin(newSll);
+	newSllIt = SortLLBegin(newSll);
 
-	RUN_TEST (0 == SLLSize(newSll), "FAIL: WRONG SLL SIZE(0)");
+	RUN_TEST (0 == SortLLSize(newSll), "FAIL: WRONG SLL SIZE(0)");
 
 	newSllIt = SortLLInsert(newSll,&a);
-	RUN_TEST (1 == SLLSize(newSll), "FAIL: WRONG SLL SIZE(1)");
-	RUN_TEST(a == *(int *)SLLGetData(newSllIt), "FAIL: Wrong Data (a)" );
+	RUN_TEST (1 == SortLLSize(newSll), "FAIL: WRONG SLL SIZE(1)");
+	RUN_TEST(a == *(int *)SortLLGetData(newSllIt), "FAIL: Wrong Data (a)" );
 	
 	newSllIt = SortLLInsert(newSll,&b);
-	RUN_TEST (2 == SLLSize(newSll), "FAIL: WRONG SLL SIZE(2)");
-	RUN_TEST(b == *(int *)SLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
+	RUN_TEST (2 == SortLLSize(newSll), "FAIL: WRONG SLL SIZE(2)");
+	RUN_TEST(b == *(int *)SortLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
 
 	newSllIt = SortLLInsert(newSll,&c);
-	RUN_TEST (3 == SLLSize(newSll), "FAIL: WRONG SLL SIZE(3)");
-	newSllIt = SLLBegin(newSll);
-	RUN_TEST(a == *(int *)SLLGetData(newSllIt), "FAIL: Wrong Data (a)" );
-	newSllIt = SLLNext(newSllIt);
-	RUN_TEST(c == *(int *)SLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
-	newSllIt = SLLNext(newSllIt);
-	RUN_TEST(b == *(int *)SLLGetData(newSllIt), "FAIL: Wrong Data (c)" );
+	RUN_TEST (3 == SortLLSize(newSll), "FAIL: WRONG SLL SIZE(3)");
+	newSllIt = SortLLBegin(newSll);
+	RUN_TEST(a == *(int *)SortLLGetData(newSllIt), "FAIL: Wrong Data (a)" );
+	newSllIt = SortLLNext(newSllIt);
+	RUN_TEST(c == *(int *)SortLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
+	newSllIt = SortLLNext(newSllIt);
+	RUN_TEST(b == *(int *)SortLLGetData(newSllIt), "FAIL: Wrong Data (c)" );
 
 	SortLLDestroy(newSll);
 	printf("\n");
 }
 
-void TestSLLFind()
+void TestSortLLFind()
 {	
 	int a = 5;
 	int b = 20;
@@ -142,23 +143,23 @@ void TestSLLFind()
 	newSllIt = SortLLInsert(newSll,&a);
 	newSllIt = SortLLInsert(newSll,&b);
 	newSllIt = SortLLInsert(newSll,&c);
-	newSllIt = SLLBegin(newSll);
+	newSllIt = SortLLBegin(newSll);
 
-	newSllIt = SLLFind(newSll, &b, SLLBegin(newSll), SLLEnd(newSll));
-	RUN_TEST(b == *(int *)SLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
-	newSllItStart = SLLBegin(newSll);
-	newSllItEnd = SLLEnd(newSll);
+	newSllIt = SortLLFind(newSll, &b, SortLLBegin(newSll), SortLLEnd(newSll));
+	RUN_TEST(b == *(int *)SortLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
+	newSllItStart = SortLLBegin(newSll);
+	newSllItEnd = SortLLEnd(newSll);
 
-	newSllIt = SLLFind(newSll, &d, newSllItStart, newSllItEnd);
-	RUN_TEST(1 == SLLIsSameIter(SLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
-	newSllIt = SLLFind(newSll, &e, newSllItStart, newSllItEnd);
-	RUN_TEST(1 == SLLIsSameIter(SLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
+	newSllIt = SortLLFind(newSll, &d, newSllItStart, newSllItEnd);
+	RUN_TEST(1 == SortLLIsSameIter(SortLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
+	newSllIt = SortLLFind(newSll, &e, newSllItStart, newSllItEnd);
+	RUN_TEST(1 == SortLLIsSameIter(SortLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
 
 	SortLLDestroy(newSll);
 	printf("\n");
 }	
 
-void TestSLLFindBy()
+void TestSortLLFindBy()
 {
 	int a = 5;
 	int b = 20;
@@ -175,21 +176,21 @@ void TestSLLFindBy()
 	newSllIt = SortLLInsert(newSll,&b);
 	newSllIt = SortLLInsert(newSll,&c);
 
-	newSllItStart = SLLBegin(newSll);
-	newSllItEnd = SLLEnd(newSll);
+	newSllItStart = SortLLBegin(newSll);
+	newSllItEnd = SortLLEnd(newSll);
 
-	newSllIt = SLLFindBy(newSll, newSllItStart, newSllItEnd, &FindData, &b);
-	RUN_TEST(b == *(int *)SLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
-	newSllIt = SLLFindBy(newSll, newSllItStart, newSllItEnd, &FindData, &d);
-	RUN_TEST(1 == SLLIsSameIter(SLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
-	newSllIt = SLLFindBy(newSll, newSllItStart, newSllItEnd, &FindData, &e);
-	RUN_TEST(1 == SLLIsSameIter(SLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
+	newSllIt = SortLLFindBy(newSll, newSllItStart, newSllItEnd, &FindData, &b);
+	RUN_TEST(b == *(int *)SortLLGetData(newSllIt), "FAIL: Wrong Data (b)" );
+	newSllIt = SortLLFindBy(newSll, newSllItStart, newSllItEnd, &FindData, &d);
+	RUN_TEST(1 == SortLLIsSameIter(SortLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
+	newSllIt = SortLLFindBy(newSll, newSllItStart, newSllItEnd, &FindData, &e);
+	RUN_TEST(1 == SortLLIsSameIter(SortLLEnd(newSll), newSllIt), "FAIL: WRONG COMPARE (it = end)" );
 
 	SortLLDestroy(newSll);
 	printf("\n");
 }
 
-void TestSLLForEach()
+void TestSortLLForEach()
 {
 	int a = 5;
 	int b = 20;
@@ -204,19 +205,19 @@ void TestSLLForEach()
 	SortLLInsert(newSll,&b);
 	SortLLInsert(newSll,&c);
 
-	newSllItStart = SLLBegin(newSll);
-	newSllItEnd = SLLEnd(newSll);
+	newSllItStart = SortLLBegin(newSll);
+	newSllItEnd = SortLLEnd(newSll);
 
-	RUN_TEST(0 == SLLForEach(newSllItStart, newSllItEnd, &AddNum, &d), "FAIL: add num For Each");
-	RUN_TEST(6 == *(int *)SLLGetData(newSllItStart), "FAIL: Wrong Data (6)" );
-	RUN_TEST(11 == *(int *)SLLGetData(SLLNext(newSllItStart)), "FAIL: Wrong Data (11)" );
-	RUN_TEST(21 == *(int *)SLLGetData(SLLNext((SLLNext(newSllItStart)))), "FAIL: Wrong Data (21)" );
+	RUN_TEST(0 == SortLLForEach(newSllItStart, newSllItEnd, &AddNum, &d), "FAIL: add num For Each");
+	RUN_TEST(6 == *(int *)SortLLGetData(newSllItStart), "FAIL: Wrong Data (6)" );
+	RUN_TEST(11 == *(int *)SortLLGetData(SortLLNext(newSllItStart)), "FAIL: Wrong Data (11)" );
+	RUN_TEST(21 == *(int *)SortLLGetData(SortLLNext((SortLLNext(newSllItStart)))), "FAIL: Wrong Data (21)" );
 
 	SortLLDestroy(newSll);
 	printf("\n");
 }
 
-void TestSLLMerge()
+void TestSortLLMerge()
 {
 	int a = 3;
 	int b = 5;
@@ -242,11 +243,11 @@ void TestSLLMerge()
 	SortLLInsert(newSll2,&g);
 	SortLLInsert(newSll2,&h);
 
-	SLLMerge(newSll1, newSll2);
-	SLLForEach(SLLBegin(newSll1),SLLEnd(newSll1),&AddNum, &a);
+	SortLLMerge(newSll1, newSll2);
+	SortLLForEach(SortLLBegin(newSll1),SortLLEnd(newSll1),&AddNum, &a);
 
-	RUN_TEST(8 == SLLSize(newSll1), "FAIL WRONG SIZE (8)");
-	RUN_TEST(f == *(int *)SLLGetData(SLLBegin(newSll1)), "FAIL: Wrong Data (f)");
+	RUN_TEST(8 == SortLLSize(newSll1), "FAIL WRONG SIZE (8)");
+	RUN_TEST(f == *(int *)SortLLGetData(SortLLBegin(newSll1)), "FAIL: Wrong Data (f)");
 
 	SortLLDestroy(newSll1);
 	SortLLDestroy(newSll2);
@@ -261,31 +262,31 @@ int main(int argc, char const *argv[])
 	TestSortLLCreate();
 
 	printf("TestSLLIsEmpty()\n");
-	TestSLLIsEmpty();
+	TestSortLLIsEmpty();
 
 	printf("TestSLLSize()\n");
-	TestSLLSize();
+	TestSortLLSize();
 
 	printf("TestSLLBegin()\n");
-	TestSLLBegin();
+	TestSortLLBegin();
 
 	printf("TestSLLEnd()\n");
-	TestSLLEnd();
+	TestSortLLEnd();
 
 	printf("TestSortLLInsert()\n");
 	TestSortLLInsert();
 
 	printf("TestSLLFind()\n");
-	TestSLLFind();
+	TestSortLLFind();
 
 	printf("TestSLLFindBy()\n");
-	TestSLLFindBy();
+	TestSortLLFindBy();
 
 	printf("TestSLLForEach()\n");
-	TestSLLForEach();
+	TestSortLLForEach();
 
 	printf("TestSLLMerge()\n");
-	TestSLLMerge();
+	TestSortLLMerge();
 
 	UNUSED(argc);
 	UNUSED(argv);

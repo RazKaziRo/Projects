@@ -6,9 +6,9 @@
  * Reviewer: Yonatan Zaken
  */
 
-#include <stdlib.h>		 /*free(), malloc()*/
-#include <assert.h> 	 /*assert()*/
-#include "doublelist.h" /*DLL API Functions()*/
+#include <stdlib.h>	/*free(), malloc()*/
+#include <assert.h> 	/*assert()*/
+#include "doublelist.h" /*DLL API Functins()*/
 
 #define UNUSED(x) (void)(x)
 #define FREE(ptr) {free(ptr); ptr=NULL;}
@@ -42,7 +42,7 @@ dll_t *DLLCreate()
 
 		return newDll;	
 	}
-
+	
 	return newDll;	
 }
 
