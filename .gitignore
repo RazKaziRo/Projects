@@ -6,7 +6,7 @@
 !.gitignore
 !**.md
 !**.txt
-!**.myfuncs
+!**.myalias
 !makefile
 !.mk
 !.o
