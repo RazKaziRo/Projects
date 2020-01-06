@@ -6,8 +6,9 @@
 
 #define UNUSED(x) (void)(x)
 #define FREE(ptr) free(ptr); ptr=NULL;
-#define MAX_ARRAY_NUM 50000
+#define MAX_ARRAY_NUM 100000
 #define MIN_ARRAY_NUM (MAX_ARRAY_NUM/2)
+#define BUCKET 4
 
 static clock_t start, end;
 static double cpu_time_used;
@@ -21,7 +22,7 @@ static void InitArray()
     srand(0);
     for (i = 0; i < MAX_ARRAY_NUM; ++i) 
     {
-        g_arr[i] = rand() % MAX_ARRAY_NUM - MIN_ARRAY_NUM;
+        g_arr[i] = rand() % MAX_ARRAY_NUM;
     }
 }
 
@@ -33,9 +34,10 @@ void TestBubbleSort()
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    /*printf("BubbleSort() Sorted array: \n");
-    PrintArray(g_arr, MAX_ARRAY_NUM);*/
-
+/*
+    printf("BubbleSort() Sorted array: \n");
+    PrintArray(g_arr, MAX_ARRAY_NUM);
+*/
     printf("BubbleSort() took %f seconds to execute \n", cpu_time_used); 
 
     printf("\n"); 
@@ -117,18 +119,40 @@ void  TestCountingSort()
     FREE(res_arr);
 }
 
+void TestRadixSort()
+{   
+
+    InitArray();   
+    
+    start = clock(); 
+    RadixSort((unsigned int *)g_arr, MAX_ARRAY_NUM, BUCKET);
+    end = clock();
+
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    /*
+    printf("RadixSort() Sorted array: \n");
+    PrintArray(g_arr, MAX_ARRAY_NUM);
+    */
+    printf("RadixSort() took %f seconds to execute \n", cpu_time_used); 
+
+    printf("\n"); 
+}
+
 int main(int argc, char const *argv[])
 {
 
+/*
     TestBubbleSort();
    
     TestBubbleSortBreak();
-  
-    TestInsertionSort();
 
     TestSelectionSort();
 
+    TestInsertionSort();
+
     TestCountingSort();
+*/
+    TestRadixSort();
 
     UNUSED(argv);
     UNUSED(argc);
