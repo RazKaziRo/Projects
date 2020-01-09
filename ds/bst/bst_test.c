@@ -3,8 +3,9 @@
  * Purpose: Answares for DS - Binary Search Tree.
  * Date: 08.01.2020
  * Language: C
- * Reviewer: 
+ * Reviewer: Guy Cohen Zedek
  */
+
 #include <stdio.h> /*printf()*/
 
 #include "bst.h"
@@ -28,6 +29,13 @@ static int DataCmp(const void *user_data, const void *node_data, void *param)
 {	
 	UNUSED(param);
 	return (*(int *)user_data > *(int *)node_data ? 1 : 0);
+}
+
+static int AddIntToNode(void *data, void *param)
+{
+	*(int *)data += *(int *)param;
+	return 0;
+
 }
 
 void TestBSTCreate()
@@ -66,6 +74,7 @@ void TestBSTInsert()
 	new_it = BSTNext(new_it); /*15*/
 	new_it = BSTNext(new_it); /*20*/
 	RUN_TEST(b == *(int *)(BSTGetData(new_it)), "FAIL: DATA IS (b)");
+
 	BSTDestroy(new_tree);
 
 	printf("\n");
@@ -91,6 +100,9 @@ void TestBSTPrev()
 	new_it = BSTNext(new_it); /*20*/
 
 	RUN_TEST(c == *(int *)BSTGetData(BSTPrev(new_it)),"FAIL: WRONG DATA (c)");
+	
+	new_it = BSTBegin(new_tree);
+	RUN_TEST(BSTIsSameItr((BSTPrev(new_it)), BSTEnd(new_tree)),"FAIL: PREV OF BEGIN");
 	BSTDestroy(new_tree);
 
 	printf("\n");
@@ -197,25 +209,52 @@ void TestBSTFind()
 	int b = 20;
 	int c = 15;
 	int d = 9;
+	int e = 0;
 
 	printf("TestBSTFind()\n");
 
 	BSTInsert(new_tree, &a);
 	BSTInsert(new_tree, &b);
 	BSTInsert(new_tree, &c);
+	BSTInsert(new_tree, &d);
 
 	new_it = BSTFind(new_tree, &b);
 	RUN_TEST(b == *(int *)(BSTGetData(new_it)), "FAIL: DATA IS (b)");
 	new_it = BSTFind(new_tree, &d);
+	RUN_TEST(d == *(int *)(BSTGetData(new_it)), "FAIL: DATA IS (d)");
+	new_it = BSTFind(new_tree, &e);
 	RUN_TEST(1 == BSTIsSameItr(new_it,BSTEnd(new_tree)), "FAIL: NO FIND RETURN END");
-
-
 
 	BSTDestroy(new_tree);
 
 	printf("\n");
+}
 
+void TestBSTForeach()
+{
+	bst_t *new_tree = BSTCreate(&DataCmp, NULL);
+	bst_itr_t start_it = NULL;
+	bst_itr_t end_it = NULL;
 
+	int a = 10;
+	int b = 20;
+	int c = 15;
+	int int_to_add = 1;
+
+	printf("TestBSTForeach()\n");
+
+	BSTInsert(new_tree, &a);
+	BSTInsert(new_tree, &b);
+	BSTInsert(new_tree, &c);
+
+	start_it = BSTBegin(new_tree);
+	end_it = BSTEnd(new_tree);
+
+	
+	RUN_TEST(0 == (BSTForeach(start_it, end_it, &AddIntToNode, &int_to_add)), "FAIL:action func failed");
+	RUN_TEST(11 == *(int *)(BSTGetData(start_it)), "FAIL: DATA NOT int_to_add (a)");
+
+	BSTDestroy(new_tree);
 }
 
 
@@ -235,6 +274,8 @@ int main(int argc, char const *argv[])
 	TestBSTSize();
 
 	TestBSTFind();
+
+	TestBSTForeach();
 
 	UNUSED(argc);
 	UNUSED(argv);

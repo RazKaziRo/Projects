@@ -7,7 +7,7 @@ typedef struct BSTree bst_t;
 typedef struct BSTNode *bst_itr_t;
 
 typedef int (*compare_func_t)(const void *data1, const void *data2, void *param);
-typedef int (*action_func_ptr)(void *data1, void *data2);
+typedef int (*action_func_ptr)(void *data1, void *param);
 
 /*********************************************** 
     Returns a pointer to the BST data structure
@@ -68,7 +68,7 @@ int BSTIsEmpty(const bst_t *tree); /*DONE*/
 	Returns the data it contains
 	complexity: O(1)                       
  ***********************************************/
-void *BSTGetData(const bst_itr_t it);/*DONE*/
+void *BSTGetData(bst_itr_t it);/*DONE*/
 
 /***************************************************** 
 	Gets pointer to the tree
@@ -103,6 +103,6 @@ bst_itr_t BSTPrev(bst_itr_t it);/*DONE*/
 	Returns 1 if they are equal, otherwise: 0
 	Complexity: O(1)
  *******************************************************/
-int BSTIsSameItr(const bst_itr_t it1, const bst_itr_t it2);/*DONE*/
+int BSTIsSameItr(bst_itr_t it1, bst_itr_t it2);/*DONE*/
 
 #endif

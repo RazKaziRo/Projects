@@ -1,11 +1,19 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for DS - Binary Search Tree.
+ * Date: 08.01.2020
+ * Language: C
+ * Reviewer: Guy Cohen Zedek
+ */
+
 #include <stdlib.h> /*malloc()*/
+#include <assert.h> /*assert()*/
 
 #include "bst.h"
 
 #define MAGIC_NUMBER (void *)0xDEADBEEF
 #define LEFT 0
 #define RIGHT 1
-
 #define FREE(ptr) free(ptr); ptr=NULL;
 
 typedef struct BSTNode
@@ -13,7 +21,7 @@ typedef struct BSTNode
 	void *data;
 	struct BSTNode *children[2];
 	struct BSTNode *parent;
-}bst_node_t;
+} bst_node_t;
 
 struct BSTree
 {
@@ -25,7 +33,10 @@ struct BSTree
 bst_t *BSTCreate(compare_func_t cmp, void *param)
 {
 	bst_t *new_tree = (bst_t *) malloc(sizeof(bst_t));
-	if(NULL != new_tree)
+
+	assert(NULL != cmp);
+
+	if (NULL != new_tree)
 	{	
 		new_tree->dummy.data = MAGIC_NUMBER;
 		new_tree->dummy.children[LEFT] = NULL;
@@ -34,13 +45,17 @@ bst_t *BSTCreate(compare_func_t cmp, void *param)
 		new_tree->cmp = cmp;
 		new_tree->param = param;
 	}
+
 	return new_tree;
 }
 
 static bst_node_t *BSTCreateNode(void *user_data, bst_node_t *parent)
 {
 	bst_node_t *new_node = (bst_node_t *)malloc(sizeof(bst_node_t));
-	if(NULL != new_node)
+
+	assert(NULL != parent);
+
+	if (NULL != new_node)
 	{
 		new_node->data = user_data;
 		new_node->children[LEFT]= NULL;
@@ -56,65 +71,81 @@ int BSTInsert(bst_t *tree, void *user_data)
 	bst_node_t *node_runner = &tree->dummy;
 	int where = 0;
 
-	while(!BSTIsEmpty(tree) && NULL != node_runner->children[where])
+	assert(NULL != tree);
+
+	while (NULL != node_runner->children[where])
 	{
 			node_runner = node_runner->children[where];
 			where = tree->cmp(user_data, node_runner->data, tree->param);
 	}
 
 	node_runner->children[where] = BSTCreateNode(user_data, node_runner);
-	return(NULL == node_runner->children[where]);
+	
+	return (NULL == node_runner->children[where]);
 }
 
-static int BTSParentNodeSide(bst_itr_t it)
-{
-	return (BSTIsSameItr(it->parent->children[RIGHT], it));
+static int BTSParentNodeSide(bst_itr_t node_it)
+{	
+	assert(NULL != node_it);
+
+	return (node_it->parent->children[RIGHT] == node_it);
 }
 
-bst_itr_t BSTNext(bst_itr_t it)
+bst_itr_t BSTNext(bst_itr_t node_it)
 {
-	bst_node_t *node_runner = it;
+	bst_node_t *node_runner = node_it;
 
-	if (NULL != it->children[RIGHT])
+	assert(NULL != node_it);
+
+	if (NULL != node_it->children[RIGHT])
 	{
-		node_runner = it->children[RIGHT];
+		node_runner = node_it->children[RIGHT];
+		
 		while (NULL != node_runner->children[LEFT])
 		{
 			node_runner = node_runner->children[LEFT];
 		}
 	}
+
 	else
 	{
 		while (LEFT != BTSParentNodeSide(node_runner))
 		{
 			node_runner = node_runner->parent;
 		}
+
 		node_runner = node_runner->parent;
 	}
 
 	return node_runner;
 }
 
-bst_itr_t BSTPrev(bst_itr_t it)
+bst_itr_t BSTPrev(bst_itr_t node_it)
 {	
-	bst_node_t *node_runner = it;
+	bst_node_t *node_runner = node_it;
 
-	if(NULL != it->children[LEFT])
+	assert(NULL != node_it);
+
+	if (NULL != node_it->children[LEFT])
 	{
-		node_runner = it->children[LEFT];
-		while(NULL != node_runner->children[RIGHT])
+		node_runner = node_it->children[LEFT];
+		while (NULL != node_runner->children[RIGHT])
 		{
 			node_runner = node_runner->children[RIGHT];
 		}
 	}
 	else
 	{
-		while(RIGHT != BTSParentNodeSide(node_runner))
+		while ((NULL != node_runner->parent) && (node_runner == node_runner->parent->children[LEFT]))
 		{
 			node_runner = node_runner->parent;
 		}
-		node_runner = node_runner->parent;
+		if(NULL != node_runner->parent)
+		{
+			node_runner = node_runner->parent;
+		}
 	}
+
 	return node_runner;
 }
 
@@ -124,7 +155,9 @@ size_t BSTSize(const bst_t *tree)
 	bst_node_t *node_runner = BSTBegin(tree);
 	bst_node_t *end_node = BSTEnd(tree);
 
-	while(!(BSTIsSameItr(node_runner,end_node)))
+	assert(NULL != tree);
+
+	while (!(BSTIsSameItr(node_runner,end_node)))
 	{
 		++counter;
 		node_runner = BSTNext(node_runner);
@@ -135,86 +168,136 @@ size_t BSTSize(const bst_t *tree)
 
 bst_itr_t BSTBegin(const bst_t *tree)
 {	
-	bst_node_t const *node_runner = &tree->dummy;
+	bst_node_t *node_runner = (bst_node_t *)&tree->dummy;
 
-	while(NULL != node_runner->children[LEFT])
+	assert(NULL != tree);
+
+	while (NULL != node_runner->children[LEFT])
 	{
 		node_runner = node_runner->children[LEFT];
 	}
 
-	return((bst_itr_t)node_runner);
+	return node_runner;
 }
 
 bst_itr_t BSTEnd(const bst_t *tree)
-{
-	return((bst_itr_t)&tree->dummy);
+{	
+	assert(NULL != tree);
+
+	return ((bst_node_t *)&tree->dummy);
 }
 
-void *BSTGetData(const bst_itr_t bst_it)
-{
-	return(bst_it->data);
+void *BSTGetData(bst_itr_t node_it)
+{	
+	assert(NULL != node_it);
+
+	return (node_it->data);
 }
 
 
 int BSTIsEmpty(const bst_t *tree)
-{
-	return(tree->dummy.children[LEFT] == NULL);
+{	
+	assert(NULL != tree);
+
+	return (tree->dummy.children[LEFT] == NULL);
 }
 
 
-int BSTIsSameItr(const bst_itr_t it1, const bst_itr_t it2)
-{
-	return (it1 == it2);
+int BSTIsSameItr(bst_itr_t node_it_x,bst_itr_t node_it_y)
+{	
+	assert(NULL != node_it_x);
+	assert(NULL != node_it_y);
+
+	return (node_it_x == node_it_y);
 }
 
-void BSTRemove(bst_itr_t it)
+void BSTRemove(bst_itr_t node_it)
 {
-	bst_node_t *successor_node = BSTNext(it);
+	bst_node_t *successor_node = BSTNext(node_it);
 
-	if(NULL != it->children[LEFT] && NULL != it->children[RIGHT])
+	if (NULL != node_it->children[LEFT] && NULL != node_it->children[RIGHT])
 	{
-		it->parent->children[BTSParentNodeSide(it)] = it->children[RIGHT];
-		it->children[RIGHT]->parent = it->parent;
-		successor_node->children[LEFT] = it->children[LEFT];
-		it->children[LEFT]->parent = successor_node;
+		node_it->parent->children[BTSParentNodeSide(node_it)] = node_it->children[RIGHT];
+		node_it->children[RIGHT]->parent = node_it->parent;
+		successor_node->children[LEFT] = node_it->children[LEFT];
+		node_it->children[LEFT]->parent = successor_node;
 	}
-	else if (NULL != it->children[LEFT])
+	else if (NULL != node_it->children[LEFT])
 	{
-		it->children[LEFT]->parent = it->parent;
-		it->parent->children[BTSParentNodeSide(it)] = it->children[LEFT];
+		node_it->children[LEFT]->parent = node_it->parent;
+		node_it->parent->children[BTSParentNodeSide(node_it)] = node_it->children[LEFT];
 	}
-	else if (NULL != it->children[RIGHT])
+	else if (NULL != node_it->children[RIGHT])
 	{
-		it->children[RIGHT]->parent = it->parent;
-		it->parent->children[BTSParentNodeSide(it)] = it->children[RIGHT];
+		node_it->children[RIGHT]->parent = node_it->parent;
+		node_it->parent->children[BTSParentNodeSide(node_it)] = node_it->children[RIGHT];
 	}
 	else
 	{
-		it->parent->children[BTSParentNodeSide(it)] = NULL;
+		node_it->parent->children[BTSParentNodeSide(node_it)] = NULL;
 	}
 
-	FREE(it);
+	FREE(node_it);
 }
 
 void BSTDestroy(bst_t *tree)
 {
-	bst_node_t *root_runner = tree->dummy.children[LEFT];
+	bst_node_t *root_runner = tree->dummy.children[LEFT]; /*AFTER ASSERT*/
+
+	assert(NULL != tree);
 
 	while(!BSTIsEmpty(tree))
 	{	
 		BSTRemove(root_runner);
 		root_runner = tree->dummy.children[LEFT];
 	}
+
 	FREE(tree);
 }	
 
-bst_itr_t BSTFind(const bst_t *tree, const void *data)
+bst_itr_t BSTFind(const bst_t *tree, const void *user_data)
 {
 	bst_node_t *node_runner = tree->dummy.children[LEFT];
-	bst_node_t *end_node = BSTEnd(tree);
 
-	
-	
+	int first_answare = tree->cmp(user_data, node_runner->data, tree->param);
+	int second_answare = tree->cmp(node_runner->data, user_data, tree->param);
+
+	assert(NULL != tree);
+
+	while ((NULL != node_runner) && (first_answare != second_answare))
+	{	
+		node_runner = node_runner->children[first_answare];
+		if (NULL != node_runner)
+		{
+			first_answare = tree->cmp(node_runner->data, user_data, tree->param);
+			second_answare = tree->cmp(user_data, node_runner->data, tree->param);
+		}
+		else
+		{
+			return (bst_node_t *)&tree->dummy;
+		}
+	}
+
+	return node_runner;
 }
+
+int BSTForeach(bst_itr_t start, bst_itr_t end, action_func_ptr action, void *param)
+{	
+	bst_node_t *node_runner = start;
+	int result = 0;
+
+	assert(NULL != start);
+	assert(NULL != end);
+
+	while ((!BSTIsSameItr(node_runner, end)) && (0 == result))
+	{
+		result = action(node_runner->data, param);
+		node_runner = BSTNext(node_runner);
+	}
+
+	return result;	
+}
+
+
 
 
