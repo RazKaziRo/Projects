@@ -1,7 +1,16 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for Calculator.
+ * Date: 13.01.2020
+ * Language: C
+ * Reviewer: Yonatan Zaken
+ */
+
 #include <stdlib.h> /*malloc() strtod()*/
 #include <string.h> /*strlen()*/
+#include <math.h> /*pow*/
 
-#include "stack.h"
+#include "../../ds/include/stack.h"
 #include "arithmetics.h"
 
 #define FREE(ptr) free(ptr); ptr = NULL;
@@ -24,77 +33,138 @@ typedef struct Operator
 
 struct Calc
 {
-	stack_t *num;
+	stack_t *nums;
 	stack_t *ops;
-	double *result;
+	double *result_holder;
 	calc_state_t **calc_lut;
 	calc_op_t *op_lut;
 };
 
-enum OpPresedence
+enum Presedence
 {
 	LOW,
 	MEDIUM,
 	HIGH
 };
 
-static int Addition(calc_t *calc)
-{
-
-}
-
-static int Subtraction(calc_t *calc)
-{
-
-}
-
-static int Multiplication(calc_t *calc)
-{
-
-}
-
-static int Division(calc_t *calc)
-{
-
-}
-
-static int Power(calc_t *calc)
-{
-
-}
-
 static int OpError()
 {
 	return 1;
 }
 
+static int CalcCalculationHandler(calc_t *calc)
+{
+	double num_x = 0;
+	double num_y = 0;
+	double result = 0;
+	char operator_holder = '\0';
+
+	num_x = *(double *)StackPeek(calc->nums);
+	StackPop(calc->nums);
+	num_y = *(double *)StackPeek(calc->nums);
+	StackPop(calc->nums);
+
+	operator_holder = *(char *)StackPeek(calc->ops);
+	StackPop(calc->ops);
+
+	switch(operator_holder)
+	{	
+
+		case('-'):
+
+		result = num_y - num_x;
+		break;
+
+		case('+'):
+		result = num_y + num_x;
+		break;
+
+		case('/'):
+		result = num_y / num_x;
+		break;
+
+		case('*'):
+		result = num_y * num_x;
+		break;
+
+		case('^'):
+		result = pow(num_y, num_x);
+		break;
+
+		default:
+		break;
+
+	}
+
+	return(StackPush(calc->nums, &result));
+}
+
 char *CalcDummyHandler(const char *expression, calc_t *calc)
 {
-	
+	return((char *)(++expression));
 }
 
 char *CalcNumberHandler(const char *expression, calc_t *calc)
 {
 	double num_to_push = 0;
 	char *expression_holder = (char *)expression;
-	char **expression_leftovers = &expression_holder;
 
-	num_to_push = strtod(expression, expression_leftovers);
-	StackPush(calc->num, &num_to_push);
+	num_to_push = strtod(expression, &expression_holder);
+	StackPush(calc->nums, &num_to_push);
 
 	return expression_holder;
 }
 
 char *CalcOperatorHandler(const char *expression, calc_t *calc)
 {
-	char op_to_push = *expression;
+	char *expression_holder = (char *)expression;
+	char op_to_push = *expression_holder;
+
+	if(!StackIsEmpty(calc->ops) && 
+		calc->op_lut[op_to_push].presedence <= calc->op_lut[*(char *)StackPeek(calc->ops)].presedence 
+		&& HIGH != calc->op_lut[op_to_push].presedence)
+	{
+		CalcCalculationHandler(calc);
+	}
+
 	StackPush(calc->ops, &op_to_push);
 
+	return(++expression_holder);
+}
+
+static char *SpacesHandler(const char *expression, calc_t *calc)
+{
+	char *expression_holder = (char *)expression;
+
+	while(' '== *expression_holder)
+	{
+		++expression_holder;
+	}
+
+	return(expression_holder);
 }
 
 char *CalcErrorHandler(const char *expression, calc_t *calc)
 {
 
+}
+
+static char *CloseParenthesisHandler(const char *expression, calc_t *calc)
+{
+	while(!StackIsEmpty(calc->ops))
+	{
+		if('(' == *(char *)StackPeek(calc->ops))
+		{
+			StackPop(calc->ops);
+		}
+
+		else
+		{
+			CalcCalculationHandler(calc);
+		}
+	}
+
+	return ((char *)(++expression));
 }
 
 
@@ -111,20 +181,23 @@ calc_op_t * CalcOpLutInit()
 			op_lut[i].presedence = -1;
 		}
 
-		op_lut['-'].op_handler = &Subtraction;
+		op_lut['-'].op_handler = &CalcCalculationHandler;
 		op_lut['-'].presedence = LOW;
 
-		op_lut['+'].op_handler = &Addition;
+		op_lut['+'].op_handler = &CalcCalculationHandler;
 		op_lut['+'].presedence = LOW;
 
-		op_lut['*'].op_handler = &Multiplication;
+		op_lut['*'].op_handler = &CalcCalculationHandler;
 		op_lut['*'].presedence = MEDIUM;
 
-		op_lut['/'].op_handler = &Division;
+		op_lut['/'].op_handler = &CalcCalculationHandler;
 		op_lut['/'].presedence = MEDIUM;
 
-		op_lut['^'].op_handler = &Power;
+		op_lut['^'].op_handler = &CalcCalculationHandler;
 		op_lut['^'].presedence = HIGH;
+
+		op_lut['('].op_handler = &CalcCalculationHandler;
+		op_lut['('].presedence = HIGH;
 	}
 
 	return op_lut;
@@ -140,9 +213,9 @@ static void WaitForNumStateInit(calc_state_t *state_lut[])
 		state_lut[WAIT_FOR_NUM][i].action = &CalcErrorHandler;
 	}
 
-	i = 0;
+	i = '0';
 
-	for(; i <= 9; ++i)
+	for(; i <= '9'; ++i)
 	{
 		state_lut[WAIT_FOR_NUM][i].next_state = WAIT_FOR_OP;
 		state_lut[WAIT_FOR_NUM][i].action = &CalcNumberHandler;
@@ -155,7 +228,10 @@ static void WaitForNumStateInit(calc_state_t *state_lut[])
 	state_lut[WAIT_FOR_NUM]['-'].action = &CalcNumberHandler;
 
 	state_lut[WAIT_FOR_NUM]['('].next_state = WAIT_FOR_NUM;
-	state_lut[WAIT_FOR_NUM]['('].action = &CalcDummyHandler;
+	state_lut[WAIT_FOR_NUM]['('].action = &CalcOperatorHandler;
+
+	state_lut[WAIT_FOR_NUM][' '].next_state = WAIT_FOR_NUM;
+	state_lut[WAIT_FOR_NUM][' '].action = &SpacesHandler;
 }
 
 static void WaitForOpStateInit(calc_state_t *state_lut[])
@@ -182,6 +258,12 @@ static void WaitForOpStateInit(calc_state_t *state_lut[])
 
 	state_lut[WAIT_FOR_OP]['^'].next_state = WAIT_FOR_NUM;
 	state_lut[WAIT_FOR_OP]['^'].action = &CalcOperatorHandler;
+
+	state_lut[WAIT_FOR_OP][' '].next_state = WAIT_FOR_OP;
+	state_lut[WAIT_FOR_OP][' '].action = &SpacesHandler;
+
+	state_lut[WAIT_FOR_OP][')'].next_state = WAIT_FOR_OP;
+	state_lut[WAIT_FOR_OP][')'].action = &CloseParenthesisHandler;
 
 }	
 
@@ -228,18 +310,18 @@ static calc_state_t **CalcStateLutInite()
 	return state_lut;
 }
 
-calc_t *CalcInit(const char *expression, double *result)
+calc_t *CalcInit(const char *expression, double *user_result)
 {
 	calc_t *new_calc = (calc_t *)malloc(sizeof(calc_t));
 	if(NULL != new_calc)
 	{
-		new_calc->num = StackCreate(sizeof(double), strlen(expression));
-		if(NULL != new_calc->num)
+		new_calc->nums = StackCreate(sizeof(double), strlen(expression));
+		if(NULL != new_calc->nums)
 		{
 			new_calc->ops = StackCreate(sizeof(char), strlen(expression));
 			if(NULL != new_calc->ops)
 			{
-				new_calc->result = result;
+				new_calc->result_holder = user_result;
 
 				new_calc->calc_lut = CalcStateLutInite();
 				if(NULL != new_calc->calc_lut)
@@ -256,7 +338,7 @@ calc_t *CalcInit(const char *expression, double *result)
 				FREE(new_calc->ops)
 			}
 
-			FREE(new_calc->num);
+			FREE(new_calc->nums);
 		}
 
 		FREE(new_calc);
@@ -267,17 +349,44 @@ calc_t *CalcInit(const char *expression, double *result)
 
 state_t CalcRun(const char *expression, calc_t *calc)
 {
-	int state = WAIT_FOR_NUM;
+	state_t state = WAIT_FOR_NUM;
 	char *expression_runner = (char *)expression;
+	char *runner_holder = expression_runner;
 
 	while(ERROR != state && '\0'!= *expression_runner)
 	{	
+		runner_holder = expression_runner;
+
 		expression_runner = calc->calc_lut[state][*expression_runner].action(expression_runner, calc);
-		state = calc->calc_lut[state][*expression_runner].next_state;
+		state = calc->calc_lut[state][*runner_holder].next_state;
 	}
+
+	while(ERROR != state && !StackIsEmpty(calc->ops))
+	{
+		CalcCalculationHandler(calc);
+	}
+
+	*calc->result_holder = *(double *)StackPeek(calc->nums);
 
 	return state;
 }
+
+void CalcDestroy(calc_t *calc)
+{	
+	int i = 0;
+
+	for(; i<NUM_OF_STATES; ++i)
+	{
+		FREE(calc->calc_lut[i]);
+	}
+	FREE(calc->calc_lut);
+
+	StackDestroy(calc->nums);
+	StackDestroy(calc->ops);
+	FREE(calc->op_lut);
+	FREE(calc);
+}
+
 
 
 
