@@ -9,6 +9,7 @@
 #include <stdlib.h> /*malloc() strtod()*/
 #include <string.h> /*strlen()*/
 #include <math.h> /*pow*/
+#include <assert.h>/*assert()*/
 
 #include "../../ds/include/stack.h"
 #include "arithmetics.h"
@@ -44,7 +45,8 @@ enum Presedence
 {
 	LOW,
 	MEDIUM,
-	HIGH
+	HIGH,
+	VERY_HIGH
 };
 
 static int OpError()
@@ -59,6 +61,8 @@ static int CalcCalculationHandler(calc_t *calc)
 	double result = 0;
 	char operator_holder = '\0';
 
+	assert(NULL != calc);
+
 	num_x = *(double *)StackPeek(calc->nums);
 	StackPop(calc->nums);
 	num_y = *(double *)StackPeek(calc->nums);
@@ -69,9 +73,7 @@ static int CalcCalculationHandler(calc_t *calc)
 
 	switch(operator_holder)
 	{	
-
 		case('-'):
-
 		result = num_y - num_x;
 		break;
 
@@ -93,14 +95,16 @@ static int CalcCalculationHandler(calc_t *calc)
 
 		default:
 		break;
-
 	}
 
 	return(StackPush(calc->nums, &result));
 }
 
 char *CalcDummyHandler(const char *expression, calc_t *calc)
-{
+{	
+	assert(NULL != calc);
+	assert(NULL != expression);
+
 	return((char *)(++expression));
 }
 
@@ -108,6 +112,9 @@ char *CalcNumberHandler(const char *expression, calc_t *calc)
 {
 	double num_to_push = 0;
 	char *expression_holder = (char *)expression;
+
+	assert(NULL != calc);
+	assert(NULL != expression);
 
 	num_to_push = strtod(expression, &expression_holder);
 	StackPush(calc->nums, &num_to_push);
@@ -120,9 +127,12 @@ char *CalcOperatorHandler(const char *expression, calc_t *calc)
 	char *expression_holder = (char *)expression;
 	char op_to_push = *expression_holder;
 
-	if(!StackIsEmpty(calc->ops) && 
-		calc->op_lut[op_to_push].presedence <= calc->op_lut[*(char *)StackPeek(calc->ops)].presedence 
-		&& HIGH != calc->op_lut[op_to_push].presedence)
+	assert(NULL != calc);
+	assert(NULL != expression);
+
+	 while(!StackIsEmpty(calc->ops) && 
+		calc->op_lut[(int)op_to_push].presedence <= calc->op_lut[(int)*(char *)StackPeek(calc->ops)].presedence 
+		&& LOW != calc->op_lut[(int)op_to_push].presedence && VERY_HIGH != calc->op_lut[(int)op_to_push].presedence)
 	{
 		CalcCalculationHandler(calc);
 	}
@@ -136,6 +146,9 @@ static char *SpacesHandler(const char *expression, calc_t *calc)
 {
 	char *expression_holder = (char *)expression;
 
+	assert(NULL != calc);
+	assert(NULL != expression);
+
 	while(' '== *expression_holder)
 	{
 		++expression_holder;
@@ -145,24 +158,24 @@ static char *SpacesHandler(const char *expression, calc_t *calc)
 }
 
 char *CalcErrorHandler(const char *expression, calc_t *calc)
-{
+{	
+	assert(NULL != calc);
+	assert(NULL != expression);
 
+	return((char *)(++expression));
 }
 
 static char *CloseParenthesisHandler(const char *expression, calc_t *calc)
 {
-	while(!StackIsEmpty(calc->ops))
-	{
-		if('(' == *(char *)StackPeek(calc->ops))
-		{
-			StackPop(calc->ops);
-		}
+	assert(NULL != calc);
+	assert(NULL != expression);
 
-		else
-		{
-			CalcCalculationHandler(calc);
-		}
+	while (!StackIsEmpty(calc->ops) && '(' != *(char *)StackPeek(calc->ops))
+	{
+		CalcCalculationHandler(calc);
 	}
+
+	StackPop(calc->ops);
 
 	return ((char *)(++expression));
 }
@@ -182,22 +195,22 @@ calc_op_t * CalcOpLutInit()
 		}
 
 		op_lut['-'].op_handler = &CalcCalculationHandler;
-		op_lut['-'].presedence = LOW;
+		op_lut['-'].presedence = MEDIUM;
 
 		op_lut['+'].op_handler = &CalcCalculationHandler;
-		op_lut['+'].presedence = LOW;
+		op_lut['+'].presedence = MEDIUM;
 
 		op_lut['*'].op_handler = &CalcCalculationHandler;
-		op_lut['*'].presedence = MEDIUM;
+		op_lut['*'].presedence = HIGH;
 
 		op_lut['/'].op_handler = &CalcCalculationHandler;
-		op_lut['/'].presedence = MEDIUM;
+		op_lut['/'].presedence = HIGH;
 
 		op_lut['^'].op_handler = &CalcCalculationHandler;
-		op_lut['^'].presedence = HIGH;
+		op_lut['^'].presedence = VERY_HIGH;
 
 		op_lut['('].op_handler = &CalcCalculationHandler;
-		op_lut['('].presedence = HIGH;
+		op_lut['('].presedence = LOW;
 	}
 
 	return op_lut;
@@ -206,6 +219,8 @@ calc_op_t * CalcOpLutInit()
 static void WaitForNumStateInit(calc_state_t *state_lut[])
 {	
 	int i = 0;
+
+	assert(NULL != state_lut);
 
 	for(; i < NUM_OF_ASCII_CHARS; ++i)
 	{
@@ -227,6 +242,9 @@ static void WaitForNumStateInit(calc_state_t *state_lut[])
 	state_lut[WAIT_FOR_NUM]['-'].next_state = WAIT_FOR_OP;
 	state_lut[WAIT_FOR_NUM]['-'].action = &CalcNumberHandler;
 
+	state_lut[WAIT_FOR_NUM]['.'].next_state = WAIT_FOR_OP;
+	state_lut[WAIT_FOR_NUM]['.'].action = &CalcNumberHandler;
+
 	state_lut[WAIT_FOR_NUM]['('].next_state = WAIT_FOR_NUM;
 	state_lut[WAIT_FOR_NUM]['('].action = &CalcOperatorHandler;
 
@@ -237,6 +255,8 @@ static void WaitForNumStateInit(calc_state_t *state_lut[])
 static void WaitForOpStateInit(calc_state_t *state_lut[])
 {
 	int j = 0;
+
+	assert(NULL != state_lut);
 
 	for(; j < NUM_OF_ASCII_CHARS; ++j)
 	{
@@ -271,6 +291,8 @@ static void ErrorStateInit(calc_state_t *state_lut[])
 {	
 	int k = 0;
 
+	assert(NULL != state_lut);
+
 	for(; k < NUM_OF_ASCII_CHARS; ++k)
 	{
 		state_lut[ERROR][k].next_state = ERROR;
@@ -290,7 +312,6 @@ static calc_state_t **CalcStateLutInite()
 		state_lut[WAIT_FOR_OP] = (calc_state_t *)malloc(sizeof(calc_state_t) * NUM_OF_ASCII_CHARS);
 		if (NULL != state_lut[WAIT_FOR_OP])
 		{
-
 			WaitForOpStateInit(state_lut);
 
 			state_lut[ERROR] = (calc_state_t *)malloc(sizeof(calc_state_t) * NUM_OF_ASCII_CHARS);
@@ -312,22 +333,27 @@ static calc_state_t **CalcStateLutInite()
 
 calc_t *CalcInit(const char *expression, double *user_result)
 {
+
 	calc_t *new_calc = (calc_t *)malloc(sizeof(calc_t));
-	if(NULL != new_calc)
+
+	assert(NULL != user_result);
+	assert(NULL != expression);
+
+	if (NULL != new_calc)
 	{
 		new_calc->nums = StackCreate(sizeof(double), strlen(expression));
-		if(NULL != new_calc->nums)
+		if (NULL != new_calc->nums)
 		{
 			new_calc->ops = StackCreate(sizeof(char), strlen(expression));
-			if(NULL != new_calc->ops)
+			if (NULL != new_calc->ops)
 			{
 				new_calc->result_holder = user_result;
 
 				new_calc->calc_lut = CalcStateLutInite();
-				if(NULL != new_calc->calc_lut)
+				if (NULL != new_calc->calc_lut)
 				{
 					new_calc->op_lut = CalcOpLutInit();
-					if(NULL != new_calc->op_lut)
+					if (NULL != new_calc->op_lut)
 					{
 						return new_calc; 
 					}
@@ -350,24 +376,42 @@ calc_t *CalcInit(const char *expression, double *user_result)
 state_t CalcRun(const char *expression, calc_t *calc)
 {
 	state_t state = WAIT_FOR_NUM;
+
 	char *expression_runner = (char *)expression;
 	char *runner_holder = expression_runner;
 
-	while(ERROR != state && '\0'!= *expression_runner)
+	assert(NULL != calc);
+	assert(NULL != expression);
+
+	while (ERROR != state && '\0'!= *expression_runner)
 	{	
 		runner_holder = expression_runner;
 
-		expression_runner = calc->calc_lut[state][*expression_runner].action(expression_runner, calc);
-		state = calc->calc_lut[state][*runner_holder].next_state;
+		expression_runner = calc->calc_lut[state][(int)*expression_runner].action(expression_runner, calc);
+		state = calc->calc_lut[state][(int)*runner_holder].next_state;
 	}
 
-	while(ERROR != state && !StackIsEmpty(calc->ops))
+	if (WAIT_FOR_OP == state)
 	{
-		CalcCalculationHandler(calc);
+		while (!StackIsEmpty(calc->ops))
+		{
+			if ('('!= *(char *)StackPeek(calc->ops))
+			{
+				CalcCalculationHandler(calc);
+			}
+			else
+			{
+				StackPop(calc->ops);
+			}
+		}
+
+		*calc->result_holder = *(double *)StackPeek(calc->nums);
 	}
-
-	*calc->result_holder = *(double *)StackPeek(calc->nums);
-
+	else
+	{
+		state = ERROR;
+	} 
+	
 	return state;
 }
 
@@ -375,7 +419,9 @@ void CalcDestroy(calc_t *calc)
 {	
 	int i = 0;
 
-	for(; i<NUM_OF_STATES; ++i)
+	assert(NULL != calc);
+
+	for (; i<NUM_OF_STATES; ++i)
 	{
 		FREE(calc->calc_lut[i]);
 	}
@@ -386,7 +432,3 @@ void CalcDestroy(calc_t *calc)
 	FREE(calc->op_lut);
 	FREE(calc);
 }
-
-
-
-
