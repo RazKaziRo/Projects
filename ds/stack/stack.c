@@ -103,3 +103,62 @@ void StackPop(stack_t* stack)
 		stack -> current = (char *)stack -> current - stack -> element_size;
 	}
 }
+
+void *StackPopWithData(stack_t* stack)
+{	
+	void *data = NULL;
+    assert(NULL != stack);
+
+	if (!StackIsEmpty(stack))
+	{	
+		data = StackPeek(stack);
+		stack->current = (char *)stack->current - stack -> element_size;
+	}
+
+	return data;
+}
+
+void StackRecursiveSort(stack_t* mystack)
+{	
+	int top_holder = 0;
+	int buttom_holder = 0;
+	size_t stack_size = StackSize(mystack);
+
+	if (2 > stack_size)
+	{
+		return;
+	}
+
+	if (2 == stack_size)
+	{
+		top_holder = *(int *)StackPopWithData(mystack);
+
+		if(top_holder < *(int *)StackPeek(mystack))
+		{
+			buttom_holder = *(int *)StackPopWithData(mystack);
+			StackPush(mystack, &top_holder);
+			StackPush(mystack, &buttom_holder);
+		}
+		else
+		{
+			StackPush(mystack, &top_holder);
+		}
+
+		return;
+	}
+
+	top_holder = *(int *)StackPopWithData(mystack);
+	StackRecursiveSort(mystack);
+
+	if(top_holder < *(int *)StackPeek(mystack))
+	{
+		buttom_holder = *(int *)StackPopWithData(mystack);
+		StackPush(mystack, &top_holder);
+		StackRecursiveSort(mystack);
+		StackPush(mystack, &buttom_holder);
+	}
+	else
+	{
+		StackPush(mystack, &top_holder);
+	}
+}

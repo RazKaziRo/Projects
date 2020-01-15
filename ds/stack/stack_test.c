@@ -132,6 +132,39 @@ void TestStackPop()
 	printf("\n");
 }
 
+void  TestStackRecursiveSort()
+{
+	int a = 1;
+	int b = 2;
+	int c = 3;
+	int d = 4;
+
+	stack_t *s1 = StackCreate(4,4);
+
+	StackPush(s1,&d);		
+	StackPush(s1,&c);
+	StackPush(s1,&b);
+	StackPush(s1,&a);
+
+	while(!StackIsEmpty(s1))
+	{
+		printf("before: %d\n", *(int *)StackPopWithData(s1));
+	}
+
+	StackPush(s1,&d);		
+	StackPush(s1,&c);
+	StackPush(s1,&b);
+	StackPush(s1,&a);
+
+	StackRecursiveSort(s1);
+
+	while(!StackIsEmpty(s1))
+	{
+		printf("after: %d\n",*(int *)StackPopWithData(s1));
+	}
+
+}
+
 int main(int argc, char const *argv[])
 {
 
@@ -155,6 +188,9 @@ int main(int argc, char const *argv[])
 
 	printf("TestStackPeek()\n");
 	TestStackPop();
+
+	printf("TestStackRecursiveSort()\n");
+	TestStackRecursiveSort();
 
 	UNUSED(argc);
 	UNUSED(argv);

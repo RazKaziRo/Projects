@@ -61,6 +61,10 @@ size_t SLLSize(const node_t *head);/*DONE*/
 /* WARNING: Doesnt get NULL pointer */
 node_t *SLLFlip(node_t *head); /*HEAD*/
 
+/* Flips the direciton of pointing from last to first return Pointer to the new Head */
+/* WARNING: Doesnt get NULL pointer */
+node_t *SLLRecursionFlip(node_t *head);
+
 /* Checks if a loop occurs in the structure */
 /* Returns 0 - loop occurs, 1 - loop doesnt occur */
 /* WARNING: Doesnt get NULL pointer */

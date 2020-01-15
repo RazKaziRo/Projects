@@ -1,10 +1,11 @@
 /*
  * Author: Raz KaziRo
- * Purpose: Answares for DS - Binary Search Tree.
+ * Purpose: Tests for Recursion.
  * Date: 14.01.2020
  * Language: C
  * Reviewer: 
  */
+
 #include <stdio.h> 	/*printf()*/
 #include <string.h> /*strlen()*/
 #include <time.h> 	/*clock()*/
@@ -90,20 +91,51 @@ void TestRecursiveStrCpy()
 	RUN_TEST(0 == strcmp(strcpy(dest, src), RecursiveStrCpy(dest, src)),"FAIL: strcmp FAIL")
 }
 
+void TestRecursiveStrCat()
+{
+	char *src = "";
+	char dest[80] = "";
+
+	char *src2 = "";
+	char dest2[80] = "";
+
+	RUN_TEST(0 == strcmp(strcat(dest2, src2), RecursiveStrCat(dest, src)),"FAIL: strcmp FAIL")
+}
+
+void TestRecursiveStrStr()
+{
+	char *src = "ABCDE";
+	char *tofind = "BC"; 
+
+	char *src2 = "ABCDE";
+	char *tofind2 = "BC"; 
+
+	char *src3 = "ABCDEF";
+	char *tofind3 = "ab"; 
+
+	char *src4 = "ABCDEF";
+	char *tofind4 = "ab"; 
+
+	RUN_TEST(0 == strcmp(strstr(src, tofind), RecursiveStrStr(src2, tofind2)),"FAIL: strcmp FAIL")
+	RUN_TEST(RecursiveStrStr(src4, tofind4) == strstr(src3, tofind3),"FAIL: strcmp FAIL")
+}
+
 int main(int argc, char const *argv[])
 {
 
-	/*TestRecursiveFibonacci();
+ 	TestRecursiveFibonacci();
+
 	TestIterativeFibonacci();
 
 	TestRecursiveStrLen();
 
 	TestRecursiveStrCmp();
-	*/
-	TestRecursiveStrCmp();
-
+	
 	TestRecursiveStrCpy();
 
+	TestRecursiveStrCat();
+
+	TestRecursiveStrStr();
 
 	UNUSED(argc);
 	UNUSED(argv);

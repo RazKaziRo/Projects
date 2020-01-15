@@ -170,6 +170,22 @@ node_t *SLLFlip(node_t *head)
 	return head;
 }
 
+node_t *SLLRecursionFlip(node_t *head)
+{
+	node_t *next_node = NULL;
+
+	if(NULL == head->next)
+	{
+		return head;
+	}
+
+	next_node = SLLRecursionFlip(head->next);
+	head->next->next = head;
+	head->next = NULL;
+
+	return next_node;
+}
+
 int SLLHasLoop(const node_t *head)
 {		
 	const node_t *slow_p = NULL, *fast_p = NULL;

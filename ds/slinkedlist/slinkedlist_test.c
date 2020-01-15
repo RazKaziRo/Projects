@@ -334,6 +334,40 @@ void TestSLLFlip()
 	printf("\n");
 }
 
+void TestSLLRecursionFlip()
+{
+	node_t *n1 = NULL;
+	node_t *n2 = NULL;
+	node_t *n3 = NULL;
+	node_t *n4 = NULL;
+	node_t *n5 = NULL;
+	node_t *head = n1;
+
+	int a = 10;
+	int b = 20;
+	int c = 30;
+	int d = 40;
+	int e = 50;
+
+	n5 = SLLCreateNode(NULL,&e);
+	n4 = SLLCreateNode(n5,&d);
+	n3 = SLLCreateNode(n4,&c);
+	n2 = SLLCreateNode(n3,&b);
+	n1 = SLLCreateNode(n2,&a);
+
+	head = SLLRecursionFlip(n1);
+	RUN_TEST(head == n5, "FAIL: head == n5");
+	RUN_TEST(n4 == n5->next, "FAIL: n4->next (n3)");
+	RUN_TEST(n3 == n4->next, "FAIL: n4->next (n3)");
+	RUN_TEST(n2 == n3->next, "FAIL: n3->next (n2)");
+	RUN_TEST(n1 == n2->next, "FAIL: n2->next (nvlgd1)");
+	RUN_TEST(NULL == n1->next, "FAIL: n1->next (NULL)");
+
+	SLLDestroy(head);
+
+	printf("\n");
+}
+
 void TestSLLHasLoop()
 {
 	node_t *n1 = NULL;
@@ -403,6 +437,7 @@ void TestSLLFindIntersection()
 int main(int argc, char const *argv[])
 {
 
+/*
 	printf("TestSLLCreateNode()\n");
 	TestSLLCreateNode();
 
@@ -438,6 +473,9 @@ int main(int argc, char const *argv[])
 
 	printf("TestSLLFindIntersection()\n");
 	TestSLLFindIntersection();
+*/
+	printf("TestSLLRecursionFlip()\n");
+	TestSLLRecursionFlip();
 
 	UNUSED(argc);
 	UNUSED(argv);

@@ -1,3 +1,11 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for Recursion.
+ * Date: 14.01.2020
+ * Language: C
+ * Reviewer: 
+ */
+
 #include "recursion.h"
 
 size_t RecursiveFibonacci(size_t n)
@@ -66,5 +74,33 @@ char *RecursiveStrCpy(char *dest, const char *src)
 
 char *RecursiveStrCat(char *dest, const char *src)
 {
+
+	if('\0' == *src)
+	{	
+		*(dest + strlen(dest)) = *src;
+		return dest;
+	}
+
+	*(dest + (RecursiveStrLen(dest))) = *src;
+	RecursiveStrCat(dest + RecursiveStrLen(dest), src + 1);
 	
+
+	return (dest);
+}
+
+char *RecursiveStrStr(const char *haystack, const char *needle)
+{
+	if ('\0' == *haystack)
+	{
+		return NULL;
+	}
+
+	if (*haystack != *needle && '\0' != *needle)
+	{
+		return(RecursiveStrStr((haystack + 1), (needle)));
+	}
+
+	RecursiveStrStr((haystack + 1), (needle + 1));
+	
+	return(char *)haystack;
 }
