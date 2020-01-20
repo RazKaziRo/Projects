@@ -7,6 +7,7 @@
  */
 
 #include <stdlib.h> /*malloc()*/
+#include <assert.h> /*assert()*/
 
 #include "avl.h"
 
@@ -30,7 +31,7 @@ struct AVLTree
 avl_t *AVLCreate(compare_func_t user_cmp_func)
 {
 	avl_t *new_tree = (avl_t *)malloc(sizeof(avl_t));
-	if(NULL != new_tree)
+	if (NULL != new_tree)
 	{
 		new_tree->root = NULL;
 		new_tree->cmp = user_cmp_func;
@@ -42,7 +43,7 @@ avl_t *AVLCreate(compare_func_t user_cmp_func)
 static avl_node_t *AVLNodeCreate(void *user_data)
 {
 	avl_node_t *new_node = (avl_node_t *)malloc(sizeof(avl_node_t));
-	if(NULL != new_node)
+	if (NULL != new_node)
 	{
 		new_node->data = user_data;
 		new_node->child[LEFT] = NULL;
@@ -60,7 +61,7 @@ static size_t MaxNodeHeight(size_t left_node_height, size_t right_node_height)
 
 static size_t AVLGetNodeHeightRecursive(avl_node_t *node)
 {	
-	if(NULL == node || ((NULL == node->child[LEFT]) && (NULL == node->child[RIGHT])))
+	if (NULL == node || ((NULL == node->child[LEFT]) && (NULL == node->child[RIGHT])))
 	{
 		return 0;
 	}
@@ -73,36 +74,36 @@ static void UpdateHeights(avl_node_t *node)
 	node->height = AVLGetNodeHeightRecursive(node);
 }
 
-
 static int BalanceFactor (avl_node_t *root)
 {
 	int child_right_height = 0;
 	int child_left_height = 0;
 
-	if(NULL != root->child[LEFT])
+	if (NULL != root->child[LEFT])
 	{
 		child_left_height = 1 + root->child[LEFT]->height;
 	}
 
-	if(NULL != root->child[RIGHT])
+	if (NULL != root->child[RIGHT])
 	{
 		child_right_height = 1 + root->child[RIGHT]->height;
 	}
 
-	return(child_right_height - child_left_height);
+	return (child_right_height - child_left_height);
 
 }
 
-static avl_node_t *AVLRotateTree(avl_node_t *root, int side)/*LEFT*/
+static avl_node_t *AVLRotateTree(avl_node_t *root, int side)
 {
 	avl_node_t *node_holder = NULL;
 
-		node_holder = root->child[!side];
-		root->child[!side] = node_holder->child[side];
-		node_holder->child[side] = root;
+	node_holder = root->child[!side];
+	root->child[!side] = node_holder->child[side];
+	node_holder->child[side] = root;
 
-		return node_holder;
+	UpdateHeights(root);
 
+	return node_holder;
 }
 
 static avl_node_t *AVLBalanceTree(avl_node_t *node)
@@ -112,11 +113,11 @@ static avl_node_t *AVLBalanceTree(avl_node_t *node)
 
 	int side = (root_balance_factor < 0) ? RIGHT : LEFT;
 
-	if(-2 == root_balance_factor || 2 == root_balance_factor)
+	if (-2 == root_balance_factor || 2 == root_balance_factor)
 	{	
 		pivot_balance_factor = BalanceFactor(node->child[!side]);
 
-		if(((root_balance_factor < 0) && (pivot_balance_factor > 0)) || /*LR Case*/
+		if (((root_balance_factor < 0) && (pivot_balance_factor > 0)) || /*LR Case*/
 		   ((root_balance_factor > 0) && (pivot_balance_factor < 0))) /*RL Case*/
 		{
 			node->child[!side] = AVLRotateTree(node->child[!side], !side);
@@ -130,25 +131,23 @@ static avl_node_t *AVLBalanceTree(avl_node_t *node)
 
 static avl_node_t *AVLInsertRecursiveHelper(avl_node_t *root, avl_node_t *insert_node, compare_func_t cmp)
 {
+
+	int side = 0;
+
 	if (NULL == root)
 	{
 		root = insert_node;
 		return root;
 	}
 
-	if(0 < cmp(insert_node->data, root->data))
-	{	
-		root->child[RIGHT] = AVLInsertRecursiveHelper(root->child[RIGHT], insert_node, cmp);
-		UpdateHeights(root);
-	}
-	else if (0 > cmp(insert_node->data, root->data))
-	{
-		root->child[LEFT] = AVLInsertRecursiveHelper(root->child[LEFT], insert_node, cmp);
-		UpdateHeights(root);
-	}
+	side = cmp(insert_node->data, root->data);
+	side = (side > 0)? RIGHT : LEFT;
 
+	root->child[side] = AVLInsertRecursiveHelper(root->child[side], insert_node, cmp);
+
+	UpdateHeights(root);
 	root = AVLBalanceTree(root);
-
+ 
 	return root;
 }
 
@@ -167,12 +166,12 @@ int AVLInsert(avl_t *tree, void *user_data)
 
 int AVLIsEmpty(const avl_t *tree)
 {
-	return(NULL == tree->root);
+	return (NULL == tree->root);
 }
 
 static size_t AVLSizeHelper(const avl_node_t *node)
 {
-	if(NULL == node)
+	if (NULL == node)
 	{
 		return 0;
 	}
@@ -182,21 +181,25 @@ static size_t AVLSizeHelper(const avl_node_t *node)
 
 size_t AVLSize(const avl_t *tree)
 {
-	return((AVLSizeHelper(tree->root)));
+	return ((AVLSizeHelper(tree->root)));
 }
 
 static void *AVLFindDataRecursiveHelper(const avl_node_t *node, const void *user_data, compare_func_t cmp)
 {	
-	if(NULL != node)
+	int side = 0;
+
+	if (NULL != node)
 	{
-		if (0 == cmp(user_data, node->data))
+		side = cmp(user_data, node->data);
+
+		if (0 == side)
 		{
 			return node->data;
 		}
 
-		(0 < cmp(user_data, node->data)) ? 
-		AVLFindDataRecursiveHelper(node->child[RIGHT], user_data, cmp) : 
-		AVLFindDataRecursiveHelper(node->child[LEFT], user_data, cmp);
+		side = (side > 0)? RIGHT : LEFT;
+
+		AVLFindDataRecursiveHelper(node->child[side], user_data, cmp);
 	}
 
 	return NULL;
@@ -212,43 +215,42 @@ static int AVLForeachRecursiveHelper(avl_node_t *node, action_ptr_t action, void
 {
 	int res = 0;
 
-	if(NULL == node)
+	if (NULL == node)
 	{
 		return 0;
 	}
 
-	if(0 == res)
+	if (0 == res)
 	{
 		res = AVLForeachRecursiveHelper(node->child[LEFT], action, param);
 	}
 
-	if(0 == res)
+	if (0 == res)
 	{
 		res = action(node->data, param);
 	}
 
-	if(0 == res)
+	if (0 == res)
 	{
 		res = AVLForeachRecursiveHelper(node->child[RIGHT], action, param);
 	}
 	
 	return res;
-
 }
 
 int AVLForeach(avl_t *tree, action_ptr_t action, void *param)
 {
-	return(AVLForeachRecursiveHelper(tree->root, action, param));
+	return (AVLForeachRecursiveHelper(tree->root, action, param));
 }
 
 size_t AVLGetHeight(const avl_t *tree)
 {
-	return(AVLGetNodeHeightRecursive(tree->root));
+	return (AVLGetNodeHeightRecursive(tree->root));
 }
 
 static void AVLDestroyRecursiveHelper(avl_node_t *root)
 {	
-	if(NULL == root)
+	if (NULL == root)
 	{
 		return;
 	}
@@ -267,42 +269,48 @@ void AVLDestroy(avl_t *tree)
 	FREE(tree);
 }
 
-static avl_node_t *AVLFindSuccessorNode(avl_node_t *node)
+static avl_node_t *AVLFindSuccessorNode(avl_node_t *node, avl_node_t **successor_node)
 {	
-	avl_node_t *successor_node =NULL;
 
 	if (NULL == node->child[LEFT])
 	{
-		return node;
+		*successor_node = node;
+		return node->child[RIGHT];
 	}
 
-	else if (NULL == node->child[LEFT]->child[LEFT])
-	{
-		successor_node = node->child[LEFT];
-		node->child[LEFT] = node->child[LEFT]->child[RIGHT];
-		/*BALANCE*/
-	}	
+	node->child[LEFT] = AVLFindSuccessorNode(node->child[LEFT], successor_node);
 
-	AVLFindSuccessorNode(node->child[LEFT]);
-	return successor_node;
+	UpdateHeights(node);
+	node = AVLBalanceTree(node);
+
+	return node;
 }
 
 static avl_node_t *AVLFindNodeReplacer(avl_node_t *node)
 {
 	avl_node_t *successor_node = NULL;
 
-	if(NULL != node->child[RIGHT])
+	if (NULL != node->child[RIGHT])
 	{
 		if (NULL != node->child[LEFT])
 		{
-			successor_node = AVLFindSuccessorNode(node->child[RIGHT]);
+			AVLFindSuccessorNode(node->child[RIGHT], &successor_node);
+			successor_node->child[LEFT] = node->child[LEFT];
 
-			/*BALANCE*/
+			if (node->child[RIGHT] != successor_node)
+			{
+				successor_node->child[RIGHT] = node->child[RIGHT];
+			}
+		
+			UpdateHeights(successor_node);
+			successor_node = AVLBalanceTree(successor_node);
 
 			return successor_node;
 		}
+
 		return node->child[RIGHT];
 	}
+
 	return node->child[LEFT];
 }
 
@@ -310,21 +318,29 @@ static avl_node_t *AVLRemoveRecursiveHelper(avl_node_t *node, const void *user_d
 {	
 	avl_node_t *replacer_node = NULL;
 
-	if(NULL != node)
+	if (NULL != node)
 	{
 		if (0 == cmp(user_data, node->data))
 		{	
 			replacer_node =  AVLFindNodeReplacer(node);
 			if (NULL != replacer_node)
-			{
-				replacer_node->child[LEFT] = node->child[LEFT];
-				if(node->child[RIGHT] != replacer_node)
+			{	
+				if (node->child[LEFT] != replacer_node)
+				{
+					replacer_node->child[LEFT] = node->child[LEFT];
+				}
+				
+				if (node->child[RIGHT] != replacer_node)
 				{
 					replacer_node->child[RIGHT] = node->child[RIGHT];
 				}
+
+				replacer_node = AVLBalanceTree(replacer_node);
+				UpdateHeights(replacer_node);
 			}
 
 			FREE(node);
+			
 			return replacer_node;
 		}
 
@@ -334,6 +350,10 @@ static avl_node_t *AVLRemoveRecursiveHelper(avl_node_t *node, const void *user_d
 			AVLRemoveRecursiveHelper(node->child[0 < cmp(user_data, node->data)], user_data, cmp);
 		}
 	}
+
+	UpdateHeights(node);
+	node = AVLBalanceTree(node);
+
 	return node;
 }
 

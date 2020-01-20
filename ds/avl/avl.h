@@ -30,20 +30,20 @@ avl_t *AVLCreate(compare_func_t cmp); /*DONE*/
 	Destroys the AVL data and free it from memory 
 	Complexity o(n) * free                            
  **************************************************/
-void AVLDestroy(avl_t *tree);
+void AVLDestroy(avl_t *tree); /*DONE*/
 
 /********************************************************************* 
 	Gets a pointer to the tree and insert new data in the correct place  
 	Return 0 for success, otherwise: 1
 	Complexity of malloc * O(log(n))                            
  ********************************************************************/
-int AVLInsert(avl_t *tree, void *data);
+int AVLInsert(avl_t *tree, void *data); /*DONE*/
 
 /*********************************************** 
 	Get a pointer to data to remove from the tree
 	Complexity: O(log n)
  ***********************************************/
-void AVLRemove(avl_t *tree, const void *data);
+void AVLRemove(avl_t *tree, const void *data); /*DONE*/
 
 /*********************************************************************** 
 	Gets a pointer to the tree and search if the data exist in the tree
@@ -73,6 +73,6 @@ size_t AVLSize(const avl_t *tree); /*DONE*/
  ***********************************************/
 int AVLIsEmpty(const avl_t *tree); /*DONE*/
 
-size_t AVLGetHeight(const avl_t *tree);
+size_t AVLGetHeight(const avl_t *tree); /*DONE*/
 
 #endif
