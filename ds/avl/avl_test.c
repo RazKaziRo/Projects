@@ -67,9 +67,19 @@ void TestAVLCreate()
 void TestAVLInsert()
 {	
 	avl_t *new_tree = AVLCreate(&NodeDataCmp);
-	int a = 20;
-	int b = 10;
-	int c = 8;
+	int a = 8;
+	int b = 5;
+	int c = 3;
+	int d = 2;
+	int e = 6;
+	int f = 4;
+
+	AVLInsert(new_tree, &a);
+	AVLInsert(new_tree, &b);
+	AVLInsert(new_tree, &c);
+	AVLInsert(new_tree, &d);
+	AVLInsert(new_tree, &e);
+	AVLInsert(new_tree, &f);
 
 	printf("TestAVLInsert(): \n");
 	RUN_TEST(0 == AVLSize(new_tree), "FAIL: SIZE(0) AFTER CREATE");

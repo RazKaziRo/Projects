@@ -93,13 +93,13 @@ static int BalanceFactor (avl_node_t *root)
 
 }
 
-static avl_node_t *AVLRotateTree(avl_node_t *root, int side)
+static avl_node_t *AVLRotateTree(avl_node_t *root, int side)/*LEFT*/
 {
 	avl_node_t *node_holder = NULL;
 
-		node_holder = root->child[LEFT];
-		root->child[LEFT] = node_holder->child[RIGHT];
-		node_holder->child[RIGHT] = root;
+		node_holder = root->child[!side];
+		root->child[!side] = node_holder->child[side];
+		node_holder->child[side] = root;
 
 		return node_holder;
 
@@ -107,15 +107,22 @@ static avl_node_t *AVLRotateTree(avl_node_t *root, int side)
 
 static avl_node_t *AVLBalanceTree(avl_node_t *node)
 {
-	int balance_factor = BalanceFactor(node);
-	int side = (balance_factor < 0) ? RIGHT : LEFT;
+	int root_balance_factor = BalanceFactor(node);
+	int pivot_balance_factor = 0;
 
-	if(-2 == balance_factor || 2 == balance_factor)
+	int side = (root_balance_factor < 0) ? RIGHT : LEFT;
+
+	if(-2 == root_balance_factor || 2 == root_balance_factor)
 	{	
-		balance_factor = BalanceFactor(node->child[!side]);
-		if(balance_factor > 0)
-		{}
-		node->child[!side] = AVLRotateTree(node->child[!side], side);
+		pivot_balance_factor = BalanceFactor(node->child[!side]);
+
+		if(((root_balance_factor < 0) && (pivot_balance_factor > 0)) || /*LR Case*/
+		   ((root_balance_factor > 0) && (pivot_balance_factor < 0))) /*RL Case*/
+		{
+			node->child[!side] = AVLRotateTree(node->child[!side], !side);
+		}
+
+		node = AVLRotateTree(node, side);
 	}
 
 	return node;
