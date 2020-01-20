@@ -67,10 +67,9 @@ void TestAVLCreate()
 void TestAVLInsert()
 {	
 	avl_t *new_tree = AVLCreate(&NodeDataCmp);
-	int a = 10;
-	int b = 20;
+	int a = 20;
+	int b = 10;
 	int c = 8;
-	int e = 25;
 
 	printf("TestAVLInsert(): \n");
 	RUN_TEST(0 == AVLSize(new_tree), "FAIL: SIZE(0) AFTER CREATE");
@@ -85,10 +84,6 @@ void TestAVLInsert()
 	AVLInsert(new_tree, &c);
 	RUN_TEST(1 == AVLGetHeight(new_tree), "FAIL: WRONG HEIGHT (1)");
 	RUN_TEST(3 == AVLSize(new_tree), "FAIL: SIZE(3) AFTER 2 INSERT");
-
-	AVLInsert(new_tree, &e);
-	RUN_TEST(4 == AVLSize(new_tree), "FAIL: SIZE(4) AFTER 3 INSERT");
-	RUN_TEST(2 == AVLGetHeight(new_tree), "FAIL: WRONG HEIGHT (2)");
 
 	AVLDestroy(new_tree);
 
@@ -122,11 +117,49 @@ void TestAVLForeach()
 
 }
 
+void TestAVLRemove()
+{
+	avl_t *new_tree = AVLCreate(&NodeDataCmp);
+	int a = 10;
+	int b = 20;
+	int c = 8;
+
+	AVLInsert(new_tree, &a);
+	AVLInsert(new_tree, &b);
+	AVLInsert(new_tree, &c);
+
+	RUN_TEST(3 == AVLSize(new_tree), "FAIL: SIZE(3) AFTER 3 INSERT");
+
+	AVLRemove(new_tree, &a);
+
+	RUN_TEST(2 == AVLSize(new_tree), "FAIL: SIZE(2) AFTER 1 REMOVE");
+
+	AVLDestroy(new_tree);
+
+}
+
+void TestAVLRotation()
+{
+	avl_t *new_tree = AVLCreate(&NodeDataCmp);
+
+	int a = 10;
+	int b = 8;
+	int c = 6;
+
+	AVLInsert(new_tree, &a);
+	AVLInsert(new_tree, &b);
+	AVLInsert(new_tree, &c);
+}
+
 int main(int argc, char const *argv[])
 {	
-	TestAVLCreate();
+	
 	TestAVLInsert();
+
+	/*TestAVLCreate();
 	TestAVLForeach();
+	TestAVLRemove();
+	TestAVLRotation();*/
 
 	UNUSED(argc);
 	UNUSED(argv);

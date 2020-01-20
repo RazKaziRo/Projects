@@ -68,27 +68,81 @@ static size_t AVLGetNodeHeightRecursive(avl_node_t *node)
 	return (1 + (MaxNodeHeight(AVLGetNodeHeightRecursive(node->child[LEFT]), AVLGetNodeHeightRecursive(node->child[RIGHT]))));
 }
 
-static void AVLInsertRecursiveHandler(avl_node_t **root, avl_node_t *insert_node, compare_func_t cmp)
+static void UpdateHeights(avl_node_t *node)
 {
-	if (NULL == *root)
+	node->height = AVLGetNodeHeightRecursive(node);
+}
+
+
+static int BalanceFactor (avl_node_t *root)
+{
+	int child_right_height = 0;
+	int child_left_height = 0;
+
+	if(NULL != root->child[LEFT])
 	{
-		*root = insert_node;
-		return;
+		child_left_height = 1 + root->child[LEFT]->height;
 	}
 
-	if(0 < cmp(insert_node->data, (*root)->data))
+	if(NULL != root->child[RIGHT])
+	{
+		child_right_height = 1 + root->child[RIGHT]->height;
+	}
+
+	return(child_right_height - child_left_height);
+
+}
+
+static avl_node_t *AVLRotateTree(avl_node_t *root, int side)
+{
+	avl_node_t *node_holder = NULL;
+
+		node_holder = root->child[LEFT];
+		root->child[LEFT] = node_holder->child[RIGHT];
+		node_holder->child[RIGHT] = root;
+
+		return node_holder;
+
+}
+
+static avl_node_t *AVLBalanceTree(avl_node_t *node)
+{
+	int balance_factor = BalanceFactor(node);
+	int side = (balance_factor < 0) ? RIGHT : LEFT;
+
+	if(-2 == balance_factor || 2 == balance_factor)
 	{	
-		AVLInsertRecursiveHandler(&(*root)->child[RIGHT], insert_node, cmp);
+		balance_factor = BalanceFactor(node->child[!side]);
+		if(balance_factor > 0)
+		{}
+		node->child[!side] = AVLRotateTree(node->child[!side], side);
 	}
-	else if (0 > cmp(insert_node->data, (*root)->data))
+
+	return node;
+}
+
+static avl_node_t *AVLInsertRecursiveHelper(avl_node_t *root, avl_node_t *insert_node, compare_func_t cmp)
+{
+	if (NULL == root)
 	{
-		AVLInsertRecursiveHandler(&(*root)->child[LEFT], insert_node, cmp);
+		root = insert_node;
+		return root;
 	}
 
-	/*IsBalanced?
-	balance*/
+	if(0 < cmp(insert_node->data, root->data))
+	{	
+		root->child[RIGHT] = AVLInsertRecursiveHelper(root->child[RIGHT], insert_node, cmp);
+		UpdateHeights(root);
+	}
+	else if (0 > cmp(insert_node->data, root->data))
+	{
+		root->child[LEFT] = AVLInsertRecursiveHelper(root->child[LEFT], insert_node, cmp);
+		UpdateHeights(root);
+	}
 
-	return;
+	root = AVLBalanceTree(root);
+
+	return root;
 }
 
 int AVLInsert(avl_t *tree, void *user_data)
@@ -96,7 +150,7 @@ int AVLInsert(avl_t *tree, void *user_data)
 	avl_node_t *new_node = AVLNodeCreate(user_data);
 	if (NULL != new_node)
 	{	
-		AVLInsertRecursiveHandler(&tree->root, new_node, tree->cmp);
+		tree->root = AVLInsertRecursiveHelper(tree->root, new_node, tree->cmp);
 
 		return 0;
 	}
@@ -109,22 +163,22 @@ int AVLIsEmpty(const avl_t *tree)
 	return(NULL == tree->root);
 }
 
-static size_t AVLSizeHandler(const avl_node_t *node)
+static size_t AVLSizeHelper(const avl_node_t *node)
 {
 	if(NULL == node)
 	{
 		return 0;
 	}
 
-	return (1 + AVLSizeHandler(node->child[LEFT]) + AVLSizeHandler(node->child[RIGHT]));
+	return (1 + AVLSizeHelper(node->child[LEFT]) + AVLSizeHelper(node->child[RIGHT]));
 }
 
 size_t AVLSize(const avl_t *tree)
 {
-	return((AVLSizeHandler(tree->root)));
+	return((AVLSizeHelper(tree->root)));
 }
 
-static void *AVLFindDataRecursiveHandler(const avl_node_t *node, const void *user_data, compare_func_t cmp)
+static void *AVLFindDataRecursiveHelper(const avl_node_t *node, const void *user_data, compare_func_t cmp)
 {	
 	if(NULL != node)
 	{
@@ -134,8 +188,8 @@ static void *AVLFindDataRecursiveHandler(const avl_node_t *node, const void *use
 		}
 
 		(0 < cmp(user_data, node->data)) ? 
-		AVLFindDataRecursiveHandler(node->child[RIGHT], user_data, cmp) : 
-		AVLFindDataRecursiveHandler(node->child[LEFT], user_data, cmp);
+		AVLFindDataRecursiveHelper(node->child[RIGHT], user_data, cmp) : 
+		AVLFindDataRecursiveHelper(node->child[LEFT], user_data, cmp);
 	}
 
 	return NULL;
@@ -143,11 +197,11 @@ static void *AVLFindDataRecursiveHandler(const avl_node_t *node, const void *use
 
 void *AVLFind(const avl_t *tree, const void *user_data)
 {	
-	return (AVLFindDataRecursiveHandler(tree->root, user_data, tree->cmp));
+	return (AVLFindDataRecursiveHelper(tree->root, user_data, tree->cmp));
 }
 
 
-static int AVLForeachRecursiveHandler(avl_node_t *node, action_ptr_t action, void *param)
+static int AVLForeachRecursiveHelper(avl_node_t *node, action_ptr_t action, void *param)
 {
 	int res = 0;
 
@@ -158,7 +212,7 @@ static int AVLForeachRecursiveHandler(avl_node_t *node, action_ptr_t action, voi
 
 	if(0 == res)
 	{
-		res = AVLForeachRecursiveHandler(node->child[LEFT], action, param);
+		res = AVLForeachRecursiveHelper(node->child[LEFT], action, param);
 	}
 
 	if(0 == res)
@@ -168,7 +222,7 @@ static int AVLForeachRecursiveHandler(avl_node_t *node, action_ptr_t action, voi
 
 	if(0 == res)
 	{
-		res = AVLForeachRecursiveHandler(node->child[RIGHT], action, param);
+		res = AVLForeachRecursiveHelper(node->child[RIGHT], action, param);
 	}
 	
 	return res;
@@ -177,7 +231,7 @@ static int AVLForeachRecursiveHandler(avl_node_t *node, action_ptr_t action, voi
 
 int AVLForeach(avl_t *tree, action_ptr_t action, void *param)
 {
-	return(AVLForeachRecursiveHandler(tree->root, action, param));
+	return(AVLForeachRecursiveHelper(tree->root, action, param));
 }
 
 size_t AVLGetHeight(const avl_t *tree)
@@ -185,15 +239,15 @@ size_t AVLGetHeight(const avl_t *tree)
 	return(AVLGetNodeHeightRecursive(tree->root));
 }
 
-static void AVLDestroyRecursiveHandler(avl_node_t *root)
+static void AVLDestroyRecursiveHelper(avl_node_t *root)
 {	
 	if(NULL == root)
 	{
 		return;
 	}
 
-	AVLDestroyRecursiveHandler(root->child[LEFT]);
-	AVLDestroyRecursiveHandler(root->child[RIGHT]);
+	AVLDestroyRecursiveHelper(root->child[LEFT]);
+	AVLDestroyRecursiveHelper(root->child[RIGHT]);
 
 	FREE(root);
 
@@ -202,38 +256,81 @@ static void AVLDestroyRecursiveHandler(avl_node_t *root)
 
 void AVLDestroy(avl_t *tree)
 {
-	AVLDestroyRecursiveHandler(tree->root);
+	AVLDestroyRecursiveHelper(tree->root);
 	FREE(tree);
 }
 
-static avl_node_t *AVLFindNodeRecursiveHandler(avl_node_t *node, const void *user_data, compare_func_t cmp)
+static avl_node_t *AVLFindSuccessorNode(avl_node_t *node)
 {	
+	avl_node_t *successor_node =NULL;
+
+	if (NULL == node->child[LEFT])
+	{
+		return node;
+	}
+
+	else if (NULL == node->child[LEFT]->child[LEFT])
+	{
+		successor_node = node->child[LEFT];
+		node->child[LEFT] = node->child[LEFT]->child[RIGHT];
+		/*BALANCE*/
+	}	
+
+	AVLFindSuccessorNode(node->child[LEFT]);
+	return successor_node;
+}
+
+static avl_node_t *AVLFindNodeReplacer(avl_node_t *node)
+{
+	avl_node_t *successor_node = NULL;
+
+	if(NULL != node->child[RIGHT])
+	{
+		if (NULL != node->child[LEFT])
+		{
+			successor_node = AVLFindSuccessorNode(node->child[RIGHT]);
+
+			/*BALANCE*/
+
+			return successor_node;
+		}
+		return node->child[RIGHT];
+	}
+	return node->child[LEFT];
+}
+
+static avl_node_t *AVLRemoveRecursiveHelper(avl_node_t *node, const void *user_data, compare_func_t cmp)
+{	
+	avl_node_t *replacer_node = NULL;
+
 	if(NULL != node)
 	{
 		if (0 == cmp(user_data, node->data))
-		{
-			return node;
+		{	
+			replacer_node =  AVLFindNodeReplacer(node);
+			if (NULL != replacer_node)
+			{
+				replacer_node->child[LEFT] = node->child[LEFT];
+				if(node->child[RIGHT] != replacer_node)
+				{
+					replacer_node->child[RIGHT] = node->child[RIGHT];
+				}
+			}
+
+			FREE(node);
+			return replacer_node;
 		}
 
-		(0 < cmp(user_data, node->data)) ? 
-		AVLFindDataRecursiveHandler(node->child[RIGHT], user_data, cmp) : 
-		AVLFindDataRecursiveHandler(node->child[LEFT], user_data, cmp);
+		else
+		{
+			node->child[0 < cmp(user_data, node->data)] = 
+			AVLRemoveRecursiveHelper(node->child[0 < cmp(user_data, node->data)], user_data, cmp);
+		}
 	}
-
-	return NULL;
+	return node;
 }
 
-
-static void AVLRemoveRecursiveHandler(avl_node_t *root, const void *data, compare_func_t cmp)
-{	
-	avl_node_t *node_to_remove = NULL;
-	avl_node_t *replacment_node = NULL;
-
-	node_to_remove = AVLFindNodeRecursiveHandler(root, data, cmp);
-}
-
-void AVLRemove(avl_t *tree, const void *data)
+void AVLRemove(avl_t *tree, const void *user_data)
 {
-	AVLRemoveRecursiveHandler(tree->root, data, tree->cmp);
+	tree->root = AVLRemoveRecursiveHelper(tree->root, user_data, tree->cmp);
 }
-
