@@ -1,9 +1,9 @@
 /*
  * Author: Raz KaziRo
  * Purpose: Answares for DS - AVL.
- * Date: 16.01.2020
+ * Date: 20.01.2020
  * Language: C
- * Reviewer: Guy Cohen Zedek
+ * Reviewer: Israel Drayfus
  */
 
 #include <stdlib.h> /*malloc()*/
@@ -199,7 +199,7 @@ static void *AVLFindDataRecursiveHelper(const avl_node_t *node, const void *user
 
 		side = (side > 0)? RIGHT : LEFT;
 
-		AVLFindDataRecursiveHelper(node->child[side], user_data, cmp);
+		return AVLFindDataRecursiveHelper(node->child[side], user_data, cmp);
 	}
 
 	return NULL;
@@ -294,7 +294,7 @@ static avl_node_t *AVLFindNodeReplacer(avl_node_t *node)
 	{
 		if (NULL != node->child[LEFT])
 		{
-			AVLFindSuccessorNode(node->child[RIGHT], &successor_node);
+			node->child[RIGHT] = AVLFindSuccessorNode(node->child[RIGHT], &successor_node);
 			successor_node->child[LEFT] = node->child[LEFT];
 
 			if (node->child[RIGHT] != successor_node)
@@ -340,7 +340,7 @@ static avl_node_t *AVLRemoveRecursiveHelper(avl_node_t *node, const void *user_d
 			}
 
 			FREE(node);
-			
+
 			return replacer_node;
 		}
 
