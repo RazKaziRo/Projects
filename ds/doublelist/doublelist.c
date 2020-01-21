@@ -22,8 +22,8 @@ typedef struct DLLNode
 
 struct DLL
 {
-	struct DLLNode head;
-	struct DLLNode tail;
+	struct DLLNode head; /*DUMMY*/
+	struct DLLNode tail; /*DUMMY*/
 };
 
 dll_t *DLLCreate()
