@@ -129,7 +129,8 @@ static avl_node_t *AVLBalanceTree(avl_node_t *node)
 	return node;
 }
 
-static avl_node_t *AVLInsertRecursiveHelper(avl_node_t *root, avl_node_t *insert_node, compare_func_t cmp)
+static avl_node_t *
+AVLInsertRecursiveHelper(avl_node_t *root, avl_node_t *insert_node, compare_func_t cmp)
 {
 
 	int side = 0;
@@ -245,7 +246,7 @@ int AVLForeach(avl_t *tree, action_ptr_t action, void *param)
 
 size_t AVLGetHeight(const avl_t *tree)
 {
-	return (AVLGetNodeHeightRecursive(tree->root));
+	return (tree->root->height);
 }
 
 static void AVLDestroyRecursiveHelper(avl_node_t *root)
@@ -314,7 +315,8 @@ static avl_node_t *AVLFindNodeReplacer(avl_node_t *node)
 	return node->child[LEFT];
 }
 
-static avl_node_t *AVLRemoveRecursiveHelper(avl_node_t *node, const void *user_data, compare_func_t cmp)
+static avl_node_t *
+AVLRemoveRecursiveHelper(avl_node_t *node, const void *user_data, compare_func_t cmp)
 {	
 	avl_node_t *replacer_node = NULL;
 

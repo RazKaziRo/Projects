@@ -258,6 +258,3 @@ iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void 
 
 	return it_runner;
 }
-
-
-
