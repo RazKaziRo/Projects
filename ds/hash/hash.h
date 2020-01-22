@@ -7,26 +7,26 @@ typedef struct Hash hash_t;
 
 typedef size_t (*hash_func_t)(const void *data);
 typedef int (*action_func_t)(void *data1, void *datab2);
-typedef int (*match_func_t)(const void *data1, const void *data2);
+typedef int (*match_func_t)(void *data1, void *data2);
 
 /*
 *   Returns a pointer to the HASH data structure
 *	Complexity of malloc     
 */
-hash_t *HashCreate(size_t table_size, hash_func_t hash_func, match_func_t is_match);
+hash_t *HashCreate(size_t table_size, hash_func_t hash_func, match_func_t is_match); /*DONE*/
 
 /*
 *	Destroys the HASH Table and frees it from the memory 
 *	Complexity o(n) * free                            
 */
-void HashDestroy(hash_t *hash_table);
+void HashDestroy(hash_t *hash_table); /*DONE*/
 
 /*
 *	Gets a pointer to the Hash Table and inserts the new data into it.  
 *	Return 0 for success, otherwise: 1
 *	Complexity of O(1)                            
 */
-int HashInsert(hash_t *hash_table, void *data);
+int HashInsert(hash_t *hash_table, void *data); /*DONE*/
 
 /*
 *	Gets a pointer to the Hash Table and removes the data given 

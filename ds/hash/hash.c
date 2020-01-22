@@ -62,3 +62,57 @@ HashCreate(size_t user_table_size, hash_func_t user_hash_func, match_func_t user
 
 	return new_hash;
 }
+
+void HashDestroy(hash_t *hash)
+{	
+	size_t i = 0;
+
+	for(; i < hash->table_size; ++i)
+	{
+		DLLDestroy(hash->table[i]);
+	}
+
+	FREE(hash);
+}
+
+int HashInsert(hash_t *hash, void *data)
+{
+	size_t key = hash->hash_func(data);
+	if(NULL != DLLPushFront(hash->table[key], data))
+	{
+		return 0;
+	}
+
+	return 1;
+}
+
+static size_t HashGetKey(hash_t *hash, const void *data)
+{
+	return(hash->hash_func(data));
+}
+
+static void *HashDLLGetIterator(hash_t *hash, void *data)
+{
+	size_t key = HashGetKey((hash_t*)hash, data);
+
+	iterator_t dll_begin = DLLBegin(hash->table[key]);
+	iterator_t dll_end = DLLEnd(hash->table[key]);
+	iterator_t dll_result = DLLFind(dll_begin, dll_end, hash->is_match_func, (void *)data);
+
+	return(dll_result);
+}
+
+void *HashFind(const hash_t *hash, const void *data)
+{
+	HashDLLGetIterator(hash, data);
+	
+	return DLLGetData(dll_result);
+	
+}
+
+
+void HashRemove(hash_t *hash, const void *data)
+{	
+
+}
+
