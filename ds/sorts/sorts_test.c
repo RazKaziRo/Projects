@@ -138,6 +138,19 @@ void TestRadixSort()
     printf("\n"); 
 }
 
+void TestMergeSort()
+{
+    int a[] = {6, 4, 1};
+    size_t arr_size = sizeof(a)/sizeof(a[0]);
+    int b[3];
+
+    PrintArray(a, arr_size);
+    MergeSort(a,b, arr_size);
+    PrintArray(a, arr_size);
+
+}
+
+
 int main(int argc, char const *argv[])
 {
 
@@ -151,8 +164,10 @@ int main(int argc, char const *argv[])
     TestInsertionSort();
 
     TestCountingSort();
-*/
+
     TestRadixSort();
+*/
+    TestMergeSort();
 
     UNUSED(argv);
     UNUSED(argc);

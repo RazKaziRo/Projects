@@ -226,8 +226,6 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap
 	iterator_t it_runner = start;
 	int res = 0;
 
-	assert(NULL != ap);
-
 	while (!DLLIsSameIter(it_runner,end))
 	{
 		if (0 == res)

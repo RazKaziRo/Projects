@@ -6,7 +6,7 @@
 typedef struct Hash hash_t;
 
 typedef size_t (*hash_func_t)(const void *data);
-typedef int (*action_func_t)(void *data1, void *datab2);
+typedef int (*action_func_t)(void *data1, void *param);
 typedef int (*match_func_t)(void *data1, void *data2);
 
 /*
@@ -33,13 +33,13 @@ int HashInsert(hash_t *hash_table, void *data); /*DONE*/
 *	Complexity: O(1)
 */
 
-void HashRemove(hash_t *hash_table, const void *data);
+void HashRemove(hash_t *hash_table, const void *data); /*DONE*/
 
 /*	given a pointer to the data searched and the hash table.
 *	Complexity: O(1),
 */
 
-void *HashFind(const hash_t *hash_table, const void *data);
+void *HashFind(const hash_t *hash_table, const void *data);/*DONE*/
 
 /*
 *	Gets the hash tableand a action function pointer to operate on the elements in the table
@@ -54,7 +54,7 @@ int HashForeach(hash_t *hash_table, action_func_t action, void *param);
 *	Returns the amount of elements
 *	complexity: O(n)                  
 */
-size_t HashSize(const hash_t *hash_table);
+size_t HashSize(const hash_t *hash_table); /*DONE*/
 
 /*
 *	Gets a pointer to the table

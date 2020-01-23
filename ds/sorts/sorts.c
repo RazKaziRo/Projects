@@ -108,11 +108,11 @@ void SelectionSort(int arr[], size_t n)
 
     assert(NULL != arr);
   
-    for (i = 0; i < n-1; i++) 
+    for (i = 0; i < n-1; ++i) 
     { 
         min_idx = i; 
 
-        for (j = i+1; j < n; j++)
+        for (j = i+1; j < n; ++j)
         {
             if (arr[j] < arr[min_idx])
             {
@@ -228,4 +228,63 @@ int RadixSort(unsigned int *src_arr, size_t src_arr_size, unsigned int num_of_bi
     }
   }
   return 1;
+}
+
+static void MergeTwoArrays(int *src_arr, int *dest_arr,  size_t size)
+{
+  size_t middle = size / 2;
+  size_t left_index = 0;
+  size_t right_index = middle;
+  size_t dest_index = 0;
+
+  while (left_index < middle && right_index < size)
+  {
+    if (src_arr[left_index] <= src_arr[right_index])
+    {
+      dest_arr[dest_index] = src_arr[left_index];
+      ++dest_index;
+      ++left_index;
+    }
+
+    else
+    {
+      dest_arr[dest_index] = src_arr[right_index];
+      ++dest_index;
+      ++right_index;
+    }
+
+  }
+
+  while(left_index < middle)
+  {
+      dest_arr[dest_index] = src_arr[left_index];
+      ++dest_index;
+      ++left_index;
+  }
+
+  while(right_index < size)
+  {
+      dest_arr[dest_index] = src_arr[right_index];
+      ++dest_index;
+      ++right_index;
+  }
+
+  for(left_index = 0; left_index < size; ++left_index)
+  {
+    src_arr[left_index] = dest_arr[left_index];
+  }
+}
+
+void MergeSort(int *src_arr,int *dest_arr, size_t size)
+{
+  size_t mid = size / 2;
+
+  if (size < 2) 
+  {
+    return ;
+  }
+
+  MergeSort(src_arr, dest_arr, mid);
+  MergeSort((src_arr + mid), dest_arr, (size - mid));
+  MergeTwoArrays(src_arr, dest_arr, size);
 }

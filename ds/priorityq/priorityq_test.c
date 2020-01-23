@@ -8,7 +8,7 @@
 
 #include <stdio.h> /*printf()*/
 
-#include "../include/priorityq.h"
+#include "../include/priorityq_vector.h"
 
 #define UNUSED(x) (void)(x)
 #define RUN_TEST(test, errmsg)\
@@ -39,43 +39,60 @@ static int FindData(void *iterator_data, void *ap)
 
 void TestPQCreate()
 {	
-	pq_t *newPQ = PQCreate(&MyCompare, NULL);
-	RUN_TEST(0 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(0)");
-	PQDestroy(newPQ);
+	size_t element_size = 4;
+	pq_t *new_pq = PQCreate(&MyCompare, &element_size);
+	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
+	PQDestroy(new_pq);
 	printf("\n");
 }
+
 
 void TestPQEnqueue()
 {	
-	int a = 10;
+	int a = 5;
 	int b = 20;
+	void *ptr_a = &a;
+	void *ptr_b = &b;
 
-	pq_t *newPQ = PQCreate(&MyCompare, NULL);
-	RUN_TEST(0 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(0)");
-	PQEnqueue(newPQ,&a);
-	RUN_TEST(1 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(1)");
-	PQEnqueue(newPQ,&b);
-	RUN_TEST(2 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(2)");
+	void **ptr_a1 = &ptr_a;
+	void **ptr_b1 = &ptr_b;
 
-	PQDestroy(newPQ);
+	size_t element_size = 4;
+
+
+	pq_t *new_pq = PQCreate(&MyCompare, &element_size);
+
+	/*printf("cmp: %d",MyCompare(*ptr_a1, *ptr_b1, NULL));*/
+
+	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
+	PQEnqueue(new_pq,&a);
+	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(1)");
+	PQEnqueue(new_pq,&b);
+	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
+	PQClear(new_pq);
+	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
+	
+
+	PQDestroy(new_pq);
 	printf("\n");
 }
 
+/*
 void TestPQDequeue()
 {
 	int a = 10;
 	int b = 20;
 
-	pq_t *newPQ = PQCreate(&MyCompare, NULL);
-	PQEnqueue(newPQ,&a);
-	PQEnqueue(newPQ,&b);
-	RUN_TEST(2 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(2)");
-	RUN_TEST(a == *(int *)PQPeek(newPQ), "FAIL: WRONG DATA ON PEEK (a)");
-	PQDequeue(newPQ);
-	RUN_TEST(1 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(2)");
-	RUN_TEST(b == *(int *)PQPeek(newPQ), "FAIL: WRONG DATA ON PEEK (a)");
+	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+	PQEnqueue(new_pq,&a);
+	PQEnqueue(new_pq,&b);
+	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
+	RUN_TEST(a == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (a)");
+	PQDequeue(new_pq);
+	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
+	RUN_TEST(b == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (a)");
 
-	PQDestroy(newPQ);
+	PQDestroy(new_pq);
 	printf("\n");
 
 }
@@ -85,12 +102,12 @@ void TestPQPeek()
 	int a = 10;
 	int b = 20;
 
-	pq_t *newPQ = PQCreate(&MyCompare, NULL);
-	PQEnqueue(newPQ,&b);
-	PQEnqueue(newPQ,&a);
- 	RUN_TEST(a == *(int *)PQPeek(newPQ), "FAIL: WRONG DATA ON PEEK (a)");
+	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+	PQEnqueue(new_pq,&b);
+	PQEnqueue(new_pq,&a);
+ 	RUN_TEST(a == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (a)");
 
-	PQDestroy(newPQ);
+	PQDestroy(new_pq);
 	printf("\n");
 }
 
@@ -99,15 +116,15 @@ void TestPQErase()
 	int a = 10;
 	int b = 20;
 
-	pq_t *newPQ = PQCreate(&MyCompare, NULL);
-	PQEnqueue(newPQ,&a);
-	PQEnqueue(newPQ,&b);
-	RUN_TEST(2 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(2)");
-	RUN_TEST(a == *(int *)PQErase(newPQ, &FindData, &a), "FAIL: WRONG DATA (a)");
-	RUN_TEST(NULL == PQErase(newPQ, &FindData, &a), "FAIL: WRONG DATA (a)");
-	RUN_TEST(1 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(1)");
+	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+	PQEnqueue(new_pq,&a);
+	PQEnqueue(new_pq,&b);
+	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
+	RUN_TEST(a == *(int *)PQErase(new_pq, &FindData, &a), "FAIL: WRONG DATA (a)");
+	RUN_TEST(NULL == PQErase(new_pq, &FindData, &a), "FAIL: WRONG DATA (a)");
+	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(1)");
 
-	PQDestroy(newPQ);
+	PQDestroy(new_pq);
 	printf("\n");
 
 }
@@ -117,12 +134,12 @@ void TestPQSize()
 	int a = 10;
 	int b = 20;
 
-	pq_t *newPQ = PQCreate(&MyCompare, NULL);
-	PQEnqueue(newPQ,&a);
-	PQEnqueue(newPQ,&b);
-	RUN_TEST(2 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(2)");
+	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+	PQEnqueue(new_pq,&a);
+	PQEnqueue(new_pq,&b);
+	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
 
-	PQDestroy(newPQ);
+	PQDestroy(new_pq);
 	printf("\n");
 }
 
@@ -131,18 +148,18 @@ void TestPQClear()
 	int a = 10;
 	int b = 20;
 
-	pq_t *newPQ = PQCreate(&MyCompare, NULL);
-	PQEnqueue(newPQ,&a);
-	PQEnqueue(newPQ,&b);
-	RUN_TEST(2 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(2)");
-	PQClear(newPQ);
-	RUN_TEST(0 == PQSize(newPQ), "FAIL: WRONG CREATE SIZE(0)");
+	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+	PQEnqueue(new_pq,&a);
+	PQEnqueue(new_pq,&b);
+	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
+	PQClear(new_pq);
+	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
 
-	PQDestroy(newPQ);
+	PQDestroy(new_pq);
 	printf("\n");
 
 }
-
+*/
 int main(int argc, char const *argv[])
 {	
 	printf("TestPQCreate()\n");
@@ -150,7 +167,7 @@ int main(int argc, char const *argv[])
 
 	printf("TestPQEnqueue()\n");
 	TestPQEnqueue();
-
+/*
 	printf("TestPQDequeue()\n");
 	TestPQDequeue();
 
@@ -165,7 +182,7 @@ int main(int argc, char const *argv[])
 
 	printf("TestPQClear()\n");
 	TestPQClear();
-
+*/
 	UNUSED(argc);
 	UNUSED(argv);
 	

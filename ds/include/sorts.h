@@ -11,6 +11,7 @@ void InsertionSort(int arr[], size_t n);
 void SelectionSort(int arr[], size_t n);
 int CountingSort(const int *arr, size_t size, int min, int max, int *res);
 int RadixSort(unsigned int *src_arr, size_t size, unsigned int num_of_bits);
+void MergeSort(int *src_arr,int *dest_arr, size_t size);
 
 
 #endif
