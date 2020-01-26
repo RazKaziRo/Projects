@@ -29,7 +29,7 @@
 static int MyCompare(const void *data1, const void *data2, void *param)
 {	
 	UNUSED(param);
-	return(*(int *)data2 - *(int *)data1);
+	return(*(int *)data1 - *(int *)data2);
 }	
 
 static int FindData(void *iterator_data, void *ap)
@@ -50,25 +50,20 @@ void TestPQCreate()
 void TestPQEnqueue()
 {	
 	int a = 5;
-	int b = 20;
-	void *ptr_a = &a;
-	void *ptr_b = &b;
+	int b = 15;
+	int c = 20;
+	int d = 25;
 
-	void **ptr_a1 = &ptr_a;
-	void **ptr_b1 = &ptr_b;
-
-	size_t element_size = 4;
-
-
-	pq_t *new_pq = PQCreate(&MyCompare, &element_size);
-
-	/*printf("cmp: %d",MyCompare(*ptr_a1, *ptr_b1, NULL));*/
+	pq_t *new_pq = PQCreate(&MyCompare, NULL);
 
 	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
 	PQEnqueue(new_pq,&a);
 	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(1)");
 	PQEnqueue(new_pq,&b);
 	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
+	PQEnqueue(new_pq,&c);
+	PQEnqueue(new_pq,&d);
+
 	PQClear(new_pq);
 	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
 	
@@ -77,26 +72,35 @@ void TestPQEnqueue()
 	printf("\n");
 }
 
-/*
+
 void TestPQDequeue()
 {
-	int a = 10;
-	int b = 20;
+	int a = 5;
+	int b = 15;
+	int c = 20;
+	int d = 25;
 
 	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+
+	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
 	PQEnqueue(new_pq,&a);
+	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(1)");
 	PQEnqueue(new_pq,&b);
 	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
-	RUN_TEST(a == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (a)");
+	PQEnqueue(new_pq,&c);
+	PQEnqueue(new_pq,&d);
+
 	PQDequeue(new_pq);
-	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
-	RUN_TEST(b == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (a)");
+	PQClear(new_pq);
+
+	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
+	
 
 	PQDestroy(new_pq);
 	printf("\n");
 
 }
-
+/*
 void TestPQPeek()
 {
 	int a = 10;
@@ -167,10 +171,10 @@ int main(int argc, char const *argv[])
 
 	printf("TestPQEnqueue()\n");
 	TestPQEnqueue();
-/*
+
 	printf("TestPQDequeue()\n");
 	TestPQDequeue();
-
+/*
 	printf("TestPQPeek()\n");
 	TestPQPeek();
 
