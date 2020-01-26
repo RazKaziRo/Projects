@@ -79,6 +79,7 @@ void TestPQDequeue()
 	int b = 15;
 	int c = 20;
 	int d = 25;
+	int e = 30;
 
 	pq_t *new_pq = PQCreate(&MyCompare, NULL);
 
@@ -91,16 +92,17 @@ void TestPQDequeue()
 	PQEnqueue(new_pq,&d);
 
 	PQDequeue(new_pq);
+	PQEnqueue(new_pq,&e);
 	PQClear(new_pq);
 
 	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
 	
-
 	PQDestroy(new_pq);
 	printf("\n");
 
 }
-/*
+
+
 void TestPQPeek()
 {
 	int a = 10;
@@ -109,11 +111,12 @@ void TestPQPeek()
 	pq_t *new_pq = PQCreate(&MyCompare, NULL);
 	PQEnqueue(new_pq,&b);
 	PQEnqueue(new_pq,&a);
- 	RUN_TEST(a == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (a)");
+ 	RUN_TEST(b == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (b)");
 
 	PQDestroy(new_pq);
 	printf("\n");
 }
+
 
 void TestPQErase()
 {
@@ -163,7 +166,7 @@ void TestPQClear()
 	printf("\n");
 
 }
-*/
+
 int main(int argc, char const *argv[])
 {	
 	printf("TestPQCreate()\n");
@@ -174,7 +177,7 @@ int main(int argc, char const *argv[])
 
 	printf("TestPQDequeue()\n");
 	TestPQDequeue();
-/*
+
 	printf("TestPQPeek()\n");
 	TestPQPeek();
 
@@ -186,7 +189,7 @@ int main(int argc, char const *argv[])
 
 	printf("TestPQClear()\n");
 	TestPQClear();
-*/
+
 	UNUSED(argc);
 	UNUSED(argv);
 	

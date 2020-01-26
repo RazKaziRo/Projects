@@ -29,7 +29,7 @@ pq_t *PQCreate(compare_func user_cmp_ptr, void *param)
 	if (NULL != new_pq)
 	{
 		new_pq->vector = VectorCreate(ELEMENT_SIZE, START_POSITION);
-		if(NULL != new_pq->vector)
+		if (NULL != new_pq->vector)
 		{
 			new_pq->user_cmp = user_cmp_ptr;
 			new_pq->param = param;
@@ -69,7 +69,7 @@ void PQHeapifyUp(void *vector, size_t size, size_t index, size_t element_size, c
 	void **parent_value = NULL;
 	void **child_value = NULL ; 
 
-	if(index > 0)
+	if (index > 0)
 	{
 		parent_value = VectorGetItemAddress((vector_t *)vector,parent_index + 1);
 		child_value = VectorGetItemAddress((vector_t *)vector, index + 1);
@@ -85,7 +85,7 @@ void PQHeapifyUp(void *vector, size_t size, size_t index, size_t element_size, c
 		}
 
 		index = parent_index;
-		PQHeapifyUp(vector, size, parent_index, element_size, cmp, param);
+		PQHeapifyUp(vector, size, index, element_size, cmp, param);
 	}
 }
 
@@ -105,24 +105,47 @@ void PQHeapifyDown(void *vector, size_t size, size_t index, size_t element_size,
 {
 	void **left_child = NULL;
 	void **right_child = NULL;
+	void **replacment_child = NULL;
 	void **parent = NULL;
 
+	size_t parent_index = index;
 	size_t left_child_idx = 2 * index + 1;
 	size_t right_child_idx = 2 * index + 2;
+	int res = 0;
 
-	parent = VectorGetItemAddress((vector_t *)vector, index + 1);
+	parent = VectorGetItemAddress((vector_t*)vector, parent_index + 1);
 
-	if(left_child_idx < size)
+	if (right_child_idx < size)
 	{
-		left_child = VectorGetItemAddress((vector_t *)vector,left_child_idx + 1);
+		right_child = VectorGetItemAddress((vector_t*)vector, right_child_idx + 1);
+		left_child = VectorGetItemAddress((vector_t*)vector, left_child_idx + 1);
+		if (0 < cmp(*right_child, *left_child, param) &&  0 < cmp(*right_child, *parent, param))
+		{
+			SwapPointers(right_child, parent);
+			parent_index = right_child_idx;
+		}
+		else if (0 < cmp(*left_child, *parent, param))
+		{
+			SwapPointers(left_child, parent);
+			parent_index = left_child_idx;
+		}
 	}
 
-	if(right_child_idx < size)
+	else if ((left_child_idx < size) && (0 < cmp(*left_child, *parent, param)))
 	{
-		right_child = VectorGetItemAddress((vector_t *)vector,right_child_idx + 1);
+		SwapPointers(left_child, parent);
+		parent_index = left_child_idx;
+	}
+
+	if (parent_index != index)
+	{
+		PQHeapifyDown(vector, size, parent_index, element_size, cmp, param);
+	}
+	else
+	{
+		return;
 	}
 }
-
 
 void *PQDequeue(pq_t *pq)
 {	
@@ -153,5 +176,35 @@ void PQClear(pq_t *pq)
 
 void *PQPeek(const pq_t *pq)
 {
-	return(VectorGetItemAddress(pq->vector, START_POSITION));
+	void **peek_data = VectorGetItemAddress(pq->vector, START_POSITION);
+	return(*peek_data);
+}
+
+void *PQErase(pq_t *pq, match_func m_ptr, const void *data)
+{	
+	size_t i = 0;
+	size_t size = PQSize(pq);
+	void **found_data = NULL;
+	void **replacer_value = VectorGetItemAddress(pq->vector, PQSize(pq));
+	void *data_holder = NULL;
+
+	for(; i < size; ++i)
+	{	
+		replacer_value = VectorGetItemAddress(pq->vector, i + 1);
+		if (1 == m_ptr(*replacer_value, (void *)data))
+		{
+			found_data = replacer_value;
+			break;
+		}
+	}
+
+	if (NULL != found_data)
+	{
+		data_holder = *found_data;
+		SwapPointers(found_data, replacer_value);
+		VectorPopBack(pq->vector);
+		PQHeapifyDown(pq->vector, PQSize(pq), i, ELEMENT_SIZE, pq->user_cmp, pq->param);
+	}
+
+	return data_holder;
 }
