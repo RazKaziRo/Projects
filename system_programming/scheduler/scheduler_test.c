@@ -93,9 +93,10 @@ void TestSchedulerRemoveItsSelf()
 
 	RUN_TEST(0 == SchedulerSize(newScheduler), "FAIL: WRONG CREATE SIZE (0)");
 	RUN_TEST(1 == SchedulerIsEmpty(newScheduler), "FAIL: WRONG IS EMPTY (1)");
-	
-	SchedulerAddTask(newScheduler, &ToDo1Sec,1, NULL);
-	SchedulerAddTask(newScheduler, &ToDo5Sec,5, NULL);
+
+	SchedulerAddTask(newScheduler, &ToDo1Sec, 1, NULL);
+
+	SchedulerAddTask(newScheduler, &ToDo5Sec, 5, NULL);
 
 	RUN_TEST(0 == SchedulerIsEmpty(newScheduler), "FAIL: WRONG IS EMPTY (1)");
 	RUN_TEST(2 == SchedulerSize(newScheduler), "FAIL: WRONG CREATE SIZE (2)");
@@ -169,6 +170,7 @@ void TestSchedulerRun()
 
 int main(int argc, char const *argv[])
 {	
+	
 	printf("TestSchedulerCreate()\n");
 	TestSchedulerCreate();
 

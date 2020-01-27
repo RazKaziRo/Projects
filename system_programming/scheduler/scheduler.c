@@ -13,7 +13,7 @@
 #include "scheduler.h"  	   /*Scheduler API Functions*/
 #include "uid.h"			   /*UID API Functions*/
 #include "task.h"		 	   /*Task API Functions*/
-#include "priorityq.h" /*Priority Queue API Functions*/
+#include "priorityq_vector.h" /*Priority Queue API Functions*/
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 #define UNUSED(x) (void)(x)

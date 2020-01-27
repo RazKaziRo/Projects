@@ -69,9 +69,9 @@ void PQHeapifyUp(void *vector, size_t size, size_t index, size_t element_size, c
 	void **parent_value = NULL;
 	void **child_value = NULL ; 
 
-	if (index > 0)
+	if (index > 1 && size > (2 * index))
 	{
-		parent_value = VectorGetItemAddress((vector_t *)vector,parent_index + 1);
+		parent_value = VectorGetItemAddress((vector_t *)vector, parent_index + 1);
 		child_value = VectorGetItemAddress((vector_t *)vector, index + 1);
 
 		if ((0 > cmp(*parent_value, *child_value, param)))
@@ -98,7 +98,7 @@ int PQEnqueue(pq_t *pq, void *data)
 		PQHeapifyUp(pq->vector,PQSize(pq), (PQSize(pq)-1), ELEMENT_SIZE, pq->user_cmp, pq->param);
 	}
 
-	return result;
+	return !result;
 }
 
 void PQHeapifyDown(void *vector, size_t size, size_t index, size_t element_size, compare_func cmp, void *param)
@@ -131,10 +131,15 @@ void PQHeapifyDown(void *vector, size_t size, size_t index, size_t element_size,
 		}
 	}
 
-	else if ((left_child_idx < size) && (0 < cmp(*left_child, *parent, param)))
+	else if ((left_child_idx < size))
 	{
-		SwapPointers(left_child, parent);
-		parent_index = left_child_idx;
+		left_child = VectorGetItemAddress((vector_t*)vector, left_child_idx + 1);
+
+		if ((0 < cmp(*left_child, *parent, param)))
+		{
+			SwapPointers(left_child, parent);
+			parent_index = left_child_idx;
+		}
 	}
 
 	if (parent_index != index)
@@ -184,8 +189,8 @@ void *PQErase(pq_t *pq, match_func m_ptr, const void *data)
 {	
 	size_t i = 0;
 	size_t size = PQSize(pq);
-	void **found_data = NULL;
-	void **replacer_value = VectorGetItemAddress(pq->vector, PQSize(pq));
+	void **last_value = VectorGetItemAddress(pq->vector, PQSize(pq));
+	void **replacer_value = NULL;
 	void *data_holder = NULL;
 
 	for(; i < size; ++i)
@@ -193,17 +198,13 @@ void *PQErase(pq_t *pq, match_func m_ptr, const void *data)
 		replacer_value = VectorGetItemAddress(pq->vector, i + 1);
 		if (1 == m_ptr(*replacer_value, (void *)data))
 		{
-			found_data = replacer_value;
+			data_holder = *replacer_value;
+			SwapPointers(replacer_value, last_value);
+			VectorPopBack(pq->vector);
+			PQHeapifyUp(pq->vector, PQSize(pq), i, ELEMENT_SIZE, pq->user_cmp, pq->param);
+			PQHeapifyDown(pq->vector, PQSize(pq), i, ELEMENT_SIZE, pq->user_cmp, pq->param);
 			break;
 		}
-	}
-
-	if (NULL != found_data)
-	{
-		data_holder = *found_data;
-		SwapPointers(found_data, replacer_value);
-		VectorPopBack(pq->vector);
-		PQHeapifyDown(pq->vector, PQSize(pq), i, ELEMENT_SIZE, pq->user_cmp, pq->param);
 	}
 
 	return data_holder;

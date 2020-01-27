@@ -8,6 +8,6 @@
 !**.txt
 !**.myalias
 !makefile
-!.mk
+!*.mk
 !.o
 !.so
