@@ -2,8 +2,8 @@
 #include <stdlib.h>/*malloc()*/
 #include <assert.h>/*assert()*/
 #include <alloca.h> /*alloca()*/
-#include <string.h>
-
+#include <string.h> /*memcpy*/
+#include <math.h> /*sqrt()*/
 
 #include "../include/sorts.h"
 
@@ -374,8 +374,31 @@ void *BinarySearch(void *arr, size_t nmemb, size_t element_size, int (*compare)(
   return NULL;
 }
 
-void *JumpSerach(void *arr, size_t nmemb, size_t size, int (*compare)(const void *, const void *, void *param), const void *data, void *param)
+void *JumpSerach(void *arr, size_t nmemb, size_t element_size, int (*compare)(const void *, const void *, void *param), const void *data, void *param)
 {
+  size_t blocks_to_jump = sqrt(nmemb);
+  void *data_holder = arr;
+
+  if(nmemb >= blocks_to_jump)
+  {
+    if (0 < compare(data, arr, param))
+    { 
+      arr = (char *)arr + (blocks_to_jump * element_size);
+      data_holder = JumpSerach(arr, (nmemb - blocks_to_jump), element_size, compare, data, param);
+    }
+
+    else if (0 > compare(data, arr, param))
+    { 
+      arr = (char *)arr - element_size;
+      data_holder = JumpSerach(arr, (nmemb - blocks_to_jump), element_size, compare, data, param);
+    }
+  }
+
+  if(0 == compare(data, data_holder, param))
+  {
+    return data_holder;
+  }
+
+  return NULL;
 
 }
-
