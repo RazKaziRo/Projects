@@ -10,7 +10,7 @@
 #include <assert.h> /*assert()*/
 
 #include "sortedlist.h" /*Sorted List API()*/
-#include "priorityq.h"  /*Priority Queue API()*/
+#include "priorityq_sll.h"  /*Priority Queue API()*/
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 
@@ -20,13 +20,13 @@ typedef struct DLLFuncWrapper
 	void *param;
 }wrapper_t;
 
-struct PQueue
+struct SLLPQueue
 {
 	sll_t *queue;
 	wrapper_t wrapper;
 };
 
-static int PQCompareWrapper(const void *data1, const void *data2, void *param)
+static int SLLPQCompareWrapper(const void *data1, const void *data2, void *param)
 {	
 	wrapper_t *wrapper = NULL;
 
@@ -38,91 +38,91 @@ static int PQCompareWrapper(const void *data1, const void *data2, void *param)
 	return !(0 <= (wrapper->user_cmp(data1, data2, wrapper->param)));
 }
 
-pq_t *PQCreate(compare_func user_cmp_ptr, void *param)
+SLLPQ_t *SLLPQCreate(compare_func user_cmp_ptr, void *param)
 {	
-	pq_t *newPQueue = (pq_t *)malloc(sizeof(pq_t));
+	SLLPQ_t *newSLLPQueue = (SLLPQ_t *)malloc(sizeof(SLLPQ_t));
 	assert(NULL != user_cmp_ptr);
 
-	if (NULL != newPQueue)
+	if (NULL != newSLLPQueue)
 	{
-		newPQueue->queue = SortLLCreate(&PQCompareWrapper, &newPQueue->wrapper);
-		if (NULL != newPQueue->queue)
+		newSLLPQueue->queue = SortLLCreate(&SLLPQCompareWrapper, &newSLLPQueue->wrapper);
+		if (NULL != newSLLPQueue->queue)
 		{
-			newPQueue->wrapper.user_cmp = user_cmp_ptr;
-			newPQueue->wrapper.param = param;
+			newSLLPQueue->wrapper.user_cmp = user_cmp_ptr;
+			newSLLPQueue->wrapper.param = param;
 		}
 		else
 		{
-			FREE(newPQueue);
+			FREE(newSLLPQueue);
 		}
 	}
 
-	return newPQueue;
+	return newSLLPQueue;
 }
 
-void PQDestroy(pq_t *pq)
+void SLLPQDestroy(SLLPQ_t *SLLPQ)
 {	
-	assert(NULL != pq);
+	assert(NULL != SLLPQ);
 
-	SortLLDestroy(pq->queue);
-	FREE(pq);
+	SortLLDestroy(SLLPQ->queue);
+	FREE(SLLPQ);
 }
 
-void *PQDequeue(pq_t *pq)
+void *SLLPQDequeue(SLLPQ_t *SLLPQ)
 {	
-	assert(NULL != pq);
+	assert(NULL != SLLPQ);
 
-	return(SortLLPopFront(pq->queue));
+	return(SortLLPopFront(SLLPQ->queue));
 }
 
-int PQEnqueue(pq_t *pq, void *data)
+int SLLPQEnqueue(SLLPQ_t *SLLPQ, void *data)
 {
-	assert(NULL != pq);
+	assert(NULL != SLLPQ);
 
-	return !(SortLLIsSameIter(SortLLInsert(pq->queue, data),SortLLEnd(pq->queue)));
+	return !(SortLLIsSameIter(SortLLInsert(SLLPQ->queue, data),SortLLEnd(SLLPQ->queue)));
 }
 
-void *PQPeek(const pq_t *pq)
+void *SLLPQPeek(const SLLPQ_t *SLLPQ)
 {	
-	assert(NULL != pq);
+	assert(NULL != SLLPQ);
 
-	return (SortLLGetData(SortLLBegin(pq->queue)));
+	return (SortLLGetData(SortLLBegin(SLLPQ->queue)));
 }
 
-size_t PQSize(const pq_t *pq)
+size_t SLLPQSize(const SLLPQ_t *SLLPQ)
 {	
-	return (SortLLSize(pq->queue));
+	return (SortLLSize(SLLPQ->queue));
 }
 
-int PQIsEmpty(const pq_t *pq)
+int SLLPQIsEmpty(const SLLPQ_t *SLLPQ)
 {	
-	assert(NULL != pq);
+	assert(NULL != SLLPQ);
 
-	return (SortLLIsEmpty(pq->queue));	
+	return (SortLLIsEmpty(SLLPQ->queue));	
 }
 
-void PQClear(pq_t *pq)
+void SLLPQClear(SLLPQ_t *SLLPQ)
 { 
-	assert(NULL != pq);
+	assert(NULL != SLLPQ);
 
-	while (!PQIsEmpty(pq))
+	while (!SLLPQIsEmpty(SLLPQ))
 	{
-		PQDequeue(pq);
+		SLLPQDequeue(SLLPQ);
 	}
 }
 
-void *PQErase(pq_t *pq, match_func m_ptr, const void *data)
+void *SLLPQErase(SLLPQ_t *SLLPQ, match_func m_ptr, const void *data)
 {	
 	void *returned_data = NULL;
 	sll_iterator_t it; 
 	
-	assert(NULL != pq);
+	assert(NULL != SLLPQ);
 	assert(NULL != m_ptr);
 
-	it = SortLLFindBy(pq->queue, SortLLBegin(pq->queue), SortLLEnd(pq->queue), m_ptr, data);
+	it = SortLLFindBy(SLLPQ->queue, SortLLBegin(SLLPQ->queue), SortLLEnd(SLLPQ->queue), m_ptr, data);
 	returned_data = SortLLGetData(it);
 
-	if (!SortLLIsSameIter(it,SortLLEnd(pq->queue)))
+	if (!SortLLIsSameIter(it,SortLLEnd(SLLPQ->queue)))
 	{
 		SortLLRemove(it);
 	}

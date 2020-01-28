@@ -1,8 +1,11 @@
 #include <stdio.h> /*printf()*/
 #include <stdlib.h>/*malloc()*/
 #include <assert.h>/*assert()*/
+#include <alloca.h> /*alloca()*/
+#include <string.h>
 
-#include "sorts.h"
+
+#include "../include/sorts.h"
 
 #define FREE(ptr) free(ptr); ptr=NULL;
 #define BITS_IN_BYTE 8
@@ -14,6 +17,17 @@ static void Swap(int *xp, int *yp)
     *xp = *yp; 
     *yp = temp; 
 } 
+
+static void QuickSortSwap(void *xp, void *yp, size_t element_size) 
+{ 
+    void *temp = alloca(element_size);
+
+    memcpy(temp, xp, element_size);
+    memcpy(xp, yp, element_size);
+    memcpy(yp,temp, element_size);
+
+} 
+
 
 static void SwapArrayPtr(unsigned int **src_arr, unsigned int **dest_arr)
 {
@@ -288,3 +302,49 @@ void MergeSort(int *src_arr,int *dest_arr, size_t size)
   MergeSort((src_arr + mid), dest_arr, (size - mid));
   MergeTwoArrays(src_arr, dest_arr, size);
 }
+
+static size_t Partition(void *base, size_t nmemb, size_t element_size, int (*compar)(const void *, const void *))
+{
+  void *pivot = alloca(element_size);
+  void *i_runner = NULL;
+  void *j_runner = NULL;
+
+  size_t i = 0, j = 0;
+
+  pivot = (char *)base + (element_size * (nmemb - 1));
+
+  while((i < nmemb - 1))
+  {
+    i_runner = (char *)base + (i * element_size);
+
+    if( 0 <= compar(pivot, i_runner))
+    { 
+      j_runner = (char *)base + (j * element_size);
+      QuickSortSwap(i_runner, j_runner, element_size);
+      ++j;
+
+    }
+    ++i;
+  }
+
+  j_runner = (char *)base + (j * element_size);
+  QuickSortSwap(pivot, j_runner, element_size);
+
+  return j;
+}
+
+void QuickSort(void *base, size_t nmemb, size_t element_size, int (*compar)(const void *, const void *))
+{
+    size_t pi = 0;
+
+    if(nmemb > 0)
+    {
+      pi = Partition(base, nmemb, element_size, compar);
+      
+      QuickSort(base, pi, element_size, compar);
+      QuickSort(((char*)base + (pi + 1) * element_size), (nmemb - pi - 1), element_size, compar);
+      
+    }
+}
+
+

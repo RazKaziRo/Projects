@@ -8,7 +8,7 @@
 
 #include <stdio.h> 	/*printf()*/
 #include <assert.h> /*assert()*/
-#include "../../include/fsa.h" /*Fixed Size Allocator functions*/
+#include "fsa.h" /*Fixed Size Allocator functions*/
 
 #define BYTE (char *)
 #define WORD_SIZE 8

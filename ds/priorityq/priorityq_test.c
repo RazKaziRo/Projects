@@ -37,43 +37,43 @@ static int FindData(void *iterator_data, void *ap)
 	return(*(int *)iterator_data == *(int *)ap);
 }					
 
-void TestPQCreate()
+void TestVECPQCreate()
 {	
 	size_t element_size = 4;
-	pq_t *new_pq = PQCreate(&MyCompare, &element_size);
-	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
-	PQDestroy(new_pq);
+	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, &element_size);
+	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
+	VECPQDestroy(new_VECPQ);
 	printf("\n");
 }
 
 
-void TestPQEnqueue()
+void TestVECPQEnqueue()
 {	
 	int a = 5;
 	int b = 15;
 	int c = 20;
 	int d = 25;
 
-	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 
-	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
-	PQEnqueue(new_pq,&a);
-	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(1)");
-	PQEnqueue(new_pq,&b);
-	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
-	PQEnqueue(new_pq,&c);
-	PQEnqueue(new_pq,&d);
+	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
+	VECPQEnqueue(new_VECPQ,&a);
+	RUN_TEST(1 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(1)");
+	VECPQEnqueue(new_VECPQ,&b);
+	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
+	VECPQEnqueue(new_VECPQ,&c);
+	VECPQEnqueue(new_VECPQ,&d);
 
-	PQClear(new_pq);
-	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
+	VECPQClear(new_VECPQ);
+	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
 	
 
-	PQDestroy(new_pq);
+	VECPQDestroy(new_VECPQ);
 	printf("\n");
 }
 
 
-void TestPQDequeue()
+void TestVECPQDequeue()
 {
 	int a = 5;
 	int b = 15;
@@ -81,114 +81,114 @@ void TestPQDequeue()
 	int d = 25;
 	int e = 30;
 
-	pq_t *new_pq = PQCreate(&MyCompare, NULL);
+	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 
-	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
-	PQEnqueue(new_pq,&a);
-	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(1)");
-	PQEnqueue(new_pq,&b);
-	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
-	PQEnqueue(new_pq,&c);
-	PQEnqueue(new_pq,&d);
+	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
+	VECPQEnqueue(new_VECPQ,&a);
+	RUN_TEST(1 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(1)");
+	VECPQEnqueue(new_VECPQ,&b);
+	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
+	VECPQEnqueue(new_VECPQ,&c);
+	VECPQEnqueue(new_VECPQ,&d);
 
-	PQDequeue(new_pq);
-	PQEnqueue(new_pq,&e);
-	PQClear(new_pq);
+	VECPQDequeue(new_VECPQ);
+	VECPQEnqueue(new_VECPQ,&e);
+	VECPQClear(new_VECPQ);
 
-	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
+	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
 	
-	PQDestroy(new_pq);
+	VECPQDestroy(new_VECPQ);
 	printf("\n");
 
 }
 
 
-void TestPQPeek()
+void TestVECPQPeek()
 {
 	int a = 10;
 	int b = 20;
 
-	pq_t *new_pq = PQCreate(&MyCompare, NULL);
-	PQEnqueue(new_pq,&b);
-	PQEnqueue(new_pq,&a);
- 	RUN_TEST(b == *(int *)PQPeek(new_pq), "FAIL: WRONG DATA ON PEEK (b)");
+	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	VECPQEnqueue(new_VECPQ,&b);
+	VECPQEnqueue(new_VECPQ,&a);
+ 	RUN_TEST(b == *(int *)VECPQPeek(new_VECPQ), "FAIL: WRONG DATA ON PEEK (b)");
 
-	PQDestroy(new_pq);
+	VECPQDestroy(new_VECPQ);
 	printf("\n");
 }
 
 
-void TestPQErase()
+void TestVECPQErase()
 {
 	int a = 10;
 	int b = 20;
 
-	pq_t *new_pq = PQCreate(&MyCompare, NULL);
-	PQEnqueue(new_pq,&a);
-	PQEnqueue(new_pq,&b);
-	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
-	RUN_TEST(a == *(int *)PQErase(new_pq, &FindData, &a), "FAIL: WRONG DATA (a)");
-	RUN_TEST(NULL == PQErase(new_pq, &FindData, &a), "FAIL: WRONG DATA (a)");
-	RUN_TEST(1 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(1)");
+	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	VECPQEnqueue(new_VECPQ,&a);
+	VECPQEnqueue(new_VECPQ,&b);
+	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
+	RUN_TEST(a == *(int *)VECPQErase(new_VECPQ, &FindData, &a), "FAIL: WRONG DATA (a)");
+	RUN_TEST(NULL == VECPQErase(new_VECPQ, &FindData, &a), "FAIL: WRONG DATA (a)");
+	RUN_TEST(1 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(1)");
 
-	PQDestroy(new_pq);
+	VECPQDestroy(new_VECPQ);
 	printf("\n");
 
 }
 
-void TestPQSize()
+void TestVECPQSize()
 {
 	int a = 10;
 	int b = 20;
 
-	pq_t *new_pq = PQCreate(&MyCompare, NULL);
-	PQEnqueue(new_pq,&a);
-	PQEnqueue(new_pq,&b);
-	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
+	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	VECPQEnqueue(new_VECPQ,&a);
+	VECPQEnqueue(new_VECPQ,&b);
+	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
 
-	PQDestroy(new_pq);
+	VECPQDestroy(new_VECPQ);
 	printf("\n");
 }
 
-void TestPQClear()
+void TestVECPQClear()
 {
 	int a = 10;
 	int b = 20;
 
-	pq_t *new_pq = PQCreate(&MyCompare, NULL);
-	PQEnqueue(new_pq,&a);
-	PQEnqueue(new_pq,&b);
-	RUN_TEST(2 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(2)");
-	PQClear(new_pq);
-	RUN_TEST(0 == PQSize(new_pq), "FAIL: WRONG CREATE SIZE(0)");
+	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	VECPQEnqueue(new_VECPQ,&a);
+	VECPQEnqueue(new_VECPQ,&b);
+	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
+	VECPQClear(new_VECPQ);
+	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
 
-	PQDestroy(new_pq);
+	VECPQDestroy(new_VECPQ);
 	printf("\n");
 
 }
 
 int main(int argc, char const *argv[])
 {	
-	printf("TestPQCreate()\n");
-	TestPQCreate();
+	printf("TestVECPQCreate()\n");
+	TestVECPQCreate();
 
-	printf("TestPQEnqueue()\n");
-	TestPQEnqueue();
+	printf("TestVECPQEnqueue()\n");
+	TestVECPQEnqueue();
 
-	printf("TestPQDequeue()\n");
-	TestPQDequeue();
+	printf("TestVECPQDequeue()\n");
+	TestVECPQDequeue();
 
-	printf("TestPQPeek()\n");
-	TestPQPeek();
+	printf("TestVECPQPeek()\n");
+	TestVECPQPeek();
 
-	printf("TestPQErase()\n");
-	TestPQErase();
+	printf("TestVECPQErase()\n");
+	TestVECPQErase();
 
-	printf("TestPQSize()\n");
-	TestPQSize();
+	printf("TestVECPQSize()\n");
+	TestVECPQSize();
 
-	printf("TestPQClear()\n");
-	TestPQClear();
+	printf("TestVECPQClear()\n");
+	TestVECPQClear();
 
 	UNUSED(argc);
 	UNUSED(argv);

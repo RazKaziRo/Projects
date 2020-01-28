@@ -22,7 +22,7 @@
 
 struct Scheduler
 {
-	pq_t *queue;
+	vecpq_t *queue;
 	int remove_current;
 	int stop;
 	task_t *current_task;
@@ -46,7 +46,7 @@ scheduler_t *SchedulerCreate()
 	scheduler_t *new_scheduler = malloc(sizeof(scheduler_t));
 	if (NULL != new_scheduler)
 	{
-		new_scheduler->queue = PQCreate(&TimeCompare, NULL);
+		new_scheduler->queue = VECPQCreate(&TimeCompare, NULL);
 		if (NULL != new_scheduler->queue)
 		{
 			new_scheduler->remove_current = 0;
@@ -72,7 +72,7 @@ void SchedulerRun(scheduler_t *s)
 
 	while (!s->stop)
 	{
-		task_to_run = PQDequeue(s->queue);
+		task_to_run = VECPQDequeue(s->queue);
 		s->current_task = task_to_run;
 
 		if (time(NULL) < TaskGetTimeToRun(task_to_run))
@@ -83,7 +83,7 @@ void SchedulerRun(scheduler_t *s)
 		if (0 == TaskRun(task_to_run) && 0 == s->remove_current)
 		{
 			TaskUpdateTimeToRun(task_to_run);
-			PQEnqueue(s->queue,task_to_run); /*suppose no need to check if failed*/
+			VECPQEnqueue(s->queue,task_to_run); /*suppose no need to check if failed*/
 		}
 		else
 		{
@@ -102,7 +102,7 @@ ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, vo
 
 	if (NULL != new_task)
 	{
-		if (PQEnqueue(s->queue, new_task))
+		if (VECPQEnqueue(s->queue, new_task))
 		{
 			return (TaskGetUid(new_task));
 		}
@@ -129,7 +129,7 @@ void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
 
 	if (NULL == s->current_task || !UIDIsSame(uid,TaskGetUid(s->current_task)))
 	{
-		task_holder = PQErase(s->queue, &IsSame, &uid);
+		task_holder = VECPQErase(s->queue, &IsSame, &uid);
 		TaskDestroy(task_holder);
 	}
 	else
@@ -143,7 +143,7 @@ void SchedulerDestroy(scheduler_t *s)
 	assert(NULL != s);
 
 	SchedulerClear(s);
-	PQDestroy(s->queue);
+	VECPQDestroy(s->queue);
 	FREE(s);
 }
 
@@ -151,23 +151,23 @@ size_t SchedulerSize(const scheduler_t *s)
 {
 	assert(NULL != s);
 
-	return(PQSize(s->queue));
+	return(VECPQSize(s->queue));
 }
 
 int SchedulerIsEmpty(const scheduler_t *s)
 {
 	assert(NULL != s);
 
-	return(PQIsEmpty(s->queue));
+	return(VECPQIsEmpty(s->queue));
 }
 
 void SchedulerClear(scheduler_t *s)
 {
 	assert(NULL != s);
 
-	while (!PQIsEmpty(s->queue))
+	while (!VECPQIsEmpty(s->queue))
 	{
-		TaskDestroy(PQDequeue(s->queue));
+		TaskDestroy(VECPQDequeue(s->queue));
 	}
 }
 
