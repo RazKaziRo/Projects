@@ -333,18 +333,49 @@ static size_t Partition(void *base, size_t nmemb, size_t element_size, int (*com
   return j;
 }
 
-void QuickSort(void *base, size_t nmemb, size_t element_size, int (*compar)(const void *, const void *))
+void QuickSort(void *base, size_t nmemb, size_t element_size, int (*compare)(const void *, const void *))
 {
     size_t pi = 0;
 
     if(nmemb > 0)
     {
-      pi = Partition(base, nmemb, element_size, compar);
+      pi = Partition(base, nmemb, element_size, compare);
       
-      QuickSort(base, pi, element_size, compar);
-      QuickSort(((char*)base + (pi + 1) * element_size), (nmemb - pi - 1), element_size, compar);
-      
+      QuickSort(base, pi, element_size, compare);
+      QuickSort(((char*)base + (pi + 1) * element_size), (nmemb - pi - 1), element_size, compare);
     }
 }
 
+void *BinarySearch(void *arr, size_t nmemb, size_t element_size, int (*compare)(const void *, const void *, void *param),const void *data, void *param)
+{ 
+  size_t middle_index = nmemb / 2;
+  void *middle_element = (char *)arr + (middle_index * element_size);
+
+  if(middle_index > 0)
+  {
+    if (0 < compare(data, middle_element, param))
+    {
+      void *right_half = (char *)middle_element + element_size;
+      middle_element = BinarySearch(right_half, middle_index, element_size, compare, data, param);
+    }
+
+    else if (0 > compare(data, middle_element, param))
+    {
+      void *left_half = (char *)middle_element - element_size * (nmemb - middle_index);
+      middle_element = BinarySearch(left_half, (nmemb - middle_index), element_size, compare, data, param);
+    }
+  }
+
+  if(0 == compare(data, middle_element, param))
+  {
+    return middle_element;
+  }
+
+  return NULL;
+}
+
+void *JumpSerach(void *arr, size_t nmemb, size_t size, int (*compare)(const void *, const void *, void *param), const void *data, void *param)
+{
+
+}
 
