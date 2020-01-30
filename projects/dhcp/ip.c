@@ -52,3 +52,17 @@ void BinaryStringToIP(char *buffer, ip_t *ip)
 	}
 	
 }
+
+void IPSetAvilableBits(char *binary_ip_address, size_t num_of_reserved_bits, bit_state_t state)
+{
+	size_t i = 0;
+
+	char *address_runner = binary_ip_address;
+	address_runner += num_of_reserved_bits;
+
+	for(; i < BITS_IN_IP_ADDRESS - num_of_reserved_bits; ++i)
+	{
+		*address_runner = '1';
+		++address_runner;
+	}
+}

@@ -21,14 +21,13 @@
 
 void TestDhcpCreate()
 {
-	
-	size_t reserved = 23;
+	size_t reserved = 30;
 
 	ip_t subnet_mask;
 	subnet_mask.address[0] = 255;
 	subnet_mask.address[1] = 255;
-	subnet_mask.address[2] = 254;
-	subnet_mask.address[3] = 0;
+	subnet_mask.address[2] = 255;
+	subnet_mask.address[3] = 252;
 
 	DhcpCreate(subnet_mask, reserved);
 
