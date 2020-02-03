@@ -180,7 +180,7 @@ static size_t TrieSizeHelper(trie_node_t *node)
 		return 0;
 	}
 
-	if (OCCUPIED == node->state && NULL == node->direction[LEFT] && NULL == node->direction[RIGHT])
+	if ((OCCUPIED == node->state) && (NULL == node->direction[LEFT]) && (NULL == node->direction[RIGHT]))
 	{
 		return 1;
 	}
