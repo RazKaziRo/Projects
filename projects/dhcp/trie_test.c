@@ -24,11 +24,11 @@ void TestTrieInsert()
 	unsigned char subnet_mask[] = {255, 255, 255, 252};
 	unsigned char broadcast_address[] = {255, 255, 255, 255};
 	unsigned char ip253[] = {255, 255, 255, 253};
+	unsigned char iptaked[] = {255, 255, 255, 253};
 
 	trie_t *new_trie = TrieCreate(height);
 
 	printf("TestTrieInsert(): \n");
-
 
 	RUN_TEST(0 == TrieSize(new_trie), "FAIL: WRONG SIZE (0)");
 	RUN_TEST(SUCCESS == TrieInsert(new_trie, subnet_mask), "FAIL: INSERT FAIL (SUCCESS)");
@@ -38,10 +38,7 @@ void TestTrieInsert()
 	RUN_TEST(SUCCESS == TrieInsert(new_trie, ip253), "FAIL: INSERT FAIL (SUCCESS)");
 	RUN_TEST(3 == TrieSize(new_trie), "FAIL: WRONG SIZE (3)");
 	RUN_TEST(FAIL == TrieInsert(new_trie, ip253), "FAIL: INSERT FAIL (FAIL)");
-	TrieFreeLeaf(new_trie, ip253);
-	RUN_TEST(2 == TrieSize(new_trie), "FAIL: WRONG SIZE AFTER FREE LEAF (2)");
-	TrieFreeLeaf(new_trie, ip253);
-	RUN_TEST(2 == TrieSize(new_trie), "FAIL: WRONG SIZE AFTER FREE LEAF (2)");
+	TrieNextAvilable(new_trie, subnet_mask);
 
 	TrieDestroy(new_trie);
 

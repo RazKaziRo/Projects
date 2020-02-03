@@ -28,7 +28,7 @@ typedef enum
 * ex: 255.255.255.0/24: the first 24 bits are dhcp reserved. 
 * complexity of malloc();       
 */
-dhcp_t *DhcpCreate(ip_t subnet_mask, size_t subnet_mask_reserved_bits);
+dhcp_t *DhcpCreate(ip_t subnet_mask, size_t subnet_mask_reserved_bits); /*DONE*/
 
 /*
 * DhcpDetroy() -
@@ -36,7 +36,7 @@ dhcp_t *DhcpCreate(ip_t subnet_mask, size_t subnet_mask_reserved_bits);
 * undefined behaviour for @dhcp NULL pointer
 * complexity: free();                  
 */
-void DhcpDestroy(dhcp_t *dhcp);
+void DhcpDestroy(dhcp_t *dhcp); /*DONE*/
 
 /*
 * DhcpAllocIp() -
@@ -54,7 +54,7 @@ void DhcpDestroy(dhcp_t *dhcp);
 * 255.255.255.254 - 
 * complexity: Olog(n)  
 */
-aloc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip);
+aloc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t *requested_ip, ip_t *allocated_ip);/*DONE*/
 
 /*
 * DhcpFreeIp() -
@@ -69,7 +69,7 @@ aloc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip);
 * 255.255.255.254 
 * complexity: Olog(n)            
 */
-free_status_t DhcpFreeIp(dhcp_t *dhcp, ip_t ip_address);
+free_status_t DhcpFreeIp(dhcp_t *dhcp, ip_t ip_address);/*DONE*/
 
 /*
 * DhcpCountFree() -

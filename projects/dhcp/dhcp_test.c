@@ -19,42 +19,50 @@
 
 #define UNUSED(x) (void)(x)
 
-unsigned char flipByte(unsigned char c)
-{
-    c = ((c>>1)&0x55)|((c<<1)&0xAA);
-    c = ((c>>2)&0x33)|((c<<2)&0xCC);
-    c = (c>>4) | (c<<4);
-
-    return c;
-}
-
 void TestDhcpCreate()
 {
-	size_t reserved = 30;
-	dhcp_t *new_dhcp = NULL;
 	ip_t subnet_mask;
-	ip_t requested_ip;
+	ip_t requested_ip253;
+	ip_t requested_ip254;
 	ip_t allocated_ip;
-	unsigned char *ip_address = allocated_ip.address;
+
+	dhcp_t *new_dhcp = NULL;
 
 	subnet_mask.address[0] = 255;
 	subnet_mask.address[1] = 255;
 	subnet_mask.address[2] = 255;
 	subnet_mask.address[3] = 252;
 
+	requested_ip253.address[0] = 255;
+	requested_ip253.address[1] = 255;
+	requested_ip253.address[2] = 255;
+	requested_ip253.address[3] = 253;
 
-	requested_ip.address[0] = 255;
-	requested_ip.address[1] = 255;
-	requested_ip.address[2] = 255;
-	requested_ip.address[3] = 253;
+	requested_ip254.address[0] = 255;
+	requested_ip254.address[1] = 255;
+	requested_ip254.address[2] = 255;
+	requested_ip254.address[3] = 254;
 
+	printf("TestDhcpCreate(): \n");
 
-	new_dhcp = DhcpCreate(subnet_mask, reserved);
-	DhcpAllocIp(new_dhcp, requested_ip, allocated_ip);
+	new_dhcp = DhcpCreate(subnet_mask, 30);
+	RUN_TEST(2 == DhcpCountFree(new_dhcp), "FAIL: WRONG COUNT FREE (2)");
 
-	DhcpAllocIp(new_dhcp, requested_ip, allocated_ip);
+	DhcpAllocIp(new_dhcp, &requested_ip253, &allocated_ip);
+	RUN_TEST(1 == DhcpCountFree(new_dhcp), "FAIL: WRONG COUNT FREE (1)");
+	DhcpAllocIp(new_dhcp, &requested_ip254, &allocated_ip);
 
+	RUN_TEST(0 == DhcpCountFree(new_dhcp), "FAIL: WRONG COUNT FREE (0)");
 
+	DhcpDestroy(new_dhcp);
+
+	printf("\n");
+
+}
+
+void TestDhcpAllocIp()
+{
+	
 }
 
 int main(int argc, char const *argv[])
