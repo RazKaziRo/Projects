@@ -31,7 +31,6 @@ typedef enum DIRECTIONS
 	RIGHT
 } direction_t;
 
-
 static trie_node_t *IMPTrieNodeCreate()
 {
 	trie_node_t *new_trie_node = malloc(sizeof(*new_trie_node));
