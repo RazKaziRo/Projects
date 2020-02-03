@@ -36,7 +36,7 @@ dhcp_t *DhcpCreate(ip_t subnet_mask, size_t subnet_mask_reserved_bits);
 * undefined behaviour for @dhcp NULL pointer
 * complexity: free();                  
 */
-void DhcpDetroy(dhcp_t *dhcp);
+void DhcpDestroy(dhcp_t *dhcp);
 
 /*
 * DhcpAllocIp() -

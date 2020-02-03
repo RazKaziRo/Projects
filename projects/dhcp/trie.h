@@ -5,7 +5,7 @@
 
 typedef struct TRIE trie_t;
 
-typedef enum Status
+typedef enum STATUS
 {
     SUCCESS,
     FAIL
@@ -17,18 +17,12 @@ typedef enum BOOL
     TRUE
 } bool_t;
 
-typedef enum DIRECTIONS
-{
-	LEFT,
-	RIGHT
-} direction_t;
-
 /*
 * TrieCreate() - 
 * Returns pointer to the Trie, will return NULL if failed. 
 * complexity of malloc();       
 */
-trie_t *TrieCreate();/*DONE*/
+trie_t *TrieCreate(size_t trie_height);/*DONE*/
 
 /*
 * TrieDetroy() -
@@ -44,11 +38,10 @@ void TrieDestroy(trie_t *trie);/*DONE*/
 * undefined behaviour for @trie NULL pointer
 * complexity: malloc();                  
 */
-status_t TrieInsert(trie_t *trie, char *str);
-
+status_t TrieInsert(trie_t *trie, unsigned char *ip_address); /*DONE*/
 /*
 * TrieIsEmpty() -
-* Checks if the trie is empty.
+* Checks if the trie is empty.status_t TrieInsert(trie_t *trie, unsigned int bits)
 * undefined behaviour for @trie NULL pointer
 * return value:
     -TRUE
@@ -59,18 +52,18 @@ bool_t TrieIsEmpty(const trie_t *trie);/*DONE*/
 
 /*
 * TrieSize() -
-* Counts the number of elements in the trie.
+* Counts the number of the OCCUPIDE elements in the trie.
 * undefined behaviour for @trie NULL pointer
 * complexity: O(n);                  
 */
 size_t TrieSize(const trie_t *trie); /*DONE*/
 
 /*
-* TrieCountLeafs() -
+* TrieFreeLeaf() -
 * Counts the number of leafs in the trie.
 * undefined behaviour for @trie NULL pointer
 * complexity: O(n);                  
 */
-size_t TrieCountLeafs(const trie_t *trie); /*DONE*/
+void TrieFreeLeaf(trie_t *trie, const unsigned char *ip_address);/*DONE*/
 
 #endif 

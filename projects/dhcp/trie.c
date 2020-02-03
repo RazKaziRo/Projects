@@ -1,6 +1,7 @@
 #include <stdlib.h> /*malloc*/
 
 #include "trie.h"
+#include "ip.h"
 
 #define NUM_OF_DIRECTION 2
 
@@ -8,18 +9,26 @@ typedef enum NODE_AVILABILITY
 {
 	AVAILABLE,
 	OCCUPIED
-} avilabilit_t;
+} avilability_t;
 
 typedef struct TRIE_NODE
 {
 	struct TRIE_NODE *direction[NUM_OF_DIRECTION];
-	avilabilit_t state;
+	avilability_t state;
 }trie_node_t;
 
 struct TRIE
 {
 	trie_node_t *root;
+	size_t height;
 };
+
+typedef enum DIRECTIONS
+{
+	LEFT,
+	RIGHT
+} direction_t;
+
 
 static trie_node_t *IMPTrieNodeCreate()
 {
@@ -34,16 +43,18 @@ static trie_node_t *IMPTrieNodeCreate()
 	return new_trie_node;
 }
 
-trie_t *TrieCreate()
+trie_t *TrieCreate(size_t trie_height)
 {
 	trie_t *new_trie = malloc(sizeof(*new_trie));
 	if(NULL != new_trie)
 	{
 		new_trie->root = IMPTrieNodeCreate();
+		new_trie->height = trie_height;
 	}
 
 	return new_trie; 
 }
+
 
 static void IMPTrieUpdateAvailabily(trie_node_t *node)
 {
@@ -55,38 +66,60 @@ static void IMPTrieUpdateAvailabily(trie_node_t *node)
 		}
 	}
 }
+static bool_t TrieIsLocationAvailableHelper(size_t height, trie_node_t *node, const unsigned char *ip_address)
+{
+	direction_t side = ((*(ip_address + (BITS_IN_IP_ADDRESS - height)/BITS_IN_BYTE)) & ((1 << (height - 1) % BITS_IN_BYTE))) >> (height - 1) % BITS_IN_BYTE;
 
-static status_t TrieInsertHalper(trie_node_t *node, char *str)
-{	
-	status_t status = FAIL;
+	if(0 == height || NULL == node->direction[side])
+	{
+		return TRUE;
+	}
+	
+	if(OCCUPIED == node->state)
+	{
+		return FALSE;
+	}
 
-	if('\0' == *str)
+	TrieIsLocationAvailableHelper(height - 1, node->direction[side], ip_address);
+}
+
+static int TrieIsLocationAvailable(trie_t *trie, const unsigned char *ip_address)
+{
+	return(TrieIsLocationAvailableHelper(trie->height, trie->root, ip_address));
+}
+
+static status_t TrieInsertHelper(size_t height, trie_node_t *node, unsigned char *ip_address)
+{
+	direction_t side = ((*(ip_address + (BITS_IN_IP_ADDRESS - height)/BITS_IN_BYTE)) & ((1 << (height - 1) % BITS_IN_BYTE))) >> (height - 1) % BITS_IN_BYTE;
+
+	if(0 == height)
 	{
 		node->state = OCCUPIED;
 		return SUCCESS;
 	}
 
-	if(NULL == node->direction[*str - 48])
+	if(NULL == node->direction[side])
 	{
-		node->direction[*str - 48] = IMPTrieNodeCreate();
-		if(NULL == node->direction[*str - 48])
-		{
-			return FAIL;
-		}
+		node->direction[side] = IMPTrieNodeCreate();
 	}
 
-	status = TrieInsertHalper(node->direction[*str - 48], str + 1);
+	TrieInsertHelper(height - 1, node->direction[side], ip_address);
 	IMPTrieUpdateAvailabily(node);
-
-	return status;
 }
 
-status_t TrieInsert(trie_t *trie, char *str)
+status_t TrieInsert(trie_t *trie, unsigned char *ip_address)
 {	
-	return(TrieInsertHalper(trie->root, str));
+	if(TrieIsLocationAvailable(trie, ip_address))
+	{
+		TrieInsertHelper(trie->height, trie->root, ip_address);
+
+		return SUCCESS;
+	}
+
+	return FAIL;
 }
 
-void TrieDestroyHalper(trie_node_t *node)
+static void TrieDestroyHalper(trie_node_t *node)
 {
 	if(NULL == node)
 	{
@@ -100,6 +133,15 @@ void TrieDestroyHalper(trie_node_t *node)
 	node = NULL;
 }
 
+void TrieDestroy(trie_t *trie)
+{
+	TrieDestroyHalper(trie->root);
+
+	free(trie);
+	trie = NULL;
+}
+
+
 bool_t TrieIsEmpty(const trie_t *trie)
 {
 	if(NULL == trie->root->direction[LEFT] && NULL == trie->root->direction[RIGHT])
@@ -110,15 +152,7 @@ bool_t TrieIsEmpty(const trie_t *trie)
 	return FALSE;
 }
 
-void TrieDestroy(trie_t *trie)
-{
-	TrieDestroyHalper(trie->root);
-
-	free(trie);
-	trie = NULL;
-}
-
-size_t TrieSizeHelper(trie_node_t *node)
+static size_t TrieSizeHelper(trie_node_t *node)
 {
 	size_t count = 0;
 
@@ -127,10 +161,15 @@ size_t TrieSizeHelper(trie_node_t *node)
 		return 0;
 	}
 
+	if(OCCUPIED == node->state && NULL == node->direction[LEFT] && NULL == node->direction[RIGHT])
+	{
+		return 1;
+	}
+
 	count += TrieSizeHelper(node->direction[LEFT]);
 	count += TrieSizeHelper(node->direction[RIGHT]);
 
-	return 1;
+	return count;
 }
 
 size_t TrieSize(const trie_t *trie)
@@ -143,27 +182,26 @@ size_t TrieSize(const trie_t *trie)
 	return 0;
 }
 
-size_t TrieCountLeafsHelper(trie_node_t *node)
+static void TrieFreeLeafHelper(size_t height, trie_node_t *node, const unsigned char *ip_address)
 {
-	size_t leaf_count = 0;
+	direction_t side = ((*(ip_address + (BITS_IN_IP_ADDRESS - height)/BITS_IN_BYTE)) & ((1 << (height - 1) % BITS_IN_BYTE))) >> (height - 1) % BITS_IN_BYTE;
 
-	if(NULL == node->direction[LEFT] && NULL == node->direction[RIGHT])
+	if(OCCUPIED == node->state && NULL == node->direction[LEFT] && NULL == node->direction[RIGHT])
 	{
-		return 1;
+		node->state = AVAILABLE;
+		return;
 	}
 
-	leaf_count += TrieCountLeafsHelper(node->direction[LEFT]);
-	leaf_count += TrieCountLeafsHelper(node->direction[RIGHT]);
-
-	return leaf_count;
-}
-
-size_t TrieCountLeafs(const trie_t *trie)
-{
-	if(!TrieIsEmpty(trie))
+	if(0 == height)
 	{
-		return(TrieCountLeafs((trie_t *)trie->root));
+		return;
 	}
 
-	return 0;
+	TrieFreeLeafHelper(height - 1, node->direction[side], ip_address);
 }
+
+void TrieFreeLeaf(trie_t *trie, const unsigned char *ip_address)
+{
+	TrieFreeLeafHelper(trie->height, trie->root, ip_address);
+}
+

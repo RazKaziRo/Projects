@@ -16,10 +16,4 @@ typedef struct IP_T
 	unsigned char address[BYTES_IN_IP_ADDRESS]; 
 } ip_t;
 
-void IPToBinaryString(ip_t ip, char *buffer);
-
-void BinaryStringToIP(char *buffer, ip_t *ip);
-
-void IPSetAvilableBits(char *binary_ip_address, size_t num_of_reserved_bits, bit_state_t state);
-
 #endif
