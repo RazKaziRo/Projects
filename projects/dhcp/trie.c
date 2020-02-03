@@ -64,6 +64,10 @@ static void IMPTrieUpdateAvailabily(trie_node_t *node)
 		{
 			node->state = OCCUPIED;
 		}
+		else
+		{
+			node->state = AVAILABLE;
+		}
 	}
 }
 static bool_t TrieIsLocationAvailableHelper(size_t height, trie_node_t *node, const unsigned char *ip_address)
@@ -198,10 +202,12 @@ static void TrieFreeLeafHelper(size_t height, trie_node_t *node, const unsigned 
 	}
 
 	TrieFreeLeafHelper(height - 1, node->direction[side], ip_address);
+	IMPTrieUpdateAvailabily(node);
 }
 
 void TrieFreeLeaf(trie_t *trie, const unsigned char *ip_address)
 {
 	TrieFreeLeafHelper(trie->height, trie->root, ip_address);
 }
+
 
