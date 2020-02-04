@@ -62,8 +62,6 @@ void TestTrieDestroy()
 
 int main(int argc, char const *argv[])
 {
-
-
 	TestTrieInsert();
 	TestTrieDestroy();
 

@@ -68,6 +68,6 @@ void TrieFreeLeaf(trie_t *trie, const unsigned char *ip_address);/*DONE*/
 
 void TrieNextAvilable(trie_t *trie, unsigned char *ip_holder);
 
-int TrieIsLocationAvailable(trie_t *trie, const unsigned char *ip_address);
+bool_t TrieIsLocationAvailable(trie_t *trie, const unsigned char *ip_address);
 
 #endif 

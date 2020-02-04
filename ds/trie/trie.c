@@ -1,4 +1,13 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for DS - Trie.
+ * Date: 04.02.2020
+ * Language: C
+ * Reviewer: Yoav Hattav
+ */
+
 #include <stdlib.h> /*malloc*/
+#include <assert.h>/*assert*/
 
 #include "trie.h"
 #include "ip.h"
@@ -64,7 +73,9 @@ trie_t *TrieCreate(size_t trie_height)
 }
 
 static void IMPTrieUpdateAvailabily(trie_node_t *node)
-{
+{	
+	assert(NULL != node);
+
 	if (NULL != node->direction[LEFT] && NULL != node->direction[RIGHT])
 	{
 		if (OCCUPIED == node->direction[LEFT]->state && OCCUPIED == node->direction[RIGHT]->state)
@@ -82,6 +93,8 @@ static bool_t TrieIsLocationAvailableHelper(size_t height, trie_node_t *node, co
 {
 	direction_t side = ((*(ip_address + (BITS_IN_IP_ADDRESS - height)/BITS_IN_BYTE)) & ((1 << (height - 1) % BITS_IN_BYTE))) >> (height - 1) % BITS_IN_BYTE;
 
+	assert(NULL != node);
+
 	if (0 == height || NULL == node->direction[side])
 	{
 		return TRUE;
@@ -95,8 +108,11 @@ static bool_t TrieIsLocationAvailableHelper(size_t height, trie_node_t *node, co
 	return (TrieIsLocationAvailableHelper(height - 1, node->direction[side], ip_address));
 }
 
-int TrieIsLocationAvailable(trie_t *trie, const unsigned char *ip_address)
+bool_t TrieIsLocationAvailable(trie_t *trie, const unsigned char *ip_address)
 {
+	assert(NULL != trie);
+	assert(NULL != ip_address);
+
 	return (TrieIsLocationAvailableHelper(trie->height, trie->root, ip_address));
 }
 
@@ -104,6 +120,9 @@ static status_t TrieInsertHelper(size_t height, trie_node_t *node, unsigned char
 {
 	direction_t side = ((*(ip_address + (BITS_IN_IP_ADDRESS - height)/BITS_IN_BYTE)) & ((1 << (height - 1) % BITS_IN_BYTE))) >> (height - 1) % BITS_IN_BYTE;
 	status_t status = 0;
+
+	assert(NULL != node);
+	assert(NULL != ip_address);
 
 	if (0 == height)
 	{
@@ -128,14 +147,10 @@ static status_t TrieInsertHelper(size_t height, trie_node_t *node, unsigned char
 
 status_t TrieInsert(trie_t *trie, unsigned char *ip_address)
 {	
-	if (TrieIsLocationAvailable(trie, ip_address))
-	{
-		TrieInsertHelper(trie->height, trie->root, ip_address);
+	assert(NULL != trie);
+	assert(NULL != ip_address);
 
-		return SUCCESS;
-	}
-
-	return FAIL;
+	return(TrieInsertHelper(trie->height, trie->root, ip_address));
 }
 
 static void TrieDestroyHalper(trie_node_t *node)
@@ -154,6 +169,8 @@ static void TrieDestroyHalper(trie_node_t *node)
 
 void TrieDestroy(trie_t *trie)
 {
+	assert(NULL != trie);
+
 	TrieDestroyHalper(trie->root);
 
 	free(trie);
@@ -162,6 +179,8 @@ void TrieDestroy(trie_t *trie)
 
 bool_t TrieIsEmpty(const trie_t *trie)
 {
+	assert(NULL != trie);
+
 	if (NULL == trie->root->direction[LEFT] && NULL == trie->root->direction[RIGHT])
 	{
 		return TRUE;
@@ -192,6 +211,8 @@ static size_t TrieSizeHelper(trie_node_t *node)
 
 size_t TrieSize(const trie_t *trie)
 {
+	assert(NULL != trie);
+
 	if (!TrieIsEmpty(trie))
 	{
 		return (TrieSizeHelper(trie->root));
@@ -203,6 +224,9 @@ size_t TrieSize(const trie_t *trie)
 static void TrieFreeLeafHelper(size_t height, trie_node_t *node, const unsigned char *ip_address)
 {
 	direction_t side = ((*(ip_address + (BITS_IN_IP_ADDRESS - height)/BITS_IN_BYTE)) & ((1 << (height - 1) % BITS_IN_BYTE))) >> (height - 1) % BITS_IN_BYTE;
+
+	assert(NULL != node);
+	assert(NULL != ip_address);
 
 	if (OCCUPIED == node->state && NULL == node->direction[LEFT] && NULL == node->direction[RIGHT])
 	{
@@ -221,12 +245,18 @@ static void TrieFreeLeafHelper(size_t height, trie_node_t *node, const unsigned 
 
 void TrieFreeLeaf(trie_t *trie, const unsigned char *ip_address)
 {
+	assert(NULL != trie);
+	assert(NULL != ip_address);
+
 	TrieFreeLeafHelper(trie->height, trie->root, ip_address);
 }
 
 static void TrieNextAvilableHelper(size_t height, trie_node_t *node, unsigned char *ip_address)
 {
 	direction_t side = ((*(ip_address + (BITS_IN_IP_ADDRESS - height) / BITS_IN_BYTE)) & ((1 << (height - 1) % BITS_IN_BYTE))) >> (height - 1) % BITS_IN_BYTE;
+
+	assert(NULL != node);
+	assert(NULL != ip_address);
 
 	if (height > 0)
 	{
@@ -251,5 +281,8 @@ static void TrieNextAvilableHelper(size_t height, trie_node_t *node, unsigned ch
 
 void TrieNextAvilable(trie_t *trie, unsigned char *ip_address)
 {
+	assert(NULL != trie);
+	assert(NULL != ip_address);
+
 	TrieNextAvilableHelper(trie->height, trie->root, ip_address);
 }
