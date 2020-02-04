@@ -181,12 +181,7 @@ bool_t TrieIsEmpty(const trie_t *trie)
 {
 	assert(NULL != trie);
 
-	if (NULL == trie->root->direction[LEFT] && NULL == trie->root->direction[RIGHT])
-	{
-		return TRUE;
-	}
-
-	return FALSE;
+	return((NULL == trie->root->direction[LEFT]) && (NULL == trie->root->direction[RIGHT]));
 }
 
 static size_t TrieSizeHelper(trie_node_t *node)

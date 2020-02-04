@@ -142,8 +142,7 @@ void *VECPQErase(vecpq_t *vecpq, match_func m_ptr, const void *data)
 void VECPQHeapifyDown(void *vector, size_t size, size_t index, 
 	size_t element_size, compare_func cmp, void *param)
 {
-	void **left_child = NULL, **right_child = NULL, 
-	**replacment_child = NULL, **parent = NULL;
+	void **left_child = NULL, **right_child = NULL, **parent = NULL;
 	
 	size_t parent_index = index;
 	size_t left_child_idx = 2 * index + 1;

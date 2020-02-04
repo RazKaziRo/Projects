@@ -133,26 +133,27 @@ aloc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t *requested_ip, ip_t *allocated_ip)
 
 	assert(IsIPInRange(dhcp, allocated_ip_ptr) || IsZeroAddress(requested_ip));
 
-	if (TrieIsLocationAvailable(dhcp->trie, requested_ip_ptr))
- 	{
- 		if (SUCCESS == TrieInsert(dhcp->trie, requested_ip_ptr))
-		{	
-			memcpy(allocated_ip_ptr, requested_ip_ptr, BYTES_IN_IP_ADDRESS);
-
-			return IP_AS_REQUESTED;
-		}
-		else
-		{
-			return FAIL_TO_ALLOC_IP;
-		}
- 	}
-
-	memcpy(allocated_ip_ptr, dhcp->subnet_mask.address, BYTES_IN_IP_ADDRESS);
-	TrieNextAvilable(dhcp->trie, allocated_ip_ptr);
-
-	if (SUCCESS == TrieInsert(dhcp->trie, allocated_ip_ptr))
+	if (0 != DhcpCountFree(dhcp))
 	{
-		return IP_NOT_AS_REQUESTED;
+		if (TrieIsLocationAvailable(dhcp->trie, requested_ip_ptr))
+ 		{
+ 			if (SUCCESS == TrieInsert(dhcp->trie, requested_ip_ptr))
+			{	
+				memcpy(allocated_ip_ptr, requested_ip_ptr, BYTES_IN_IP_ADDRESS);
+
+				return IP_AS_REQUESTED;
+			}
+
+			return FAIL_TO_ALLOC_IP;
+ 		}
+
+		memcpy(allocated_ip_ptr, dhcp->subnet_mask.address, BYTES_IN_IP_ADDRESS);
+		TrieNextAvilable(dhcp->trie, allocated_ip_ptr);
+
+		if (SUCCESS == TrieInsert(dhcp->trie, allocated_ip_ptr))
+		{
+			return IP_NOT_AS_REQUESTED;
+		}
 	}
 
 	return FAIL_TO_ALLOC_IP;
@@ -165,6 +166,7 @@ free_status_t DhcpFreeIp(dhcp_t *dhcp, ip_t ip_address)
 	if (0 == TrieIsLocationAvailable(dhcp->trie, ip_address.address))
 	{
 		TrieFreeLeaf(dhcp->trie, ip_address.address);
+		
 		return SUCCESS_FREE;
 	}
 

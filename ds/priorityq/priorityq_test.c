@@ -40,7 +40,7 @@ static int FindData(void *iterator_data, void *ap)
 void TestVECPQCreate()
 {	
 	size_t element_size = 4;
-	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, &element_size);
+	vecpq_t *new_VECPQ = VECPQCreate(&MyCompare, &element_size);
 	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
 	VECPQDestroy(new_VECPQ);
 	printf("\n");
@@ -54,7 +54,7 @@ void TestVECPQEnqueue()
 	int c = 20;
 	int d = 25;
 
-	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	vecpq_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 
 	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
 	VECPQEnqueue(new_VECPQ,&a);
@@ -81,7 +81,7 @@ void TestVECPQDequeue()
 	int d = 25;
 	int e = 30;
 
-	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	vecpq_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 
 	RUN_TEST(0 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(0)");
 	VECPQEnqueue(new_VECPQ,&a);
@@ -108,7 +108,7 @@ void TestVECPQPeek()
 	int a = 10;
 	int b = 20;
 
-	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	vecpq_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 	VECPQEnqueue(new_VECPQ,&b);
 	VECPQEnqueue(new_VECPQ,&a);
  	RUN_TEST(b == *(int *)VECPQPeek(new_VECPQ), "FAIL: WRONG DATA ON PEEK (b)");
@@ -123,7 +123,7 @@ void TestVECPQErase()
 	int a = 10;
 	int b = 20;
 
-	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	vecpq_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 	VECPQEnqueue(new_VECPQ,&a);
 	VECPQEnqueue(new_VECPQ,&b);
 	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
@@ -141,7 +141,7 @@ void TestVECPQSize()
 	int a = 10;
 	int b = 20;
 
-	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	vecpq_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 	VECPQEnqueue(new_VECPQ,&a);
 	VECPQEnqueue(new_VECPQ,&b);
 	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
@@ -155,7 +155,7 @@ void TestVECPQClear()
 	int a = 10;
 	int b = 20;
 
-	VECPQ_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
+	vecpq_t *new_VECPQ = VECPQCreate(&MyCompare, NULL);
 	VECPQEnqueue(new_VECPQ,&a);
 	VECPQEnqueue(new_VECPQ,&b);
 	RUN_TEST(2 == VECPQSize(new_VECPQ), "FAIL: WRONG CREATE SIZE(2)");
