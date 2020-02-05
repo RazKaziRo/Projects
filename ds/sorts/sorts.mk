@@ -1,9 +1,11 @@
+#Vector Makefile
+
 # Directories: 
-DIR =.
-INC_DIR   = ../include#DS .h Files
-OBJ_DIR   = $(DIR)/obj#DS .o Files
-BUILD_DIR = $(DIR)/build#Executable File
-LIB_DIR   = ../lib#Libraries
+DIR :=.
+INC_DIR   := ../include#DS .h Files
+OBJ_DIR   := $(DIR)/obj#DS .o Files
+LIB_DIR   := ../lib#Libraries
+TEST_DIR  := ../../tests#Libraries
 
 # Compiler:
 CC = gcc
@@ -11,46 +13,34 @@ DEBUGFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
 RCFLAGS = -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3
 LDFLAGS = -shared 
 PICFLAG = -fpic
-RPATH = -Wl,-rpath,"../$(LIB_DIR)"
+RPATH = -Wl,-rpath,'$$ORIGIN/../lib'
 
 #File Names:
 NAME = sorts
 
+#Dependencies Files
+DEPENDENCIES = N/A
+
 .PHONY: all clean directories 
 
-all: $(BUILD_DIR) $(OBJ_DIR) debug
+all: directories debug 
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+directories:
+	@mkdir -p $(OBJ_DIR) $(LIB_DIR)
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+debug: $(NAME) $(LIB_DIR)/lib$(NAME).so
 
-debug: $(BUILD_DIR)/$(NAME)_debug $(LIB_DIR)/lib$(NAME)_debug.so
+$(NAME): $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(NAME).so
+	@$(CC) $(DEBUGFLAGS) $(TEST_DIR)/$(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -lm
 
-release: $(BUILD_DIR)/$(NAME)_rc $(LIB_DIR)/lib$(NAME)_rc.so
+$(OBJ_DIR)/$(NAME).o: $(NAME).c $(INC_DIR)/$(NAME).h
+	@$(CC) $(DEBUGFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 
 
-#Debug ------------------------------------------------------------
+$(LIB_DIR)/lib$(NAME).so: $(OBJ_DIR)/$(NAME).o
+	@$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME).o 
 
-$(BUILD_DIR)/$(NAME)_debug: $(OBJ_DIR)/$(NAME)_debug.o $(LIB_DIR)/lib$(NAME)_debug.so $(NAME)_test.c
-	$(CC) $(DEBUGFLAGS) $(NAME)_test.c  -L$(LIB_DIR) -Wl,-rpath,'$$ORIGIN/../../lib' -I$(INC_DIR) -o $@ -l$(NAME)_debug
+clean: remove_dir
+	rm $(OBJ_DIR)/*.o $(LIB_DIR)/lib$(NAME).so
 
-$(OBJ_DIR)/$(NAME)_debug.o: $(NAME).c $(INC_DIR)/$(NAME).h
-	$(CC) $(DEBUGFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 
-
-$(LIB_DIR)/lib$(NAME)_debug.so: $(OBJ_DIR)/$(NAME)_debug.o
-	$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME)_debug.o
-
-#Release ---------------------------------------------------------
-
-$(BUILD_DIR)/$(NAME)_rc: $(OBJ_DIR)/$(NAME)_rc.o $(LIB_DIR)/lib$(NAME)_rc.so 
-	$(CC) $(RCFLAGS) $(NAME)_test.c  -L$(LIB_DIR) -Wl,-rpath,'$$ORIGIN/../../lib' -I$(INC_DIR) -o $@ -l$(NAME)_debug
-
-$(OBJ_DIR)/$(NAME)_rc.o: $(NAME).c $(INC_DIR)/$(NAME).h
-	$(CC) $(RCFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 
-
-$(LIB_DIR)/lib$(NAME)_rc.so: $(OBJ_DIR)/$(NAME)_rc.o
-	$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME)_rc.o -L$(LIB_DIR) -Wl,-rpath,'$$ORIGIN' -ldoublelist_rc
-
-clean:
-	rm $(OBJ_DIR)/*.o $(BUILD_DIR)/* $(LIB_DIR)/lib$(NAME)_rc.so $(LIB_DIR)/lib$(NAME)_debug.so
+remove_dir:
+	rm -r $(OBJ_DIR) $(LIB_DIR) $(NAME)

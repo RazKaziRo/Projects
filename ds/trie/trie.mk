@@ -1,4 +1,4 @@
-#Hash Makefile
+#Vector Makefile
 
 # Directories: 
 DIR :=.
@@ -16,10 +16,10 @@ PICFLAG = -fpic
 RPATH = -Wl,-rpath,'$$ORIGIN/../lib'
 
 #File Names:
-NAME = sortedlist
+NAME = trie
 
 #Dependencies Files
-DEPENDENCIES = doublelist
+DEPENDENCIES = N/A
 
 .PHONY: all clean directories 
 
@@ -31,23 +31,16 @@ directories:
 debug: $(NAME) $(LIB_DIR)/lib$(NAME).so
 
 $(NAME): $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(NAME).so
-	@$(CC) $(DEBUGFLAGS) $(TEST_DIR)/$(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -l$(DEPENDENCIES)
+	@$(CC) $(DEBUGFLAGS) $(TEST_DIR)/$(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -lm
 
 $(OBJ_DIR)/$(NAME).o: $(NAME).c $(INC_DIR)/$(NAME).h
 	@$(CC) $(DEBUGFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 
 
-$(LIB_DIR)/lib$(NAME).so: $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(DEPENDENCIES).so
+$(LIB_DIR)/lib$(NAME).so: $(OBJ_DIR)/$(NAME).o
 	@$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME).o 
 
-$(LIB_DIR)/lib$(DEPENDENCIES).so:
-	cd ../$(DEPENDENCIES) && make -f $(DEPENDENCIES).mk
-
-clean: remove_dir clean_dependencies
+clean: remove_dir
 	rm $(OBJ_DIR)/*.o $(LIB_DIR)/lib$(NAME).so
 
 remove_dir:
 	rm -r $(OBJ_DIR) $(LIB_DIR) $(NAME)
-
-clean_dependencies:
-	cd ../$(DEPENDENCIES) && make -f $(DEPENDENCIES).mk clean
-

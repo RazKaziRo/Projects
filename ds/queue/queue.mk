@@ -1,9 +1,11 @@
+#Queue Makefile
+
 # Directories: 
-DIR =.
-INC_DIR   = ../include#DS .h Files
-OBJ_DIR   = $(DIR)/obj#DS .o Files
-BUILD_DIR = $(DIR)/build#Executable File
-LIB_DIR   = ../lib#Libraries
+DIR :=.
+INC_DIR   := ../include#DS .h Files
+OBJ_DIR   := $(DIR)/obj#DS .o Files
+LIB_DIR   := ../lib#Libraries
+TEST_DIR  := ../../tests#Libraries
 
 # Compiler:
 CC = gcc
@@ -11,45 +13,40 @@ DEBUGFLAGS = -ansi -pedantic-errors -Wall -Wextra -g
 RCFLAGS = -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3
 LDFLAGS = -shared 
 PICFLAG = -fpic
-RPATH = -Wl,-rpath,"../$(LIB_DIR)"
+RPATH = -Wl,-rpath,'$$ORIGIN/../lib'
 
 #File Names:
 NAME = queue
 
-.PHONY: all clean
+#Dependencies Files
+DEPENDENCIES = slinkedlist
 
-all: $(BUILD_DIR) $(OBJ_DIR) debug
+.PHONY: all clean directories 
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+all: directories debug 
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+directories:
+	@mkdir -p $(OBJ_DIR) $(LIB_DIR)
 
-debug: $(BUILD_DIR)/$(NAME)_debug $(LIB_DIR)/lib$(NAME)_debug.so
+debug: $(NAME) $(LIB_DIR)/lib$(NAME).so
 
-release: $(BUILD_DIR)/$(NAME)_rc $(LIB_DIR)/lib$(NAME)_rc.so
+$(NAME): $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(NAME).so
+	@$(CC) $(DEBUGFLAGS) $(TEST_DIR)/$(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -l$(DEPENDENCIES)
 
-#Debug ------------------------------------------------------------
-
-$(BUILD_DIR)/$(NAME)_debug: $(OBJ_DIR)/$(NAME)_debug.o $(LIB_DIR)/lib$(NAME)_debug.so
-	@$(CC) $(DEBUGFLAGS) $(NAME)_test.c  -L$(LIB_DIR) -Wl,-rpath,'$$ORIGIN/../../lib' -I$(INC_DIR) -o $@ -l$(NAME)_debug -lslinkedlist_debug
-
-$(OBJ_DIR)/$(NAME)_debug.o: $(NAME).c $(INC_DIR)/$(NAME).h
+$(OBJ_DIR)/$(NAME).o: $(NAME).c $(INC_DIR)/$(NAME).h
 	@$(CC) $(DEBUGFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 
 
-$(LIB_DIR)/lib$(NAME)_debug.so: $(OBJ_DIR)/$(NAME)_debug.o
-	@$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME)_debug.o
+$(LIB_DIR)/lib$(NAME).so: $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(DEPENDENCIES).so
+	@$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME).o 
 
-#Release ---------------------------------------------------------
+$(LIB_DIR)/lib$(DEPENDENCIES).so:
+	cd ../$(DEPENDENCIES) && make -f $(DEPENDENCIES).mk
 
-$(BUILD_DIR)/$(NAME)_rc: $(OBJ_DIR)/$(NAME)_rc.o $(LIB_DIR)/lib$(NAME)_rc.so 
-	$(CC) $(RCFLAGS) $(NAME)_test.c  -L$(LIB_DIR) -Wl,-rpath,'$$ORIGIN/../../lib' -I$(INC_DIR) -o $@ -l$(NAME)_debug -lslinkedlist_rc
+clean: remove_dir clean_dependencies
+	rm $(OBJ_DIR)/*.o $(LIB_DIR)/lib$(NAME).so
 
-$(OBJ_DIR)/$(NAME)_rc.o: $(NAME).c $(INC_DIR)/$(NAME).h
-	$(CC) $(RCFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 
+remove_dir:
+	rm -r $(OBJ_DIR) $(LIB_DIR) $(NAME)
 
-$(LIB_DIR)/lib$(NAME)_rc.so: $(OBJ_DIR)/$(NAME)_rc.o
-	$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME)_rc.o
-clean:
-	rm $(OBJ_DIR)/*.o $(BUILD_DIR)/* $(LIB_DIR)/lib$(NAME)_rc.so $(LIB_DIR)/lib$(NAME)_debug.so
+clean_dependencies:
+	cd ../$(DEPENDENCIES) && make -f $(DEPENDENCIES).mk clean

@@ -2,10 +2,6 @@
 %_make_debug:
 	cd ./$* && make -f $*.mk debug
 
-.PHONY: %_make_rc
-%_make_rc:
-	cd ./$* && make -f $*.mk release
-
 .PHONY: %_outd
 %_outd:	
 	cd ./$*/build && ./$*_debug

@@ -10,7 +10,7 @@
 #include <assert.h> /*assert()*/
 
 #include "hash.h"
-#include "../include/doublelist.h"
+#include "doublelist.h"
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 #define START_POSITION 1
