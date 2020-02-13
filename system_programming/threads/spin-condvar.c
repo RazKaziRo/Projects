@@ -14,7 +14,7 @@ void* thread_function (void* thread_arg)
 {    
 	while (1) 
 	{        
-		int flag_is_set;  
+	   int flag_is_set;  
        /* Protect the flag with a mutex lock.  */         
        pthread_mutex_lock (&thread_flag_mutex);         
        flag_is_set = thread_flag;         

@@ -32,7 +32,8 @@ int main ()
   thread1_args.count  =  30000;    
   pthread_create  (&thread1_id,  NULL,  &char_print,  &thread1_args);    
   /*  Create  a  new  thread  to  print  20,000  o's.  */    
-  thread2_args.character  =  'o';    thread2_args.count  =  20000;    
+  thread2_args.character  =  'o';    
+  thread2_args.count  =  20000;    
   pthread_create  (&thread2_id,  NULL,  &char_print,  &thread2_args); 
 
     /* Make  sure  the  first  thread  has  finished.  */    
