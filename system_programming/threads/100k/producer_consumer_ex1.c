@@ -21,12 +21,11 @@ void *SetArray(void *param)
 			{
 				g_int_arr[i] += j;
 			}
-
-		g_lock = 1;
-		__sync_lock_release(&g_lock);
-
 		}
+		g_lock = 1;
 	}
+
+	__sync_lock_release(&g_lock);
 
 	return NULL;
 }
@@ -46,15 +45,10 @@ void *GetArray(void *param)
 			{
 				printf("%d", g_int_arr[i]);
 			}
-
-		g_lock = 0;
-		__sync_lock_release(&g_lock);
-		
 		}
+	g_lock = 0;
 	}
-
-	
-
+	__sync_lock_release(&g_lock);
 	return NULL;
 }
 
