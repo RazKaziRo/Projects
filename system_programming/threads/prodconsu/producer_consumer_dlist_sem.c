@@ -58,14 +58,11 @@ void *ProducerFunction(void *param)
 void *ConsumerFunction(void *param)
 {
 
-    sem_wait (&job_queue_count);  
+    sem_wait(&job_queue_count);  
 
 	pthread_mutex_lock (&job_queue_mutex);
 
-	if(!DLLIsEmpty(new_dll))
-	{
-		printf("Consumer Pop: %lu \n", (size_t )DLLPopBack(new_dll));
-	}
+	printf("Consumer Pop: %lu \n", (size_t )DLLPopBack(new_dll));
 
 	pthread_mutex_unlock  (&job_queue_mutex); 
 
