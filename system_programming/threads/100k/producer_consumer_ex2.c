@@ -27,7 +27,7 @@ enum
 	LOCKED
 };
 
-int g_int_arr[NUM_OF_ELEMENTS] = {0};
+int g_arr[NUM_OF_ELEMENTS] = {0};
 
 int g_producer_lock = UNLOCKED;
 int g_consumer_lock = LOCKED;
@@ -43,7 +43,7 @@ void *ProducerFunction(void *param)
 
 		for(j = 0; j < NUM_TO_PRODUCE; ++j)
 		{
-			g_int_arr[j] = i;
+			g_arr[j] = i;
 		}
 		__sync_lock_release(&g_consumer_lock);
 	}
@@ -61,7 +61,7 @@ void *ConsumerFunction(void *param)
 
 		for(j = 0; j < NUM_TO_PRODUCE; ++j)
 		{
-			printf("%d", g_int_arr[j]);
+			printf("%d", g_arr[j]);
 		}
 		printf("\n");
 
