@@ -21,9 +21,15 @@
 #define NUM_TO_PRODUCE 100
 #define ARR_START_LOCATION 0
 
+enum
+{
+	UNLOCKED,
+	LOCKED
+};
+
 int g_int_arr[NUM_OF_ELEMENTS] = {0};
 
-int g_action_lock = 0;
+int g_action_lock = UNLOCKED;
 
 void *SetArray(void *param)
 {	
@@ -31,7 +37,7 @@ void *SetArray(void *param)
 
 	for(i = 0; i < NUM_OF_ELEMENTS; ++i)
 	{	
-		while (__sync_lock_test_and_set (&g_action_lock, 1));
+		while (__sync_lock_test_and_set (&g_action_lock, LOCKED));
 
 		for(j = 0; j < NUM_TO_PRODUCE; ++j)
 		{
@@ -40,6 +46,7 @@ void *SetArray(void *param)
 		__sync_lock_release(&g_action_lock);
 	}
 
+	UNUSED(param);
 	return NULL;
 }
 
@@ -49,7 +56,7 @@ void *GetArray(void *param)
 
 	for(i = 0; i < NUM_OF_ELEMENTS; ++i)
 	{	
-		while (__sync_lock_test_and_set (&g_action_lock, 1));
+		while (__sync_lock_test_and_set (&g_action_lock, LOCKED));
 		for(j = 0; j < NUM_TO_PRODUCE; ++j)
 		{
 			printf("%d", g_int_arr[j]);
@@ -60,6 +67,7 @@ void *GetArray(void *param)
 		__sync_lock_release(&g_action_lock);
 	}
 
+	UNUSED(param);
 	return NULL;
 }
 
@@ -75,5 +83,8 @@ int main(int argc, char const *argv[])
 	pthread_join(producer_tread, NULL);
   	pthread_join(consumer_tread, NULL);
 
+  	UNUSED(argv);
+	UNUSED(argc);
+	
 	return 0;
 }
