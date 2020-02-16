@@ -32,7 +32,6 @@ int g_arr[NUM_OF_ELEMENTS] = {0};
 int g_producer_lock = UNLOCKED;
 int g_consumer_lock = LOCKED;
 
-
 void *ProducerFunction(void *param)
 {	
 	size_t i = 0, j = 0;
