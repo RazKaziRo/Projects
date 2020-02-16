@@ -83,5 +83,8 @@ int main(int argc, char const *argv[])
 	pthread_join(producer_tread, NULL);
   	pthread_join(consumer_tread, NULL);
 
+  	UNUSED(argc);
+  	UNUSED(argv);
+
 	return 0;
 }
