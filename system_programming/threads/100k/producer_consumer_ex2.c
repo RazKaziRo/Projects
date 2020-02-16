@@ -48,7 +48,7 @@ void *ProducerFunction(void *param)
 		__sync_lock_release(&g_consumer_lock);
 	}
 
-	return NULL;
+	return param;
 }
 
 void *ConsumerFunction(void *param)
@@ -68,7 +68,7 @@ void *ConsumerFunction(void *param)
 		__sync_lock_release(&g_producer_lock);
 	}
 
-	return NULL;
+	return param;
 }
 
 int main(int argc, char const *argv[])
