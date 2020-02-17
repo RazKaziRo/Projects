@@ -1,6 +1,5 @@
 #include <pthread.h>  
 #include <stdio.h>
-
 #include "../../../ds/include/doublelist.h"
 
 #define RUN_TEST(test, errmsg)\
@@ -19,7 +18,7 @@
 
 #define UNUSED(x) (void)(x)
 
-#define NUM_OF_THREADS 100
+#define NUM_OF_THREADS 10000
 
 enum
 {
@@ -57,18 +56,17 @@ void *ConsumerFunction(void *param)
 	int milli_seconds = 1000 * 6000; 
     clock_t start_time = clock(); 
 
-    while (clock() < start_time + milli_seconds) 
+    pthread_mutex_lock (&job_queue_mutex);
+
+    while (DLLIsEmpty(new_dll)) 
 	{
+		pthread_mutex_unlock (&job_queue_mutex);
 		pthread_mutex_lock (&job_queue_mutex);
-
-		if(!DLLIsEmpty(new_dll))
-		{
-			printf("Consumer Pop: %lu \n", (size_t )DLLPopBack(new_dll));
-		}
-
-		pthread_mutex_unlock (&job_queue_mutex); 
-
 	}
+
+	printf("Consumer Pop: %lu \n", (size_t )DLLPopBack(new_dll));
+
+	pthread_mutex_unlock (&job_queue_mutex); 
 
 	UNUSED(param);
 	return NULL;
