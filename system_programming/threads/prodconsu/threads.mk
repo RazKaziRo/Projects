@@ -31,7 +31,7 @@ directories:
 debug: $(NAME) $(LIB_DIR)/lib$(NAME).so
 
 $(NAME): $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(NAME).so
-	@$(CC) $(DEBUGFLAGS) $(TEST_DIR)/$(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -l$(DEPENDENCIES)
+	@$(CC) $(DEBUGFLAGS) $(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -l$(DEPENDENCIES)
 
 $(OBJ_DIR)/$(NAME).o: $(NAME).c 
 	@$(CC) $(DEBUGFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 

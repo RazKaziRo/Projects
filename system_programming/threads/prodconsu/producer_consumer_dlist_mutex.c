@@ -28,7 +28,8 @@ enum
 };
 
 dll_t *new_dll = NULL;
-pthread_mutex_t  job_queue_mutex = PTHREAD_MUTEX_INITIALIZER; 
+
+pthread_mutex_t job_queue_mutex = PTHREAD_MUTEX_INITIALIZER; 
 
 size_t g_i = 0;
 
@@ -53,7 +54,6 @@ void *ProducerFunction(void *param)
 
 void *ConsumerFunction(void *param)
 {
-
 	int milli_seconds = 1000 * 6000; 
     clock_t start_time = clock(); 
 
@@ -66,7 +66,7 @@ void *ConsumerFunction(void *param)
 			printf("Consumer Pop: %lu \n", (size_t )DLLPopBack(new_dll));
 		}
 
-		pthread_mutex_unlock  (&job_queue_mutex); 
+		pthread_mutex_unlock (&job_queue_mutex); 
 
 	}
 

@@ -20,8 +20,8 @@
 
 #define UNUSED(x) (void)(x)
 
-#define NUM_OF_PRODUCER 10000
-#define NUM_OF_CONSUMER 10000
+#define NUM_OF_PRODUCER 100
+#define NUM_OF_CONSUMER 100
 
 enum
 {
@@ -41,7 +41,7 @@ void *ProducerFunction(void *param)
 
 	++g_i;
 	
-	printf("Producer Push: %lu \n", g_i);
+	printf("Producer ID %lu Push: %lu \n", pthread_self(), g_i);
 
 	if(!DLLPushFront(new_dll, (void *)g_i))
 	{
@@ -62,7 +62,7 @@ void *ConsumerFunction(void *param)
 
 	pthread_mutex_lock (&job_queue_mutex);
 
-	printf("Consumer Pop: %lu \n", (size_t )DLLPopBack(new_dll));
+	printf("Consumer ID %lu Pop: %lu \n",pthread_self(), (size_t )DLLPopBack(new_dll));
 
 	pthread_mutex_unlock  (&job_queue_mutex); 
 
@@ -104,6 +104,7 @@ int main(int argc, char const *argv[])
 	RUN_TEST(0 == DLLSize(new_dll), "FAIL");
 
 	DLLDestroy(new_dll);
+	sem_destroy(&job_queue_count);
 
   	UNUSED(argc);
   	UNUSED(argv);
