@@ -19,17 +19,11 @@
 
 #define UNUSED(x) (void)(x)
 
-#define NUM_OF_CONSUMERS 10
+#define NUM_OF_CONSUMERS 100
 
-enum
-{
-	CLOSE,
-	OPEN
-};
 
 pthread_mutex_t job_queue_mutex = PTHREAD_MUTEX_INITIALIZER; 
 pthread_cond_t producer_wait_cv;
-
 sem_t consumer_queue_count;
 
 int g_data = 0;
