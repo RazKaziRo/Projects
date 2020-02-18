@@ -19,7 +19,13 @@
 
 #define UNUSED(x) (void)(x)
 
-#define NUM_OF_CONSUMERS 25
+#define NUM_OF_CONSUMERS 10
+
+enum
+{
+	CLOSE,
+	OPEN
+};
 
 pthread_mutex_t job_queue_mutex = PTHREAD_MUTEX_INITIALIZER; 
 pthread_cond_t producer_wait_cv;
@@ -27,7 +33,6 @@ pthread_cond_t producer_wait_cv;
 sem_t consumer_queue_count;
 
 int g_data = 0;
-int g_wating_threads = 0;
 
 void *ProducerFunction(void *param)
 {
@@ -35,18 +40,18 @@ void *ProducerFunction(void *param)
 
 	while(1)
 	{
-		pthread_mutex_lock (&job_queue_mutex);    
+		for(i = 0; i < NUM_OF_CONSUMERS; ++i)
+		{	
+			sem_wait(&consumer_queue_count);
+		}
+
+		pthread_mutex_lock (&job_queue_mutex); 
 
 			printf("Producer ID: %lu Write: %d \n", pthread_self(), ++g_data);
 
-			for(i = 0; i < NUM_OF_CONSUMERS; ++i)
-			{
-				sem_post(&consumer_queue_count);
-			}
-
-			pthread_cond_wait(&producer_wait_cv, &job_queue_mutex);
-
-		pthread_mutex_unlock (&job_queue_mutex); 
+			pthread_cond_broadcast(&producer_wait_cv);
+			
+		pthread_mutex_unlock (&job_queue_mutex);
 
 	}
 
@@ -56,25 +61,23 @@ void *ProducerFunction(void *param)
 
 void *ConsumerFunction(void *param)
 {
-
 	while(1)
 	{
-		sem_wait(&consumer_queue_count);
+		int local_data = g_data;
 
 		pthread_mutex_lock (&job_queue_mutex);    
 
-		++g_wating_threads;
-		
-		printf("Consumer ID: %lu Read: %d \n",pthread_self(), g_data);
+			sem_post(&consumer_queue_count);
 
-		if(NUM_OF_CONSUMERS == g_wating_threads)
-		{
-			pthread_cond_signal(&producer_wait_cv);
-			g_wating_threads = 0;
-			
-		}
+			while(g_data == local_data)
+			{	
+				pthread_cond_wait(&producer_wait_cv, &job_queue_mutex);
+			}
+
+			printf("Consumer ID: %lu Read: %d \n",pthread_self(), g_data);
 
 		pthread_mutex_unlock (&job_queue_mutex); 
+
 	}
 
 	UNUSED(param);
