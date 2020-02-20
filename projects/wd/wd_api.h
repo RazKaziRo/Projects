@@ -3,7 +3,7 @@
 
 #include <pthread.h>
 
-typedef struct WatchDog wd_t;
+typedef struct WATCHDOG wd_t;
 
 typedef enum STATUS
 {
