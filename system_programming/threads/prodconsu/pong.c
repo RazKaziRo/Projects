@@ -57,7 +57,6 @@ int main(void)
     if (sem_close(ping) < 0) 
     {
         perror("sem_close(3) failed");
-        /* We ignore possible sem_unlink(3) errors here */
         sem_unlink(SEM_PING_NAME);
         exit(EXIT_FAILURE);
     }
@@ -65,7 +64,6 @@ int main(void)
     if (sem_close(pong) < 0) 
     {
         perror("sem_close(3) failed");
-        /* We ignore possible sem_unlink(3) errors here */
         sem_unlink(SEM_PING_NAME);
         exit(EXIT_FAILURE);
     }
