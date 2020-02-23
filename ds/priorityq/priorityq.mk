@@ -16,10 +16,10 @@ PICFLAG = -fpic
 RPATH = -Wl,-rpath,'$$ORIGIN/../lib'
 
 #File Names:
-NAME = priorityq_vector
+NAME = priorityq_sll
 
 #Dependencies Files
-DEPENDENCIES = vector
+DEPENDENCIES = sortedlist
 
 .PHONY: all clean directories 
 
@@ -31,16 +31,19 @@ directories:
 debug: $(NAME) $(LIB_DIR)/lib$(NAME).so
 
 $(NAME): $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(NAME).so
-	@$(CC) $(DEBUGFLAGS) $(TEST_DIR)/$(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -l$(DEPENDENCIES)
+	@$(CC) $(DEBUGFLAGS) $(TEST_DIR)/$(NAME)_test.c -L$(LIB_DIR) $(RPATH) -I$(INC_DIR) -o $@ -l$(NAME) -l$(DEPENDENCIES) -ldoublelist
 
 $(OBJ_DIR)/$(NAME).o: $(NAME).c $(INC_DIR)/$(NAME).h
 	@$(CC) $(DEBUGFLAGS) -c $(PICFLAG) -I$(INC_DIR) $(NAME).c -o $@ 
 
-$(LIB_DIR)/lib$(NAME).so: $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(DEPENDENCIES).so
+$(LIB_DIR)/lib$(NAME).so: $(OBJ_DIR)/$(NAME).o $(LIB_DIR)/lib$(DEPENDENCIES).so $(LIB_DIR)/libdoublelist.so
 	@$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/$(NAME).o 
 
 $(LIB_DIR)/lib$(DEPENDENCIES).so:
 	cd ../$(DEPENDENCIES) && make -f $(DEPENDENCIES).mk
+
+$(LIB_DIR)/libdoublelist.so:
+	cd ../doublelist && make -f doublelist.mk
 
 clean: remove_dir clean_dependencies
 	rm $(OBJ_DIR)/*.o $(LIB_DIR)/lib$(NAME).so

@@ -155,13 +155,13 @@ void TestSchedulerRun()
 {
 	scheduler_t *newScheduler = SchedulerCreate();
 	SchedulerAddTask(newScheduler, &ToDo5Sec,5, NULL);
-	SchedulerAddTask(newScheduler, &ToDo1Sec,1, NULL);
-	SchedulerAddTask(newScheduler, &StopScheduler,10, newScheduler);
+	/*SchedulerAddTask(newScheduler, &ToDo1Sec,1, NULL);
+	/*SchedulerAddTask(newScheduler, &StopScheduler,10, newScheduler);
 
-	RUN_TEST(3 == SchedulerSize(newScheduler), "FAIL: WRONG CREATE SIZE (0)");
+	RUN_TEST(3 == SchedulerSize(newScheduler), "FAIL: WRONG CREATE SIZE (0)");*/
 
 	SchedulerRun(newScheduler);
-	SchedulerRun(newScheduler);
+	/*SchedulerRun(newScheduler);*/
 
 	SchedulerDestroy(newScheduler);
 	printf("\n");
@@ -170,7 +170,7 @@ void TestSchedulerRun()
 
 int main(int argc, char const *argv[])
 {	
-	
+
 	printf("TestSchedulerCreate()\n");
 	TestSchedulerCreate();
 
@@ -188,6 +188,8 @@ int main(int argc, char const *argv[])
 
 	printf("TestSchedulerClear()\n");
 	TestSchedulerClear();
+
+	TestSchedulerRun();
 
 	UNUSED(argv);
 	UNUSED(argc);

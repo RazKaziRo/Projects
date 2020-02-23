@@ -13,7 +13,7 @@
 #include "scheduler.h"  	   /*Scheduler API Functions*/
 #include "uid.h"			   /*UID API Functions*/
 #include "task.h"		 	   /*Task API Functions*/
-#include "priorityq_vector.h" /*Priority Queue API Functions*/
+#include "priorityq_sll.h" /*Priority Queue API Functions*/
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 #define UNUSED(x) (void)(x)
@@ -22,7 +22,7 @@
 
 struct Scheduler
 {
-	vecpq_t *queue;
+	SLLPQ_t *queue;
 	int remove_current;
 	int stop;
 	task_t *current_task;
@@ -46,7 +46,7 @@ scheduler_t *SchedulerCreate()
 	scheduler_t *new_scheduler = malloc(sizeof(scheduler_t));
 	if (NULL != new_scheduler)
 	{
-		new_scheduler->queue = VECPQCreate(&TimeCompare, NULL);
+		new_scheduler->queue = SLLPQCreate(&TimeCompare, NULL);
 		if (NULL != new_scheduler->queue)
 		{
 			new_scheduler->remove_current = 0;
@@ -72,7 +72,7 @@ void SchedulerRun(scheduler_t *s)
 
 	while (!s->stop)
 	{
-		task_to_run = VECPQDequeue(s->queue);
+		task_to_run = SLLPQDequeue(s->queue);
 		s->current_task = task_to_run;
 
 		if (time(NULL) < TaskGetTimeToRun(task_to_run))
@@ -83,7 +83,7 @@ void SchedulerRun(scheduler_t *s)
 		if (0 == TaskRun(task_to_run) && 0 == s->remove_current)
 		{
 			TaskUpdateTimeToRun(task_to_run);
-			VECPQEnqueue(s->queue,task_to_run); /*suppose no need to check if failed*/
+			SLLPQEnqueue(s->queue,task_to_run); /*suppose no need to check if failed*/
 		}
 		else
 		{
@@ -102,7 +102,7 @@ ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, vo
 
 	if (NULL != new_task)
 	{
-		if (VECPQEnqueue(s->queue, new_task))
+		if (SLLPQEnqueue(s->queue, new_task))
 		{
 			return (TaskGetUid(new_task));
 		}
@@ -129,7 +129,7 @@ void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
 
 	if (NULL == s->current_task || !UIDIsSame(uid,TaskGetUid(s->current_task)))
 	{
-		task_holder = VECPQErase(s->queue, &IsSame, &uid);
+		task_holder = SLLPQErase(s->queue, &IsSame, &uid);
 		TaskDestroy(task_holder);
 	}
 	else
@@ -143,7 +143,7 @@ void SchedulerDestroy(scheduler_t *s)
 	assert(NULL != s);
 
 	SchedulerClear(s);
-	VECPQDestroy(s->queue);
+	SLLPQDestroy(s->queue);
 	FREE(s);
 }
 
@@ -151,23 +151,23 @@ size_t SchedulerSize(const scheduler_t *s)
 {
 	assert(NULL != s);
 
-	return(VECPQSize(s->queue));
+	return(SLLPQSize(s->queue));
 }
 
 int SchedulerIsEmpty(const scheduler_t *s)
 {
 	assert(NULL != s);
 
-	return(VECPQIsEmpty(s->queue));
+	return(SLLPQIsEmpty(s->queue));
 }
 
 void SchedulerClear(scheduler_t *s)
 {
 	assert(NULL != s);
 
-	while (!VECPQIsEmpty(s->queue))
+	while (!SLLPQIsEmpty(s->queue))
 	{
-		TaskDestroy(VECPQDequeue(s->queue));
+		TaskDestroy(SLLPQDequeue(s->queue));
 	}
 }
 

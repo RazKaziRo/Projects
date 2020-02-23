@@ -1,16 +1,9 @@
-#ifndef __WD_API_H__
-#define __WD_API_H__
+#ifndef __WD_API_FUNC_H__
+#define __WD_API_FUNC_H__
 
-#include <pthread.h>
+#include "wd.h"
 
-typedef struct WATCHDOG wd_t;
-
-typedef enum STATUS
-{
-	SUCCESS,
-	MEMORY_ALOC_FAIL
-} wd_status_t;
-
+#define WD_APP_PATH "./wd"
 /*	
 *	The function recives a pointer to a thread created by the user 
 * 	which will hold the tread to be joined in WDStop(). the first argument is the excute filename by path 
@@ -18,13 +11,13 @@ typedef enum STATUS
 * 	Return value: 0 for success, 1 for fail. 
 */
 
-wd_t *WDStart(const char *filename, wd_status_t status);
+wd_t *WDStart(const char *path_to_app, wd_status_t *status);
 
 /*
 *	the function ends the reviving effect.
 *	it recievs the pointer to the tread created in WDStart() 
 */
 
-void WDStop(pthread_t *thread);
+void WDStop(wd_t *wd_pack);
 
 #endif
