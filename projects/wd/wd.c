@@ -71,7 +71,8 @@ static void SIGUSR2Handler(int sig)
 
 		if(app_id == 0)
 		{
-			execl(wd_pack_holder->path_to_app, wd_pack_holder->path_to_app, NULL);
+			printf("PROCESS NEED TO REVIVE: %s", wd_pack_holder->path_app_to_revive);
+			execl(wd_pack_holder->path_app_to_revive, wd_pack_holder->path_app_being_revive_by, NULL);
 		}
 		else
 		{
@@ -117,7 +118,7 @@ static scheduler_t *IMPWDSchedulerInit(wd_t *wd_pack)
 	return scheduler;
 }
 
-static int IMPWDSemaphoreInit(wd_t *wd_pack)
+static int IMPWDSemaphoreInit()
 {
 	int sem_open_status = 0;
 
@@ -143,7 +144,7 @@ wd_t *WDInit(wd_status_t *status)
 			sighandlers_init_status = IMPWDSigHandlersInit();
 			if(0 == sighandlers_init_status)
 			{
-				if (0 == IMPWDSemaphoreInit(wd_pack))
+				if (0 == IMPWDSemaphoreInit())
 				{
 					*status = SUCCESS;
 					return wd_pack;
@@ -169,7 +170,7 @@ static void WDCleanup(wd_t *wd_pack)
 	sem_close(sem_ps_to_wait);
 	sem_close(sem_stop_app);
 	sem_close(is_wd_up);
-	
+
 	sem_unlink(SEM_IS_WD_UP_NAME);
 	sem_unlink(SEM_APP_TO_WAIT_NAME);
 	sem_unlink(SEM_APP_IS_READY_NAME);

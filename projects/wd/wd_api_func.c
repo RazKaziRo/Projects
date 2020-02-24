@@ -1,6 +1,7 @@
 #include <signal.h> /*kill()*/
 #include <sys/types.h> /*fork()*/
 #include <unistd.h>
+#include <time.h>
 
 #include "wd_api_func.h"
 
@@ -19,7 +20,7 @@ static int IMPWDSemInitHelper(wd_t *wd_pack)
 	{
 		sem_open_status  = 1;
 	}
-	
+
 	return sem_open_status;
 }
 
@@ -38,28 +39,40 @@ wd_t *WDStart(const char *path_to_app, wd_status_t *status)
 		sem_open_status  = 1;
 	}
 
-	if(NULL != wd_pack && 0 == sem_open_status && 0 == IMPWDSemInitHelper(wd_pack))
-	{	
+	if(NULL != wd_pack && (0 == sem_open_status) && (0 == IMPWDSemInitHelper(wd_pack)))
+	{		
 		sem_getvalue(is_wd_up, &is_wd_up_value);
 
-		if(0 == pthread_create(&wd_pack->thread, NULL, &WDSchedulerRun, wd_pack) && (0 == is_wd_up_value))
+		wd_pack->path_app_to_revive = WD_APP_PATH;
+		wd_pack->path_app_being_revive_by = path_to_app;
+
+		printf("is_wd_up_value %d", is_wd_up_value);
+
+		if(0 == is_wd_up_value)
 		{	
+			
 			app_id = fork();
 		
-			if(0 == app_id && 0 == is_wd_up_value)
+			if(0 == app_id)
 			{	
 				printf("Start WD APP: \n");
 
 				sem_post(is_wd_up);
-				execl(WD_APP_PATH, path_to_app, NULL);
+				execl(WD_APP_PATH, wd_pack->path_app_being_revive_by, wd_pack->path_app_to_revive, NULL);
 			}
 			else
 			{
 				wd_pack->app_id_to_watch = app_id;
-				wd_pack->path_to_app = WD_APP_PATH;
-				printf("app-> patch to wd %s \n", wd_pack->path_to_app);
+				printf("app-> patch to wd %s \n", wd_pack->path_app_to_revive);
 			}
 		}
+
+		else
+		{	
+			wd_pack->app_id_to_watch = getppid();
+		}
+
+		pthread_create(&wd_pack->thread, NULL, &WDSchedulerRun, wd_pack);
 	}
 
 	printf("is_wd_up_value %d \n", is_wd_up_value);
@@ -72,14 +85,22 @@ void WDStop(wd_t *wd_pack)
 	sem_t *sem_stop_app = NULL;
 	int sem_stop_value = 0;
 
+	time_t start = clock();
+	
 	sem_stop_app = sem_open(SEM_STOP_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
 
 	printf("STOP SEM_STOP_VALUE befor %d \n", sem_stop_value);
 
-	while(0 == sem_stop_value)
+	while(0 == sem_stop_value || ((clock() - start)/CLOCKS_PER_SEC) < 10)
 	{
 		sem_getvalue(sem_stop_app, &sem_stop_value);
 		kill(wd_pack->app_id_to_watch, SIGUSR2);
+	}
+
+	if(0 == sem_stop_value)
+	{
+		sem_post(sem_stop_app);
+		kill(wd_pack->app_id_to_watch, SIGKILL);
 	}
 
 	printf("STOP SEM_STOP_VALUE after kill %d \n", sem_stop_value);

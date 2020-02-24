@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "wd_api_func.h"
 
-#define NUM_OF_ITERATIONS 10
+#define NUM_OF_ITERATIONS 50
 int g_arr[NUM_OF_ITERATIONS] = {0};
 
 int main(int argc, char const *argv[])

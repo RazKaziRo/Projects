@@ -38,7 +38,8 @@ struct WATCHDOGPACK
 	scheduler_t *scheduler;
 	pthread_t thread;
 	pid_t app_id_to_watch;
-	const char *path_to_app;
+	const char *path_app_to_revive;
+	const char *path_app_being_revive_by;
 	sem_t *sem_to_wait;
 	sem_t *sem_to_ready;
 };
