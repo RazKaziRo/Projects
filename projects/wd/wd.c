@@ -1,42 +1,42 @@
 #include <signal.h> /*sigaction*/
-#include <fcntl.h>	/**/          
+#include <fcntl.h>	/*SEM_PERMS*/ 
 #include <sys/stat.h>       
 #include <semaphore.h>/*sem_open*()*/
 #include <stdlib.h> /*malloc()*/
 #include "stdio.h" /*printf()*/
-#include <sys/types.h> /*getpud()*/
+#include <sys/types.h> /*getpid()*/
 #include <unistd.h>
 
 #include "wd.h"
 
-#define SEM_STOP_NAME "/stop_app"
-#define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
-/*
-*   '0x0100' or S_IRUSR - Permits the creator of the named semaphore to open the semaphore in read mode.
-*   '0x0080' or S_IWUSR - Permits the creator of the named semaphore to open the semaphore in write mode.
-*   '0x0020' or S_IRGRP - Permits the group associated with the named semaphore to open the semaphore in read mode.
-*   '0x0010' or S_IWGRP - Permits the group associated with the named semaphore to open the semaphore in write mode.
-*   '0x0004' or S_IROTH - Permits others to open the named semaphore in read mode.
-*   '0x0002' or S_IWOTH - Permits others to open the named semaphore in write mode.
-*/
-
-#define INITIAL_VALUE 0
 #define FREE(ptr) free(ptr); ptr = NULL;
 
 int g_im_alive = 0;
-sem_t *sem_wd_ready = NULL;
+
 sem_t *sem_ps_ready = NULL;
+sem_t *sem_ps_to_wait = NULL;
+
 sem_t *sem_stop_app = NULL;
+sem_t *is_wd_up = NULL;
 
 static void SIGUSR1Handler(int sig)
 {	
-	printf("SIGUSR1 HANDLER: %d \n", g_im_alive);
+	printf("SIGUSR1 - app_id: %d  g_im_alive value: %d\n",getpid(), g_im_alive);
 	++g_im_alive;
 }
 
 static void SIGUSR2Handler(int sig)
 {
+	int sem_stop_value = 0;
+
+	printf("sem post recived!");
+
 	sem_post(sem_stop_app);
+
+	sem_getvalue(sem_stop_app, &sem_stop_value);
+
+	printf("My Id: %d, sem_stop_value: %d \n", getpid(), sem_stop_value);
+
 }
 
  static int Task1ImAlive(void *param)
@@ -66,7 +66,7 @@ static void SIGUSR2Handler(int sig)
 
 	if(0 == g_im_alive)
 	{	
-		kill(wd_pack_holder->app_id_to_watch, SIGKILL);
+		printf("I am: %d I need to Revive: %d \n",  getpid(), wd_pack_holder->app_id_to_watch);
 		app_id = fork();
 
 		if(app_id == 0)
@@ -76,15 +76,15 @@ static void SIGUSR2Handler(int sig)
 		else
 		{
 			wd_pack_holder->app_id_to_watch = app_id;
+			SchedulerStop(wd_pack_holder->scheduler);
 		}
-		
 	}
 
+	printf("I am %d PROCESS ALIVE \n", getpid());
 	g_im_alive = 0;
 
 	return 0;
 }
-
 
 static int IMPWDSigHandlersInit()
 {
@@ -117,19 +117,17 @@ static scheduler_t *IMPWDSchedulerInit(wd_t *wd_pack)
 	return scheduler;
 }
 
-static sem_t *IMPWDSemaphoreInit(wd_t *wd_pack)
+static int IMPWDSemaphoreInit(wd_t *wd_pack)
 {
+	int sem_open_status = 0;
 
 	sem_stop_app = sem_open(SEM_STOP_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
-	wd_pack->sem_stop_app = sem_stop_app;
-/*
-	sem_wd_ready = sem_open(SEM_PING_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
-	sem_ps_ready = sem_open(SEM_PONG_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
+	if(SEM_FAILED == sem_stop_app)
+	{
+		sem_open_status  = 1;
+	}
 
-	
-	*/
-
-	return sem_stop_app;
+	return sem_open_status;
 }
 
 wd_t *WDInit(wd_status_t *status)
@@ -145,10 +143,9 @@ wd_t *WDInit(wd_status_t *status)
 			sighandlers_init_status = IMPWDSigHandlersInit();
 			if(0 == sighandlers_init_status)
 			{
-				if (SEM_FAILED != IMPWDSemaphoreInit(wd_pack))
+				if (0 == IMPWDSemaphoreInit(wd_pack))
 				{
 					*status = SUCCESS;
-
 					return wd_pack;
 				}
 			}
@@ -167,20 +164,39 @@ static void WDCleanup(wd_t *wd_pack)
 {
 	SchedulerDestroy(wd_pack->scheduler);
 	FREE(wd_pack);
+
+	sem_close(sem_ps_ready);
+	sem_close(sem_ps_to_wait);
+	sem_close(sem_stop_app);
+	sem_close(is_wd_up);
+	
+	sem_unlink(SEM_IS_WD_UP_NAME);
+	sem_unlink(SEM_APP_TO_WAIT_NAME);
+	sem_unlink(SEM_APP_IS_READY_NAME);
 	sem_unlink(SEM_STOP_NAME);
 }
 
 void *WDSchedulerRun(void *wd_pack)
 {	
-	int sem_value = 0;
-	sem_getvalue(sem_stop_app, &sem_value);
+	wd_t *wd_pack_holder = (wd_t *)wd_pack;
+	int sem_stop_value = 0;
 
-	printf("sem_value %d \n", sem_value);
+	sem_getvalue(sem_stop_app, &sem_stop_value);
+	printf("Inside %d Before Scheduler Run: sem_stop_value %d \n",getpid(), sem_stop_value);
 
-	while(0 == sem_value)
+	while(0 == sem_stop_value)
 	{
+		sem_post(wd_pack_holder->sem_to_ready);
+		sem_wait(wd_pack_holder->sem_to_wait);
+
 		SchedulerRun(((wd_t *)wd_pack)->scheduler);
+
+		sem_getvalue(sem_stop_app, &sem_stop_value);
 	}
 
-	WDCleanup(wd_pack);
+	printf("Inside %d After Scheduler Run: sem_stop_value %d \n",getpid(), sem_stop_value);
+
+	WDCleanup(wd_pack_holder);
+
+	return NULL;
 }
