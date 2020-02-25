@@ -1,11 +1,13 @@
 #ifndef __WD_H__
 #define __WD_H__
 
-#include <fcntl.h>	/*SEM_PERMS*/ 
+#include <fcntl.h>		/*SEM_PERMS*/ 
 #include <sys/stat.h>       
-#include <semaphore.h>/*sem_open*()*/
-#include <pthread.h>
-#include <stdlib.h>/*free()*/
+#include <semaphore.h>	/*sem_open*()*/
+#include <pthread.h> 	/*pthread_t*/
+#include <stdlib.h>		/*free()*/
+#include <stdio.h> 		/*printf()*/ 
+
 #include "../../system_programming/include/scheduler.h"
 
 #define SEM_STOP_NAME "/stop_app"
@@ -25,14 +27,19 @@
 
 #define INITIAL_VALUE 0
 #define FREE(ptr) free(ptr); ptr = NULL;
+#define UNUSED(x) (void)(x)
 
 typedef struct WATCHDOGPACK wd_t;
 
 typedef enum WDSTATUS
 {
 	SUCCESS,
-	MEMORY_ALOC_FAIL
-
+	MEMORY_ALOC_FAIL,
+	SEM_CLOSE_FAIL,
+	SEM_OPEN_FAIL,
+	SEM_UNLINK_FAIL,
+	WD_CLEAN_FAIL,
+	FAIL_START_WD
 } wd_status_t;
 
 struct WATCHDOGPACK
@@ -40,15 +47,18 @@ struct WATCHDOGPACK
 	scheduler_t *scheduler;
 	pthread_t thread;
 	pid_t app_id_to_watch;
+
 	const char *path_app_to_watch;
 	const char *path_to_app;
+
 	sem_t *sem_to_wait;
 	sem_t *sem_to_ready;
+
+	wd_status_t status;
 };
 
 wd_t *WDInit(wd_status_t *status);
 
 void *WDSchedulerRun(void *wd_pack);
-
 
 #endif

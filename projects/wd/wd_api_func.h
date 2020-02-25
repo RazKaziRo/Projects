@@ -18,6 +18,6 @@ wd_t *WDStart(const char *path_to_app, wd_status_t *status);
 *	it recievs the pointer to the tread created in WDStart() 
 */
 
-void WDStop(wd_t *wd_pack);
+wd_status_t WDStop(wd_t *wd_pack);
 
 #endif

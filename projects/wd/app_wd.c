@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <sys/types.h> /*getpid()*/
 #include <unistd.h>
+
 #include "wd_api_func.h"
 
-#define NUM_OF_ITERATIONS 10
+#define NUM_OF_ITERATIONS 50
 int g_arr[NUM_OF_ITERATIONS] = {0};
 
 int main(int argc, char const *argv[])
 {
-	wd_status_t status;
+	wd_status_t status = 0;
 	wd_t *app_wd = NULL;
 
 	size_t i = 0;
@@ -22,7 +23,10 @@ int main(int argc, char const *argv[])
 		g_arr[i] = i;
 	}
 
-	WDStop(app_wd);
+	status = WDStop(app_wd);
 
+	printf("Status: %d \n", status);
+
+	UNUSED(argc);
 	return 0;
 }

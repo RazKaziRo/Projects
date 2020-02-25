@@ -1,3 +1,11 @@
+/*
+ * Author: Raz KaziRo
+ * Purpose: Answares for Project - Watch Dog.
+ * Date: 25.02.2020
+ * Language: C
+ * Reviewer: Shye Shapira 
+ */
+
 #include <signal.h> /*kill()*/
 #include <sys/types.h> /*fork()*/
 #include <unistd.h>
@@ -6,6 +14,7 @@
 #include "wd_api_func.h"
 
 sem_t *is_wd_up = NULL;
+sem_t *wd_sem_stop_app = NULL;
 
 static int IMPWDSemInitHelper(wd_t *wd_pack)
 {
@@ -25,6 +34,12 @@ static int IMPWDSemInitHelper(wd_t *wd_pack)
 
 	is_wd_up = sem_open(SEM_IS_WD_UP_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
 	if(SEM_FAILED == is_wd_up)
+	{
+		sem_open_status  = 1;
+	}
+
+	wd_sem_stop_app = sem_open(SEM_STOP_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
+	if(SEM_FAILED == wd_sem_stop_app)
 	{
 		sem_open_status  = 1;
 	}
@@ -82,35 +97,36 @@ wd_t *WDStart(const char *path_to_app, wd_status_t *status)
 	return wd_pack;
 }
 
-void WDStop(wd_t *wd_pack)
+wd_status_t WDStop(wd_t *wd_pack)
 {
-	sem_t *sem_stop_app = NULL;
 	int sem_stop_value = 0;
-
 	time_t start = clock();
-	
-	sem_stop_app = sem_open(SEM_STOP_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
+	wd_status_t status_holder = 0;
 
 	printf("STOP SEM_STOP_VALUE befor %d \n", sem_stop_value);
 
-	while(0 == sem_stop_value || ((clock() - start)/CLOCKS_PER_SEC) < 3)
+	while(0 == sem_stop_value && ((clock() - start)/CLOCKS_PER_SEC) < 3)
 	{
-		sem_getvalue(sem_stop_app, &sem_stop_value);
+		sem_getvalue(wd_sem_stop_app, &sem_stop_value);
 		kill(wd_pack->app_id_to_watch, SIGUSR2);
 	}
 
 	if(0 == sem_stop_value)
 	{
-		sem_post(sem_stop_app);
+		sem_post(wd_sem_stop_app);
 		kill(wd_pack->app_id_to_watch, SIGKILL);
 	}
 
 	printf("STOP SEM_STOP_VALUE after kill %d \n", sem_stop_value);
 
 	pthread_join(wd_pack->thread, NULL);
-	
-	sem_close(sem_stop_app);
+
+	sem_close(wd_sem_stop_app);
 	sem_unlink(SEM_IS_WD_UP_NAME);
 
+	status_holder = wd_pack->status;
+
 	FREE(wd_pack);
+
+	return status_holder;
 }
