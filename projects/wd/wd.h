@@ -5,6 +5,7 @@
 #include <sys/stat.h>       
 #include <semaphore.h>/*sem_open*()*/
 #include <pthread.h>
+#include <stdlib.h>/*free()*/
 #include "../../system_programming/include/scheduler.h"
 
 #define SEM_STOP_NAME "/stop_app"
@@ -23,6 +24,7 @@
 */
 
 #define INITIAL_VALUE 0
+#define FREE(ptr) free(ptr); ptr = NULL;
 
 typedef struct WATCHDOGPACK wd_t;
 
@@ -38,12 +40,11 @@ struct WATCHDOGPACK
 	scheduler_t *scheduler;
 	pthread_t thread;
 	pid_t app_id_to_watch;
-	const char *path_app_to_revive;
-	const char *path_app_being_revive_by;
+	const char *path_app_to_watch;
+	const char *path_to_app;
 	sem_t *sem_to_wait;
 	sem_t *sem_to_ready;
 };
-
 
 wd_t *WDInit(wd_status_t *status);
 

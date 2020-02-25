@@ -13,12 +13,11 @@ int main(int argc, char const *argv[])
 	wd = WDInit(&wd_init_status);
 	wd->app_id_to_watch = getppid();
 
-	wd->path_app_to_revive = argv[0];
-	wd->path_app_being_revive_by = argv[1];
+	wd->path_app_to_watch = argv[1];
+	wd->path_to_app = argv[0];
 
-	
-	printf("WD ARGV[1]: %s", argv[1]);
 	printf("WD ARGV[0]: %s", argv[0]);
+	printf("WD ARGV[1]: %s", argv[1]);
 
 	wd->sem_to_wait = sem_open(SEM_APP_TO_WAIT_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
 	if(SEM_FAILED == wd->sem_to_wait)
@@ -32,10 +31,12 @@ int main(int argc, char const *argv[])
 		sem_open_status  = 1;
 	}
 
-	printf("inside wd path to app: %s \n", wd->path_app_to_revive);
+	printf("inside wd path to app: %s \n", wd->path_app_to_watch);
 	printf("WD PID: %d \n", getpid());
 
 	WDSchedulerRun(&wd->scheduler);
+
+	FREE(wd);
 
 	return 0;
 }

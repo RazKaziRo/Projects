@@ -9,15 +9,9 @@
 
 #include "wd.h"
 
-#define FREE(ptr) free(ptr); ptr = NULL;
-
 int g_im_alive = 0;
 
-sem_t *sem_ps_ready = NULL;
-sem_t *sem_ps_to_wait = NULL;
-
 sem_t *sem_stop_app = NULL;
-sem_t *is_wd_up = NULL;
 
 static void SIGUSR1Handler(int sig)
 {	
@@ -71,8 +65,8 @@ static void SIGUSR2Handler(int sig)
 
 		if(app_id == 0)
 		{
-			printf("PROCESS NEED TO REVIVE: %s", wd_pack_holder->path_app_to_revive);
-			execl(wd_pack_holder->path_app_to_revive, wd_pack_holder->path_app_being_revive_by, NULL);
+			printf("PROCESS NEED TO REVIVE: %s", wd_pack_holder->path_app_to_watch);
+			execl(wd_pack_holder->path_app_to_watch, wd_pack_holder->path_app_to_watch, wd_pack_holder->path_to_app, NULL);
 		}
 		else
 		{
@@ -164,14 +158,11 @@ wd_t *WDInit(wd_status_t *status)
 static void WDCleanup(wd_t *wd_pack)
 {
 	SchedulerDestroy(wd_pack->scheduler);
-	FREE(wd_pack);
 
-	sem_close(sem_ps_ready);
-	sem_close(sem_ps_to_wait);
+	sem_close(wd_pack->sem_to_ready);
+	sem_close(wd_pack->sem_to_wait);
 	sem_close(sem_stop_app);
-	sem_close(is_wd_up);
 
-	sem_unlink(SEM_IS_WD_UP_NAME);
 	sem_unlink(SEM_APP_TO_WAIT_NAME);
 	sem_unlink(SEM_APP_IS_READY_NAME);
 	sem_unlink(SEM_STOP_NAME);
