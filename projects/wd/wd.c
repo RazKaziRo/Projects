@@ -6,14 +6,14 @@
  * Reviewer: Shye Shapira 
  */
 
-#include <signal.h> /*sigaction*/
-#include <fcntl.h>	/*SEM_PERMS*/ 
-#include <sys/stat.h>       
-#include <semaphore.h>/*sem_open*()*/
-#include <stdlib.h> /*malloc()*/
-#include "stdio.h" /*printf()*/
-#include <sys/types.h> /*getpid()*/
-#include <unistd.h>
+#include <signal.h> 	/*sigaction*/
+#include <fcntl.h>		/*SEM_PERMS*/ 
+#include <sys/stat.h> 	/*O_CREAT*/      
+#include <semaphore.h>	/*sem_open*()*/
+#include <stdlib.h> 	/*malloc()*/
+#include "stdio.h" 		/*printf()*/
+#include <sys/types.h> 	/*getpid()*/
+#include <unistd.h>		/*getpid()*/
 
 #include "wd.h"
 
@@ -43,7 +43,7 @@ static void SIGUSR2Handler(int sig)
 	UNUSED(sig);
 }
 
- static int Task1ImAlive(void *param)
+static int Task1ImAlive(void *param)
 {
 	wd_t *wd_pack_holder = (wd_t *)param;
 	int sem_stop_value = 0;
@@ -78,11 +78,9 @@ static void SIGUSR2Handler(int sig)
 			printf("PROCESS NEED TO REVIVE: %s", wd_pack_holder->path_app_to_watch);
 			execl(wd_pack_holder->path_app_to_watch, wd_pack_holder->path_app_to_watch, wd_pack_holder->path_to_app, NULL);
 		}
-		else
-		{
-			wd_pack_holder->app_id_to_watch = app_id;
-			SchedulerStop(wd_pack_holder->scheduler);
-		}
+
+		wd_pack_holder->app_id_to_watch = app_id;
+		SchedulerStop(wd_pack_holder->scheduler);
 	}
 
 	printf("I am %d PROCESS ALIVE \n", getpid());
@@ -160,6 +158,8 @@ wd_t *WDInit(wd_status_t *status)
 					*status = SUCCESS;
 					return wd_pack;
 				}
+
+				WDCleanup(wd_pack);
 			}
 
 			SchedulerDestroy(wd_pack->scheduler);
@@ -170,30 +170,6 @@ wd_t *WDInit(wd_status_t *status)
 	}
 
 	return wd_pack;	
-}
-
-static void WDCleanup(wd_t *wd_pack)
-{
-	SchedulerDestroy(wd_pack->scheduler);
-	wd_pack->status = SUCCESS;
-
-	if (0 != sem_close(sem_stop_app) || 
-		(0 != sem_close(wd_pack->sem_to_ready)) || (0 != sem_close(wd_pack->sem_to_wait)))
-	{
-		wd_pack->status = SEM_CLOSE_FAIL;
-	}
-
-	if (0 != sem_unlink(SEM_APP_TO_WAIT_NAME) || 
-		(0 != sem_unlink(SEM_APP_IS_READY_NAME)) || (0 != sem_unlink(SEM_STOP_NAME)))
-	{
-		wd_pack->status = SEM_UNLINK_FAIL;
-	}
-
-	if (wd_pack->status == SEM_UNLINK_FAIL || wd_pack->status ==  SEM_CLOSE_FAIL)
-	{
-		wd_pack->status = WD_CLEAN_FAIL;
-	}
-	
 }
 
 void *WDSchedulerRun(void *wd_pack)
@@ -219,4 +195,27 @@ void *WDSchedulerRun(void *wd_pack)
 	WDCleanup(wd_pack_holder);
 
 	return NULL;
+}
+
+void WDCleanup(wd_t *wd_pack)
+{
+	SchedulerDestroy(wd_pack->scheduler);
+	wd_pack->status = SUCCESS;
+
+	if (0 != sem_close(sem_stop_app) || 
+		(0 != sem_close(wd_pack->sem_to_ready)) || (0 != sem_close(wd_pack->sem_to_wait)))
+	{
+		wd_pack->status = SEM_CLOSE_FAIL;
+	}
+
+	if (0 != sem_unlink(SEM_APP_TO_WAIT_NAME) || 
+		(0 != sem_unlink(SEM_APP_IS_READY_NAME)) || (0 != sem_unlink(SEM_STOP_NAME)))
+	{
+		wd_pack->status = SEM_UNLINK_FAIL;
+	}
+
+	if (wd_pack->status == SEM_UNLINK_FAIL || wd_pack->status ==  SEM_CLOSE_FAIL)
+	{
+		wd_pack->status = WD_CLEAN_FAIL;
+	}	
 }

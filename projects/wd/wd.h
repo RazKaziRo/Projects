@@ -39,7 +39,9 @@ typedef enum WDSTATUS
 	SEM_OPEN_FAIL,
 	SEM_UNLINK_FAIL,
 	WD_CLEAN_FAIL,
-	FAIL_START_WD
+	FAIL_START_WD,
+	WD_INIT_FAIL,
+	THREAD_CREATE_FAIL
 } wd_status_t;
 
 struct WATCHDOGPACK
@@ -60,5 +62,7 @@ struct WATCHDOGPACK
 wd_t *WDInit(wd_status_t *status);
 
 void *WDSchedulerRun(void *wd_pack);
+
+void WDCleanup(wd_t *wd_pack);
 
 #endif

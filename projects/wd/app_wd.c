@@ -1,10 +1,10 @@
-#include <stdio.h>
 #include <sys/types.h> /*getpid()*/
-#include <unistd.h>
+#include <unistd.h>  /*getpid()*/
 
 #include "wd_api_func.h"
 
-#define NUM_OF_ITERATIONS 50
+#define NUM_OF_ITERATIONS 1
+
 int g_arr[NUM_OF_ITERATIONS] = {0};
 
 int main(int argc, char const *argv[])
@@ -28,5 +28,6 @@ int main(int argc, char const *argv[])
 	printf("Status: %d \n", status);
 
 	UNUSED(argc);
+
 	return 0;
 }
