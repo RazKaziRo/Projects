@@ -1,28 +1,55 @@
 
 public class SinglyLinkedList {
 	
-	private Node head;
+	private Node headNode;
 	
 	SinglyLinkedList(){
-		this.head = new Node(null, null);
+		this.headNode = new Node(null, null);
 	}
 	
 	public int size() {
 		
 		int counter = 0;
-		Node nodeHolder = this.head;
+		Node nodeHolder = null;
 		
-		while(nodeHolder.getData() != null) {
-			++counter;
-			nodeHolder = nodeHolder.getNextNode();
+		if(!isEmpty()) {
+			
+			nodeHolder = headNode.getNextNode();
+			
+			while(nodeHolder != null) {
+				++counter;
+				nodeHolder = nodeHolder.nextNode;
+			}
 		}
 		
 		return counter;
 	}
 	
+	public Object popFront(){
+		
+		Node nodeHolder = null;
+		
+		if(!isEmpty()) {
+			
+			nodeHolder = headNode.nextNode;
+			headNode.nextNode = nodeHolder.nextNode;
+		}
+		
+		return nodeHolder.getData();
+	
+	}
+	
+	public void pushFront(Object data) {
+		
+		Node nodeHolder = headNode.nextNode;
+		Node newNode = new Node(data, headNode);
+		headNode.nextNode = newNode;
+		newNode.nextNode = nodeHolder;
+	}
+	
 	public boolean isEmpty() {
 		
-		return (this.head.nextNode == null);
+		return (this.headNode.nextNode == null);
 	}
 	
 	public ListIterator begin() {
@@ -44,11 +71,11 @@ public class SinglyLinkedList {
 		}
 
 		public Object getData() {
-			return data;
+			return this.data;
 		}
 
 		public Node getNextNode() {
-			return nextNode;
+			return this.nextNode;
 		}
 		
 	}
@@ -56,10 +83,11 @@ public class SinglyLinkedList {
 	private class ListIteratorIMP implements ListIterator {
 
 		private Node nodeHolder;
+		private Object dataHolder = null;
 		
 		ListIteratorIMP(){
 			
-			this.nodeHolder = head;
+			this.nodeHolder = headNode;
 		}
 		
 		@Override
@@ -70,8 +98,6 @@ public class SinglyLinkedList {
 
 		@Override
 		public Object next() {
-			
-			Object dataHolder = null;
 			
 			if(hasNext()) {
 				
@@ -88,6 +114,28 @@ public class SinglyLinkedList {
 		SinglyLinkedList sll1 = new SinglyLinkedList();
 		ListIterator itr = sll1.begin();
 		
+		System.out.println("SIZE 0: " + sll1.size());
+
+		System.out.println("HAS NEXT FALSE: " + itr.hasNext());
+
+		sll1.pushFront(10);
+		
+		System.out.println("HAS NEXT TRUE: " + itr.hasNext());
+
+		System.out.println("SIZE 1: " + sll1.size());
+
+		sll1.pushFront(20);
+		sll1.pushFront(30);
+		sll1.pushFront(40);
+		sll1.pushFront(50);
+
+		
+		System.out.println("SIZE 5: " + sll1.size());
+		
+		System.out.println("POP FRONT (50): " + sll1.popFront());
+		System.out.println("POP FRONT (40): " + sll1.popFront());
+		
+		System.out.println("SIZE 3 AFTER 2 POP: " + sll1.size());
 		System.out.println(itr.hasNext());
 		
 
