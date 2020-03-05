@@ -135,8 +135,6 @@ int AddToFloat(void *data, int int_to_add)
 
 int AddToChar(void *data, int int_to_add)
 {	
-	
-
 	int num_to_add = CountDigitsOfInt(int_to_add); 
 	char *str_to_concat = IntToString(int_to_add, CountDigitsOfInt(int_to_add));
 	*(char **)data = (void *)realloc(*(char **)data,strlen(*(char **)data)+num_to_add+1);

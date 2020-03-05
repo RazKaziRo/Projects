@@ -12,3 +12,5 @@
 !*.sh
 !.o
 !.so
+!**.java
+!**.class
