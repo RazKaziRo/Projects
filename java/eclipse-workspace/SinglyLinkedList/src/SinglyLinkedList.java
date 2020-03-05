@@ -31,8 +31,8 @@ public class SinglyLinkedList {
 		
 		if(!isEmpty()) {
 			
-			nodeHolder = headNode.nextNode;
-			headNode.nextNode = nodeHolder.nextNode;
+			nodeHolder = headNode;
+			headNode = nodeHolder.nextNode;
 		}
 		
 		return nodeHolder.getData();
@@ -41,22 +41,45 @@ public class SinglyLinkedList {
 	
 	public void pushFront(Object data) {
 		
-		Node nodeHolder = headNode.nextNode;
+		//Node nodeHolder = headNode.nextNode;
 		Node newNode = new Node(data, headNode);
-		headNode.nextNode = newNode;
-		newNode.nextNode = nodeHolder;
+		//headNode.nextNode = newNode;
+		headNode = newNode;
 	}
 	
 	public boolean isEmpty() {
 		
-		return (this.headNode.nextNode == null);
+		return (headNode.nextNode == null);
 	}
+	
+	public ListIterator find(Object data) {
+		
+		ListIterator itrRunner = new ListIteratorIMP();
+		ListIterator itrHolder = null;
+		
+		Object dataHolder = null;
+		
+		while(itrRunner.hasNext()) {
+			
+			itrHolder = itrRunner;
+			dataHolder = itrRunner.next();
+			
+			if(dataHolder != null && dataHolder.equals(data)) {
+					
+					return itrHolder;
+				}
+			}
+
+		return null;
+	};
+
 	
 	public ListIterator begin() {
 		
 		ListIterator itr = new ListIteratorIMP();
 		
 		return itr;
+		
 	}
 	
 	private class Node{
@@ -71,11 +94,11 @@ public class SinglyLinkedList {
 		}
 
 		public Object getData() {
-			return this.data;
+			return data;
 		}
 
 		public Node getNextNode() {
-			return this.nextNode;
+			return nextNode;
 		}
 		
 	}
@@ -88,12 +111,13 @@ public class SinglyLinkedList {
 		ListIteratorIMP(){
 			
 			this.nodeHolder = headNode;
+			this.dataHolder = headNode.data;
 		}
 		
 		@Override
 		public boolean hasNext() {
 			
-			return nodeHolder.getNextNode() != null;
+			return headNode.nextNode != null;
 		}
 
 		@Override
@@ -129,6 +153,8 @@ public class SinglyLinkedList {
 		sll1.pushFront(40);
 		sll1.pushFront(50);
 
+		ListIterator itrFinder = sll1.find(50);
+		System.out.println(itrFinder);
 		
 		System.out.println("SIZE 5: " + sll1.size());
 		
@@ -136,8 +162,14 @@ public class SinglyLinkedList {
 		System.out.println("POP FRONT (40): " + sll1.popFront());
 		
 		System.out.println("SIZE 3 AFTER 2 POP: " + sll1.size());
-		System.out.println(itr.hasNext());
+		System.out.println("HAS NEXT TRUE: " + itr.hasNext());
 		
+		System.out.println("POP FRONT (30): " + sll1.popFront());
+		System.out.println("POP FRONT (20): " + sll1.popFront());
+		System.out.println("POP FRONT (10): " + sll1.popFront());
+		
+		System.out.println("HAS NEXT FALSE: " + itr.hasNext());
+		System.out.println("SIZE 0: " + sll1.size());
 
 	}
 
