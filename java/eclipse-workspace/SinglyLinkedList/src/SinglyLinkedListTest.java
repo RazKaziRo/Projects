@@ -66,7 +66,7 @@ public class SinglyLinkedListTest {
 			sll.pushFront(i);
 			
 		}
-		ListIterator itrFinder = sll.find(12);
+		ListIterator itrFinder = sll.find(1);
 		System.out.println(itrFinder.next());
 
 
