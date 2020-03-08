@@ -18,7 +18,7 @@ public class SinglyLinkedList {
 			
 			while(nodeHolder != null) {
 				++counter;
-				nodeHolder = nodeHolder.nextNode;
+				nodeHolder = nodeHolder.nextNode; 
 			}
 		}
 		
