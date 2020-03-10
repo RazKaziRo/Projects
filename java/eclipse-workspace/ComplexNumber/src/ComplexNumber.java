@@ -34,8 +34,8 @@ public class ComplexNumber implements Comparable <ComplexNumber> {
 		
 		public ComplexNumber divideBy(ComplexNumber c){
 			
-			return new ComplexNumber((this.real * c.real) + (this.img * c.img) / (pow(c.real, 2) + pow(c.img, 2)), 
-					((this.img * c.real) - (this.real * c.img)) / (pow(c.real, 2) + pow(c.img, 2)));
+			return new ComplexNumber((this.real * c.real + this.img * c.img) / (pow(c.real,2) + pow(c.img, 2)), 
+					(c.real * this.img - this.real * c.img) / (pow(c.real,2) +  (pow(c.img, 2))));
 		}
 
 		public double getReal() {
@@ -55,23 +55,76 @@ public class ComplexNumber implements Comparable <ComplexNumber> {
 		}
 		
 		public void setValue(double real, double img) {
+			this.real = real;
+			this.img = img;
 			
 		}
-		/*
+		
 		public boolean isReal() {
-			
+			return this.img == 0;
 		}
 		
 		public boolean isImg() {
-			
+			return this.real == 0;
 		}
 		
-		public static ComplexNumber parse(String str) {
+	
+		public static ComplexNumber parseComplex(String s) {
 			
-		}
-		
-		*/
-		
+	        s = s.replaceAll(" ","");
+	        ComplexNumber parsed = null;
+	        
+	        if(s.contains(String.valueOf("+")) || (s.contains(String.valueOf("-")) && s.lastIndexOf('-') > 0))
+	        {
+	            String re = "";
+	            String im = "";
+	            
+	            s = s.replaceAll("i","");
+	            s = s.replaceAll("I","");
+	            
+	            if(s.indexOf('+') > 0)
+	            {
+	                re = s.substring(0,s.indexOf('+'));
+	                im = s.substring(s.indexOf('+')+1, s.length());
+	                parsed = new ComplexNumber(Double.parseDouble(re),Double.parseDouble(im));
+	            }
+	            else if(s.lastIndexOf('-') > 0)
+	            {
+	                re = s.substring(0,s.lastIndexOf('-'));
+	                im = s.substring(s.lastIndexOf('-')+1,s.length());
+	                parsed = new ComplexNumber(Double.parseDouble(re),-Double.parseDouble(im));
+	            }
+	        }
+	        else
+	        {
+	            if(s.endsWith("i") || s.endsWith("I")){
+	            	
+	                s = s.replaceAll("i","");
+	                s = s.replaceAll("I","");
+	                
+	                if(0 == s.compareTo("-")) {
+	                	
+		                parsed = new ComplexNumber(0, -1);
+	                }
+	                else if (0 == s.compareTo("")) {
+	                	
+		                parsed = new ComplexNumber(0, 1);
+
+	                }
+	                else {
+	                	
+		                parsed = new ComplexNumber(0, Double.parseDouble(s));
+	                }
+	            }
+	            
+	            else
+	            {
+	                parsed = new ComplexNumber(Double.parseDouble(s),0);
+	            }
+	        }
+	        return parsed;
+}
+			
 		@Override
 		public int compareTo(ComplexNumber c) {
 			
@@ -100,17 +153,29 @@ public class ComplexNumber implements Comparable <ComplexNumber> {
 		
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
+			
 			ComplexNumber other = (ComplexNumber) obj;
-			if (Double.doubleToLongBits(img) != Double.doubleToLongBits(other.img))
+			if (Double.doubleToLongBits(img) != Double.doubleToLongBits(other.img)) {
 				return false;
-			if (Double.doubleToLongBits(real) != Double.doubleToLongBits(other.real))
+			}
+			
+			if (Double.doubleToLongBits(real) != Double.doubleToLongBits(other.real)) {
 				return false;
+
+			}
+			
 			return true;
 		}
 		
