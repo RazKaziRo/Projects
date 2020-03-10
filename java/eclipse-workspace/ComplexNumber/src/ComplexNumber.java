@@ -148,7 +148,7 @@ public class ComplexNumber implements Comparable <ComplexNumber> {
 		
 		@Override
 		public String toString() { 
-			return (this.real + " + " + this.img +  "i");
+			return (this.real + " + " + this.img + "i");
 		}
 		
 		@Override
