@@ -68,12 +68,12 @@ public class Inventory {
         return quantity;
     }
     
-    public Item getItemName(String name) {
+    public Item getItem(Item item) {
     	
     	Item returnedItem = null;
-    	
+  
         for (Item existingItem : this.items) {
-        		if(0 == existingItem.getName().compareTo(name)) {
+        		if(0 == existingItem.compareTo(item)) {
         			returnedItem =  existingItem;
         		}
         }

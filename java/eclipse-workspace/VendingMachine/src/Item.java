@@ -20,7 +20,7 @@ public class Item implements Comparable<Item>{
 	}
 
 	public double getPrice() {
-		return price;
+		return this.price;
 	}
 
 	public void setPrice(double price) {
