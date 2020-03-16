@@ -130,29 +130,11 @@ public class VendingMachine {
 		return change;
 	}
 
-	public double getCurrentBalance() {
-		return currentBalance;
-	}
+	public double getCurrentBalance() {return currentBalance;}
 
-	public void setCurrentBalance(double currentBalance) {
-		this.currentBalance = currentBalance;
-	}
+	public double getTotalSales() {return totalSales;}
 
-	public double getTotalSales() {
-		return totalSales;
-	}
-
-	public void setTotalSales(double totalSales) {
-		this.totalSales = totalSales;
-	}
-
-	public Inventory getItemInventory() {
-		return itemInventory;
-	}
-
-	public void setItemInventory(Inventory itemInventory) {
-		this.itemInventory = itemInventory;
-	}
+	public Inventory getItemInventory() {return itemInventory;}
 
 	public void insertCoin(double coin) {
 		
