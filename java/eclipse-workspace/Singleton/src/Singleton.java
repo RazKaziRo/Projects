@@ -1,4 +1,3 @@
-
 public class Singleton {
 	
 	//1. Classic Java Singleton pattern
