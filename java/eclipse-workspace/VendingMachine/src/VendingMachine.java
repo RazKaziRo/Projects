@@ -9,9 +9,9 @@ public class VendingMachine {
 
 	VendingMachine(Inventory itemInventory) {
 		
-	       setCurrentBalance(0);
-	       setTotalSales(0);
-	       setItemInventory(itemInventory);
+	       currentBalance = 0;
+	       totalSales = 0;
+	       this.itemInventory = itemInventory;
 	       state = State.INIT.stateInitialize();
 	       monitorItr.write(Notifications.MACHINE_READY, null);
 	}
