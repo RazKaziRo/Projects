@@ -22,12 +22,13 @@ public class VendingMachine {
 	
 	private double returnChange(double requestedItemPrice) {
 		double change = currentBalance - requestedItemPrice;
-		currentBalance = 0;
+		resetCurrentBalance();
 		monitorItr.write(Notifications.CHANGE, change);
 		return change;
 	}
 	
 	private void setCurrentBalance(double currentBalance) {this.currentBalance += currentBalance;}
+	private void resetCurrentBalance() {currentBalance = 0;}
     private void setTotalSales(double totalSales) {this.totalSales += totalSales;}
 	public double getCurrentBalance() {return currentBalance;}
 	double getTotalSales() {return totalSales;} //for testing propose
@@ -42,7 +43,7 @@ public class VendingMachine {
 			
 			protected void stateInitialize(VendingMachine vm, Inventory itemsInventory, Monitor monitorItr) {
 				
-				vm.setCurrentBalance(0);
+				vm.resetCurrentBalance();
 				vm.setTotalSales(0);
 				vm.setItemInventory(itemsInventory);
 				vm.setMonitorItr(monitorItr);
