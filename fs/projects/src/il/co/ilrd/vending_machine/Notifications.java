@@ -9,7 +9,7 @@ package il.co.ilrd.vending_machine;
 		  NEW_BALANCE(5, "Balance: "),
 		  CHANGE(6, "Change: "),
 		  PLEASE_WAIT(7, "Please Wait Your Item Is On The Way... "),
-		  MORE_COINS_NEEDED(8, "Low Balance To Make Purchase Missing ");
+		  MORE_COINS_NEEDED(8, "Low Balance To Make Purchase of Item: ");
 		
 		  private final int code;
 		  private final String description;
