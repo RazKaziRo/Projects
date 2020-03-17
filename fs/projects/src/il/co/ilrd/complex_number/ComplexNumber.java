@@ -2,7 +2,7 @@ package il.co.ilrd.complex_number;
 
 import static java.lang.Math.*;
 
-public class ComplexNumber implements Comparable <ComplexNumber> { 
+public class ComplexNumber implements Comparable <ComplexNumber> {
 	
 		private double real, img;
 		
