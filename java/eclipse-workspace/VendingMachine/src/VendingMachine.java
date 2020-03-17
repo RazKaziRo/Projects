@@ -3,50 +3,47 @@ public class VendingMachine {
  	
     private double currentBalance; 
     private double totalSales;
-    private Inventory itemInventory;
+	private Inventory itemInventory;
 	private State state;
 	Monitor monitorItr = null;
 
-	VendingMachine(Inventory itemInventory, Monitor monitorItr) {
-	       currentBalance = 0;
-	       totalSales = 0;
-	       this.itemInventory = itemInventory;
-	       state = State.INIT.stateInitialize();
-	       this.monitorItr = monitorItr;
-	       monitorItr.write(Notifications.MACHINE_READY, null);
-	}
-
-	private void setCurrentBalance(double currentBalance) {
-		this.currentBalance += currentBalance;
+	VendingMachine(Inventory itemsInventory, Monitor monitorItr) {
+		
+	       state = State.INIT.stateInitialize(this, itemsInventory, monitorItr);
 	}
 
 	private enum State{
 
 		INIT{
 			
-			protected State stateInitialize() {
-				
+			protected State stateInitialize(VendingMachine vm, Inventory itemsInventory, Monitor monitorItr) {
+				vm.setCurrentBalance(0);
+				vm.setTotalSales(0);
+				vm.setItemInventory(itemsInventory);
+				vm.setMonitorItr(monitorItr);
+				vm.monitorItr.write(Notifications.MACHINE_READY, null);
 				return WAIT_FOR_COIN;
-				
-				
 			}
 
 			@Override
 			protected State gotCoin(VendingMachine vm, double coin) {
-				return null;
+				vm.monitorItr.write(Notifications.ERROR, null);
+				return INIT;
 			}
 
 			@Override
 			protected State gotOrder(VendingMachine vm, Item requestedItem) {
-				return null;
+				vm.monitorItr.write(Notifications.ERROR, null);
+				return INIT;
 			}
 		},
 		
 		WAIT_FOR_COIN{
 
 			@Override
-			protected State stateInitialize() {
-				return null;
+			protected State stateInitialize(VendingMachine vm, Inventory itemsInventory, Monitor monitorItr) {
+				vm.monitorItr.write(Notifications.ERROR, null);
+				return WAIT_FOR_COIN;
 			}
 
 			@Override
@@ -67,8 +64,9 @@ public class VendingMachine {
 		WAIT_FOR_ORDER{
 
 			@Override
-			protected State stateInitialize() {
-				return null;
+			protected State stateInitialize(VendingMachine vm, Inventory itemsInventory, Monitor monitorItr) {
+				vm.monitorItr.write(Notifications.ERROR, null);
+				return WAIT_FOR_ORDER;
 			}
 
 			@Override
@@ -83,7 +81,7 @@ public class VendingMachine {
 				if(requestedItem.getQuantity() > 0) {
 					if(requestedItem.getPrice() <= vm.getCurrentBalance()) {
 						vm.monitorItr.write(Notifications.PLEASE_WAIT, null);
-						vm.totalSales += requestedItem.getPrice();
+						vm.setTotalSales(requestedItem.getPrice());
 						vm.returnChange(requestedItem.getPrice());
 						vm.itemInventory.decreaseQuantity(requestedItem, 1);
 						vm.monitorItr.write(Notifications.PURCHACE_SUCCES, requestedItem.getName());
@@ -99,15 +97,14 @@ public class VendingMachine {
 			}
 		};
 
-		protected abstract State stateInitialize();
+		protected abstract State stateInitialize(VendingMachine vm, Inventory itemsInventory, Monitor monitorItr);
 		protected abstract State gotCoin(VendingMachine vm, double coin);
 		protected abstract State gotOrder(VendingMachine vm, Item requestedItem);
 	}
 		
 	public double getItemPrice(Item item) {
-		
-		return itemInventory.getItemPrice(item);
 
+		return itemInventory.getItemPrice(item);
 	}
 	
 	public void orderItem(Item requestedItem) {
@@ -122,29 +119,14 @@ public class VendingMachine {
 		monitorItr.write(Notifications.CHANGE, change);
 		return change;
 	}
-
-	public double getCurrentBalance() {return currentBalance;}
-
-	public double getTotalSales() {return totalSales;}
-
-	public Inventory getItemInventory() {return itemInventory;}
-
-	public void insertCoin(double coin) {
-		
-        state = state.gotCoin(this, coin);
-    }
-    
-    public void reset(){
-  
-    	if(currentBalance > 0) {
-    		returnChange(0);
-    	}
-    	
-        itemInventory.clear();
-        currentBalance = 0;
-	    totalSales = 0;
-	    state = State.INIT.stateInitialize();
-	    monitorItr.write(Notifications.MACHINE_READY, null);
-    } 
 	
+	private void setCurrentBalance(double currentBalance) {this.currentBalance += currentBalance;}
+    private void setTotalSales(double totalSales) {this.totalSales += totalSales;}
+	public double getCurrentBalance() {return currentBalance;}
+	public double getTotalSales() {return totalSales;}
+	public Inventory getItemInventory() {return itemInventory;}
+	private void setItemInventory(Inventory itemInventory) {this.itemInventory = itemInventory;}
+	private void setMonitorItr(Monitor monitorItr) {this.monitorItr = monitorItr;}
+	public void insertCoin(double coin) {state = state.gotCoin(this, coin);}
+    
 }

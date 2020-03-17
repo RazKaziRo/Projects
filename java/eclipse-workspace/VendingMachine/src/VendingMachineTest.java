@@ -73,10 +73,6 @@ public class VendingMachineTest {
 		venM.orderItem(itemB);
 		assertEquals("venM.getTotalSales()", venM.getTotalSales(), 30, 0);
 		venM.insertCoin(5);
-		venM.reset();
-		assertEquals("venM.getTotalSales()", venM.getTotalSales(), 0, 0);
-
-	
 	}
 	
 	/*
