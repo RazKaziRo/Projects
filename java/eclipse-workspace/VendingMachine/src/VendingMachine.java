@@ -5,15 +5,19 @@ public class VendingMachine {
     private double totalSales;
     private Inventory itemInventory;
 	private State state;
-	Monitor monitorItr = new MonitorTest();
+	Monitor monitorItr = null;
 
-	VendingMachine(Inventory itemInventory) {
-		
+	VendingMachine(Inventory itemInventory, Monitor monitorItr) {
 	       currentBalance = 0;
 	       totalSales = 0;
 	       this.itemInventory = itemInventory;
 	       state = State.INIT.stateInitialize();
+	       this.monitorItr = monitorItr;
 	       monitorItr.write(Notifications.MACHINE_READY, null);
+	}
+
+	private void setCurrentBalance(double currentBalance) {
+		this.currentBalance += currentBalance;
 	}
 
 	private enum State{
@@ -28,12 +32,12 @@ public class VendingMachine {
 			}
 
 			@Override
-			protected State gotCoin() {
+			protected State gotCoin(VendingMachine vm, double coin) {
 				return null;
 			}
 
 			@Override
-			protected State gotOrder() {
+			protected State gotOrder(VendingMachine vm, Item requestedItem) {
 				return null;
 			}
 		},
@@ -46,16 +50,18 @@ public class VendingMachine {
 			}
 
 			@Override
-			protected State gotCoin() {
+			protected State gotCoin(VendingMachine vm, double coin) {
+				vm.setCurrentBalance(coin);
+				vm.monitorItr.write(Notifications.NEW_BALANCE,  vm.currentBalance);
 				return WAIT_FOR_ORDER;
+				
 			}
 
 			@Override
-			protected State gotOrder() {
+			protected State gotOrder(VendingMachine vm, Item requestedItem) {
+				vm.monitorItr.write(Notifications.INSERT_COINS, null);
 				return WAIT_FOR_COIN;
 			}
-
-			
 		},
 		
 		WAIT_FOR_ORDER{
@@ -66,22 +72,36 @@ public class VendingMachine {
 			}
 
 			@Override
-			protected State gotCoin() {
-				
+			protected State gotCoin(VendingMachine vm, double coin) {
+				vm.setCurrentBalance(coin);
 				return WAIT_FOR_ORDER;
 			}
 
 			@Override
-			protected State gotOrder() {
+			protected State gotOrder(VendingMachine vm, Item requestedItem) {
 				
+				if(requestedItem.getQuantity() > 0) {
+					if(requestedItem.getPrice() <= vm.getCurrentBalance()) {
+						vm.monitorItr.write(Notifications.PLEASE_WAIT, null);
+						vm.totalSales += requestedItem.getPrice();
+						vm.returnChange(requestedItem.getPrice());
+						vm.itemInventory.decreaseQuantity(requestedItem, 1);
+						vm.monitorItr.write(Notifications.PURCHACE_SUCCES, requestedItem.getName());
+					}
+					else {
+						vm.monitorItr.write(Notifications.MORE_COINS_NEEDED, requestedItem.getPrice() - vm.getCurrentBalance() + " Coins");
+					}
+				}
+				else {
+					vm.monitorItr.write(Notifications.ITEM_OUT_OF_STOCK, null);
+				}
 				return WAIT_FOR_COIN;
 			}
-
 		};
 
 		protected abstract State stateInitialize();
-		protected abstract State gotCoin();
-		protected abstract State gotOrder();
+		protected abstract State gotCoin(VendingMachine vm, double coin);
+		protected abstract State gotOrder(VendingMachine vm, Item requestedItem);
 	}
 		
 	public double getItemPrice(Item item) {
@@ -90,39 +110,12 @@ public class VendingMachine {
 
 	}
 	
-	public void orderItem(Item item) {
+	public void orderItem(Item requestedItem) {
 		
-		Item requestedItem = itemInventory.getItem(item);
-		
-		if(state == State.WAIT_FOR_ORDER) {
-			
-			if(requestedItem.getQuantity() > 0) {
-				
-				if(requestedItem.getPrice() <= currentBalance) {
-					monitorItr.write(Notifications.PLEASE_WAIT, null);
-					totalSales += requestedItem.getPrice();
-					returnChange(requestedItem.getPrice());
-					itemInventory.decreaseQuantity(requestedItem, 1);
-					monitorItr.write(Notifications.PURCHACE_SUCCES, requestedItem.getName());
-				}
-				else {
-					
-					monitorItr.write(Notifications.MORE_COINS_NEEDED, requestedItem.getPrice() - currentBalance + " Coins");
-				}
-			}
-			else {
-				monitorItr.write(Notifications.ITEM_OUT_OF_STOCK, null);
-			}
-			state = state.gotOrder();
-		}
-		else {
-			monitorItr.write(Notifications.INSERT_COINS, null);
-			
-		}
-		
+		state = state.gotOrder(this, requestedItem);
 	}
 	
-	public double returnChange(double requestedItemPrice) {
+	private double returnChange(double requestedItemPrice) {
 		
 		double change = currentBalance - requestedItemPrice;
 		currentBalance = 0;
@@ -138,12 +131,7 @@ public class VendingMachine {
 
 	public void insertCoin(double coin) {
 		
-    	if(state == State.WAIT_FOR_COIN || state == State.WAIT_FOR_ORDER) {
-    		
-        	currentBalance += coin;
-        	state = state.gotCoin();
-        	monitorItr.write(Notifications.NEW_BALANCE , currentBalance);
-    	}
+        state = state.gotCoin(this, coin);
     }
     
     public void reset(){
@@ -153,9 +141,8 @@ public class VendingMachine {
     	}
     	
         itemInventory.clear();
-	    setCurrentBalance(0);
-	    setTotalSales(0);
-	    setItemInventory(itemInventory);
+        currentBalance = 0;
+	    totalSales = 0;
 	    state = State.INIT.stateInitialize();
 	    monitorItr.write(Notifications.MACHINE_READY, null);
     } 

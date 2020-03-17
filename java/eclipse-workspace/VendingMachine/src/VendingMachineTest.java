@@ -45,6 +45,7 @@ public class VendingMachineTest {
 	public void testInitVendingMachine() {
 		
 		Inventory invA = new Inventory();
+		Monitor monitor = new MonitorTest();
 		
 		Item itemA = new Item("ItemA", 10, 1);
 		Item itemB = new Item("ItemB", 20, 2);
@@ -54,7 +55,7 @@ public class VendingMachineTest {
 		invA.addItem(itemB);
 		invA.addItem(itemC);
 		
-		VendingMachine venM = new VendingMachine(invA);
+		VendingMachine venM = new VendingMachine(invA, monitor);
 		
 		assertEquals("venM.getCurrentBalance()", venM.getCurrentBalance(), 0, 0);
 		assertEquals("venM.getItemPrice(itemA)", venM.getItemPrice(itemA), 10, 0);
