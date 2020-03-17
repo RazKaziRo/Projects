@@ -5,26 +5,22 @@ public class VendingMachine {
     private double currentBalance; 
     private double totalSales;
 	private Inventory itemInventory;
-	private State state;
+	private VedingMachineState state;
 	private Monitor monitorItr = null;
 
 	VendingMachine(Inventory itemsInventory, Monitor monitorItr) {
-		
-	       State.INIT.stateInitialize(this, itemsInventory, monitorItr);
+		VedingMachineState.INIT.stateInitialize(this, itemsInventory, monitorItr);
 	}
 	
 	public double getItemPrice(Item item) {
-
 		return itemInventory.getItemPrice(item);
 	}
 	
 	public void orderItem(Item requestedItem) {
-		
 		state.gotOrder(this, requestedItem);
 	}
 	
 	private double returnChange(double requestedItemPrice) {
-		
 		double change = currentBalance - requestedItemPrice;
 		currentBalance = 0;
 		monitorItr.write(Notifications.CHANGE, change);
@@ -39,13 +35,13 @@ public class VendingMachine {
 	private void setItemInventory(Inventory itemInventory) {this.itemInventory = itemInventory;}
 	private void setMonitorItr(Monitor monitorItr) {this.monitorItr = monitorItr;}
 	public void insertCoin(double coin) {state.gotCoin(this, coin);}
-	private void setState(State state) {this.state = state;}
+	private void setState(VedingMachineState state) {this.state = state;}
 	
-	private enum State{
-
+	private enum VedingMachineState{
 		INIT{
 			
 			protected void stateInitialize(VendingMachine vm, Inventory itemsInventory, Monitor monitorItr) {
+				
 				vm.setCurrentBalance(0);
 				vm.setTotalSales(0);
 				vm.setItemInventory(itemsInventory);
