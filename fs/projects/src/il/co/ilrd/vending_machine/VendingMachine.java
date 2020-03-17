@@ -1,19 +1,45 @@
 package il.co.ilrd.vending_machine;
 
-
 public class VendingMachine {
  	
     private double currentBalance; 
     private double totalSales;
 	private Inventory itemInventory;
 	private State state;
-	Monitor monitorItr = null;
+	private Monitor monitorItr = null;
 
 	VendingMachine(Inventory itemsInventory, Monitor monitorItr) {
 		
 	       state = State.INIT.stateInitialize(this, itemsInventory, monitorItr);
 	}
+	
+	public double getItemPrice(Item item) {
 
+		return itemInventory.getItemPrice(item);
+	}
+	
+	public void orderItem(Item requestedItem) {
+		
+		state = state.gotOrder(this, requestedItem);
+	}
+	
+	private double returnChange(double requestedItemPrice) {
+		
+		double change = currentBalance - requestedItemPrice;
+		currentBalance = 0;
+		monitorItr.write(Notifications.CHANGE, change);
+		return change;
+	}
+	
+	private void setCurrentBalance(double currentBalance) {this.currentBalance += currentBalance;}
+    private void setTotalSales(double totalSales) {this.totalSales += totalSales;}
+	public double getCurrentBalance() {return currentBalance;}
+	double getTotalSales() {return totalSales;} //for testing propose
+	Inventory getItemInventory() {return itemInventory;} //for testing propose
+	private void setItemInventory(Inventory itemInventory) {this.itemInventory = itemInventory;}
+	private void setMonitorItr(Monitor monitorItr) {this.monitorItr = monitorItr;}
+	public void insertCoin(double coin) {state = state.gotCoin(this, coin);}
+	
 	private enum State{
 
 		INIT{
@@ -103,32 +129,5 @@ public class VendingMachine {
 		protected abstract State gotCoin(VendingMachine vm, double coin);
 		protected abstract State gotOrder(VendingMachine vm, Item requestedItem);
 	}
-		
-	public double getItemPrice(Item item) {
-
-		return itemInventory.getItemPrice(item);
-	}
-	
-	public void orderItem(Item requestedItem) {
-		
-		state = state.gotOrder(this, requestedItem);
-	}
-	
-	private double returnChange(double requestedItemPrice) {
-		
-		double change = currentBalance - requestedItemPrice;
-		currentBalance = 0;
-		monitorItr.write(Notifications.CHANGE, change);
-		return change;
-	}
-	
-	private void setCurrentBalance(double currentBalance) {this.currentBalance += currentBalance;}
-    private void setTotalSales(double totalSales) {this.totalSales += totalSales;}
-	public double getCurrentBalance() {return currentBalance;}
-	double getTotalSales() {return totalSales;} //for testing propose
-	Inventory getItemInventory() {return itemInventory;} //for testing propose
-	private void setItemInventory(Inventory itemInventory) {this.itemInventory = itemInventory;}
-	private void setMonitorItr(Monitor monitorItr) {this.monitorItr = monitorItr;}
-	public void insertCoin(double coin) {state = state.gotCoin(this, coin);}
     
 }
