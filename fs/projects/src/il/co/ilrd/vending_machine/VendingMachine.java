@@ -20,7 +20,7 @@ public class VendingMachine {
 		state.gotOrder(this, requestedItem);
 	}
 	
-	private double returnChange(double requestedItemPrice) {
+	private double calcAndReturnChange(double requestedItemPrice) {
 		double change = currentBalance - requestedItemPrice;
 		resetCurrentBalance();
 		monitorItr.write(Notifications.CHANGE, change);
@@ -107,7 +107,7 @@ public class VendingMachine {
 					if(requestedItem.getPrice() <= vm.getCurrentBalance()) {
 						vm.monitorItr.write(Notifications.PLEASE_WAIT, null);
 						vm.setTotalSales(requestedItem.getPrice());
-						vm.returnChange(requestedItem.getPrice());
+						vm.calcAndReturnChange(requestedItem.getPrice());
 						vm.itemInventory.decreaseQuantity(requestedItem, 1);
 						vm.monitorItr.write(Notifications.PURCHACE_SUCCES, requestedItem.getName());
 					}
@@ -117,6 +117,7 @@ public class VendingMachine {
 				}
 				else {
 					vm.monitorItr.write(Notifications.ITEM_OUT_OF_STOCK, null);
+					vm.calcAndReturnChange(0);
 				}
 				vm.setState(WAIT_FOR_COIN);
 			}
