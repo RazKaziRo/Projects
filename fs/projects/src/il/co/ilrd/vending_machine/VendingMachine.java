@@ -6,9 +6,9 @@ public class VendingMachine {
     private double totalSales;
 	private Inventory itemInventory;
 	private VedingMachineState state;
-	private Monitor monitorItr = null;
+	private Monitor monitorItr;
 
-	VendingMachine(Inventory itemsInventory, Monitor monitorItr) {
+	public VendingMachine(Inventory itemsInventory, Monitor monitorItr) {
 		VedingMachineState.INIT.stateInitialize(this, itemsInventory, monitorItr);
 	}
 	
