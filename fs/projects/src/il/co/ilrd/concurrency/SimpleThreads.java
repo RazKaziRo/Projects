@@ -2,7 +2,7 @@ package il.co.ilrd.concurrency;
 
 public class SimpleThreads {
 
-    // Display a message, preceded by
+    // Display a message, preceded by 
     // the name of the current thread
     static void threadMessage(String message) {
         String threadName =
@@ -19,7 +19,7 @@ public class SimpleThreads {
                 "Mares eat oats",
                 "Does eat oats",
                 "Little lambs eat ivy",
-                "A kid will eat ivy too"
+                "A kid will eat ivy too" 
             };
             try {
                 for (int i = 0;
