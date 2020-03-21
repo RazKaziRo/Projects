@@ -1,24 +1,25 @@
 package il.co.ilrd.concurrency;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Exercis2 extends Thread {
-
-    public int c = 0;
-    private final ReentrantLock re = new ReentrantLock();
+	
+	private final ReentrantLock re = new ReentrantLock();
+	public static AtomicInteger c = new AtomicInteger(0);
 
 	@Override
 	public void run() {
-		
-		synchronized (this) {
+			
+		re.lock();
 			
 			for(int i = 0; i < 10000000; ++i) {
-				++c;
+				c.incrementAndGet();
 			}
-		}
-
-
-		System.out.println(Thread.currentThread().getName() + " Counter Value: " + c);
+	
+		System.out.println(Thread.currentThread().getName() + " Counter Value: " + c.get());
+		
+		re.unlock();
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
@@ -48,21 +49,21 @@ public class Exercis2 extends Thread {
 		*/
 		
 		/* Synchronized Block:
-		 * T1 Counter Value: 10005308
+		 * T1 Counter Value: 10000000
 		 * T2 Counter Value: 20000000
 		 * Execution time in milliseconds: 20
 		 */
 
 		/* Atomic Variable
-		 * T1 Counter Value: 20000000
+		 * T1 Counter Value: 18915538
 		 * T2 Counter Value: 20000000
-		 * Execution time in milliseconds: 236
+		 * Execution time in milliseconds: 272
 		 */
 		
 		/* ReentrantLock
-		 * T1 Counter Value: 10001023
+		 * T1 Counter Value: 10000000
 		 * T2 Counter Value: 20000000
-		 * Execution time in milliseconds: 23
+		 * Execution time in milliseconds: 168
 		 */
 	}
 
