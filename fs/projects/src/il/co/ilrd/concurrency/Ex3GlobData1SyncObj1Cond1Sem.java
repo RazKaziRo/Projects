@@ -3,46 +3,76 @@ package il.co.ilrd.concurrency;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Ex3GlobData1SyncObj1Cond1Sem {
 	
 	public static final int NUM_OF_CONSUMERS = 10;
-	public static Object data;
-    private final Semaphore listAvailable = new Semaphore(0, true);
-	final Condition readyToConsume  = ((Lock) listAvailable).newCondition(); 
-
+	
+	public static int data;
+    private final Semaphore noOfConsumers = new Semaphore(0, true);
+    private final Lock lock = new ReentrantLock();
+    private final Condition readyToConsume  = lock.newCondition(); 
+	
 	public class Producer implements Runnable{
 		
-		public void setData(Object data) {
-			Ex3GlobData1SyncObj1Cond1Sem.data = data;
-		}
-		
-		@Override
-		public void run() {
-		
-			readyToConsume.signal();
-		}
-		
-		
-		
-	}
-	public class Consumers implements Runnable{
-
 		@Override
 		public void run() {
 			
-			try {
-				readyToConsume.await();
-				System.out.println("Thread: "+ Thread.currentThread().getName() + data);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			while(true) {
+				
+				
+				lock.lock();
+				while(noOfConsumers.availablePermits() < NUM_OF_CONSUMERS) {
+					lock.unlock();
+					lock.lock();
+				}
+				System.out.println(Thread.currentThread().getName() + "Write: " + ++data);
+				readyToConsume.signalAll();
+				lock.unlock();
 			}
 			
+				
+				
+			
+			}
 		}
+			
+	public class Consumers implements Runnable{
+		private int oldData;
 		
-	}
-	
-	public static void main(String[] args) {
+		@Override
+		public void run() {
+			
+			while(true) {
+			
+				oldData = data; 
+					
+				lock.lock();
+				noOfConsumers.release();//+1
+					
+				while(data == oldData) {
+					try {
+						readyToConsume.await();
+					}
+					catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				try {
+					noOfConsumers.acquire();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				System.out.println(Thread.currentThread().getName() + " Read: " + data);
+				lock.unlock();				
+			} 
+
+		}
+}
+	public static void main(String[] args) throws InterruptedException {
 		
 		Ex3GlobData1SyncObj1Cond1Sem ex3 = new Ex3GlobData1SyncObj1Cond1Sem();
 		Thread [] consumers = new Thread[NUM_OF_CONSUMERS];
@@ -50,18 +80,19 @@ public class Ex3GlobData1SyncObj1Cond1Sem {
 		Producer prodClass = ex3.new Producer();
 		Consumers conClass = ex3.new Consumers();
 		
-		Thread producer = new Thread(prodClass, "Producer");
-		prodClass.setData("Messege 1");
+		Thread producer = new Thread(prodClass, "Producer ");
 		producer.start();
 		
 		for(int i = 0; i < NUM_OF_CONSUMERS; ++i) {
-			Thread consumer = new Thread(conClass, "Consumer" + i);
-
+			 consumers[i] = new Thread(conClass, "Consumer " + i);
+			 consumers[i].start();
 		}
-
 		
-		
-		
+		for(int i = 0; i < NUM_OF_CONSUMERS; ++i) {
+			 consumers[i].join();
+		}
+		producer.join();
+	
 	}
 
 }
