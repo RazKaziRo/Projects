@@ -1,8 +1,10 @@
 package il.co.ilrd.concurrency;
 
+import java.util.concurrent.TimeUnit;
+
 import il.co.ilrd.singly_linked_list.SinglyLinkedList;
 
-public class Ex3LinkedList1SyncObj {	
+public class Ex3LinkedList1SyncObj{	
 	
 	public static final int NUM_OF_CONSUMERS = 10;
 	public static final int NUM_OF_PRODUCERS = 10;
@@ -24,9 +26,10 @@ public class Ex3LinkedList1SyncObj {
 		@Override
 		public void run() {
 			
-			synchronized (this) {
-				System.out.println(Thread.currentThread().getName() + " Pushed: " + data);
-				s.pushFront(data);
+			synchronized (s) {
+					System.out.println(Thread.currentThread().getName() + " Pushed: " + data + " To List: " + s.hashCode());
+					s.pushFront(data);
+					s.notify();
 			}
 			
 		}
@@ -37,12 +40,18 @@ public class Ex3LinkedList1SyncObj {
 		@Override
 		public void run() {
 			
-			synchronized (this) {
-				System.out.println(Thread.currentThread().getName() + " Poped: " + s.popFront());				
-
+				synchronized (s) {
+					while(s.isEmpty()) {
+						try {
+							s.wait();
+						} 
+						catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					System.out.println(Thread.currentThread().getName() + " Poped: " + s.popFront() + " From List: " + s.hashCode());	
 			}
 		}
-
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
@@ -53,14 +62,14 @@ public class Ex3LinkedList1SyncObj {
 		SinglyLinkedList s = new SinglyLinkedList();
 		Ex3LinkedList1SyncObj ex3 = new Ex3LinkedList1SyncObj (s);
 		
-		for(int i = 0; i < NUM_OF_PRODUCERS; ++i) {
-			producers[i] = new Thread(ex3.new Push(i), "Producer No: "+ i);
-			producers[i].start();
-		}
-		
 		for(int j = 0; j < NUM_OF_CONSUMERS; ++j) {
 			consumers[j] = new Thread(ex3.new Pop(), "Consumer No: " + j);
 			consumers[j].start();
+		}
+		
+		for(int i = 0; i < NUM_OF_PRODUCERS; ++i) {
+			producers[i] = new Thread(ex3.new Push(i), "Producer No: "+ i);
+			producers[i].start();
 		}
 		
 		for(int i = 0; i < NUM_OF_PRODUCERS; ++i) {
@@ -70,7 +79,7 @@ public class Ex3LinkedList1SyncObj {
 		for(int j = 0; j < NUM_OF_CONSUMERS; ++j) {
 			consumers[j].join();
 		}
-		//TimeUnit.MILLISECONDS.sleep(1000);
+		TimeUnit.MILLISECONDS.sleep(1000);
 		System.out.println("SinglyList Size: "+ s.size());
 	}
 
