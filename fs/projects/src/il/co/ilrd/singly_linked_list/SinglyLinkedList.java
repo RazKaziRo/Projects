@@ -5,7 +5,7 @@ public class SinglyLinkedList {
 	
 	private Node headNode;
 	
-	SinglyLinkedList(){
+	public SinglyLinkedList(){
 		this.headNode = new Node(null, null);
 	}
 	

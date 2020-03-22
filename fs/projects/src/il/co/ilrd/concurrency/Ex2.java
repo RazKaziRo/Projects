@@ -3,7 +3,7 @@ package il.co.ilrd.concurrency;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Exercis2 extends Thread {
+public class Ex2 extends Thread {
 	
 	private final ReentrantLock re = new ReentrantLock();
 	public static AtomicInteger c = new AtomicInteger(0);
@@ -24,7 +24,7 @@ public class Exercis2 extends Thread {
 	
 	public static void main(String[] args) throws InterruptedException {
 
-		Exercis2 ex2 = new Exercis2();
+		Ex2 ex2 = new Ex2();
 		
 		Thread t1 = new Thread(ex2, "T1");
 		Thread t2 = new Thread(ex2, "T2");
