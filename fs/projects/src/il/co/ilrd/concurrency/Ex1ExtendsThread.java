@@ -2,7 +2,7 @@ package il.co.ilrd.concurrency;
 
 import java.util.concurrent.TimeUnit;
 
-public class Exercis1ExtendsThread extends Thread{
+public class Ex1ExtendsThread extends Thread{
 
 	private volatile boolean exit = false;
 	
@@ -19,7 +19,7 @@ public class Exercis1ExtendsThread extends Thread{
 	}
 
 	public static void main (String [] argv) throws InterruptedException {
-		Exercis1ExtendsThread myServer = new Exercis1ExtendsThread(); 
+		Ex1ExtendsThread myServer = new Ex1ExtendsThread(); 
 		Thread t1 = new Thread(myServer, "T1");
 		t1.start();
 		TimeUnit.MILLISECONDS.sleep(10);

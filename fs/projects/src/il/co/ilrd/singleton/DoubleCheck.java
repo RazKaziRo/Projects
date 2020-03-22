@@ -3,8 +3,7 @@ package il.co.ilrd.singleton;
 
 public class DoubleCheck {
 
-    private volatile static DoubleCheck instance; // volatile
-    /*The volatile prevents memory writes from being re-ordered, making it impossible for other threads to read uninitialized fields of your singleton through the singleton’s pointer.*/
+    private volatile static DoubleCheck instance; 
     private DoubleCheck (){}
  
     public static DoubleCheck getSingleton() {
