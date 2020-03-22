@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Exercis3ProdCons1Atom2Sem  {
+public class Ex3ProdCons1Atom2Sem  {
 	
     public AtomicBoolean stopPingPong = new AtomicBoolean(false);
     private final Semaphore PongAvailable = new Semaphore(0, true);
@@ -58,7 +58,7 @@ public class Exercis3ProdCons1Atom2Sem  {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		Exercis3ProdCons1Atom2Sem ex3 = new Exercis3ProdCons1Atom2Sem();
+		Ex3ProdCons1Atom2Sem ex3 = new Ex3ProdCons1Atom2Sem();
 		Ping pingClass = ex3.new Ping();
 		Pong pongClass = ex3.new Pong();
 	
