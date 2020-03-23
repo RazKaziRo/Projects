@@ -72,7 +72,7 @@ public class Ex3GlobData1SyncObj1Cond1Sem {
 		producer.start();
 		
 		for(int i = 0; i < NUM_OF_CONSUMERS; ++i) {
-			 consumers[i] = new Thread(conClass, "Consumer " + i);
+			 consumers[i] = new Thread(conClass, "Consumer #" + i);
 			 consumers[i].start();
 		}
 		
