@@ -10,7 +10,7 @@ public class Ex3GlobData1SyncObj1Cond1Sem {
 	public static final int NUM_OF_CONSUMERS = 10;
 	
 	public static int data;
-    private final Semaphore noOfConsumers = new Semaphore(0, true);
+    private final Semaphore semNoOfConsumers = new Semaphore(0, true);
     private final Lock lock = new ReentrantLock();
     private final Condition readyToConsume  = lock.newCondition(); 
 	
@@ -21,51 +21,39 @@ public class Ex3GlobData1SyncObj1Cond1Sem {
 			
 			while(true) {
 				
+				for(int i = 0; i < NUM_OF_CONSUMERS; ++i) {
+					try {
+						semNoOfConsumers.acquire();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 				
 				lock.lock();
-				while(noOfConsumers.availablePermits() < NUM_OF_CONSUMERS) {
-					lock.unlock();
-					lock.lock();
-				}
 				System.out.println(Thread.currentThread().getName() + "Write: " + ++data);
 				readyToConsume.signalAll();
 				lock.unlock();
 			}
 			
-				
-				
-			
 			}
 		}
 			
 	public class Consumers implements Runnable{
-		private int oldData;
-		
+
 		@Override
 		public void run() {
 			
 			while(true) {
-			
-				oldData = data; 
-					
-				lock.lock();
-				noOfConsumers.release();//+1
-					
-				while(data == oldData) {
-					try {
-						readyToConsume.await();
-					}
-					catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+				
+				lock.lock();	
+				semNoOfConsumers.release();
+				
 				try {
-					noOfConsumers.acquire();
+					readyToConsume.await();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 				System.out.println(Thread.currentThread().getName() + " Read: " + data);
 				lock.unlock();				
 			} 
