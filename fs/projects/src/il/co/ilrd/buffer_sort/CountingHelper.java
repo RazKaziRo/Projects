@@ -26,13 +26,12 @@ public class CountingHelper {
 			int[] localHistogram = new int[ASCII_CHARS];
 			String s = new String();
 
-			//System.out.println(Thread.currentThread().getName() + " Start index: " + startIdx + " End Index: " + endIdx);
 			for(int i = startIdx; i < endIdx; ++i) {
+				
 					s = result.get(i);	
 					for(int j = 0; j < s.length(); ++j) {
 						++localHistogram[s.charAt(j)];
 				}
-					
 			}
 			
 			updateSuperHistogram(localHistogram);
