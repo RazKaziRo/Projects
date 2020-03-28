@@ -13,7 +13,7 @@
 typedef void (*vFunc_t)(void*);
 typedef enum VFUNCIDX
 {
-	CLONE, //0
+	CLONE,
    	EQUALS,
    	FINALIZ,
    	GET_CLASS,
@@ -22,7 +22,7 @@ typedef enum VFUNCIDX
 	NOTIFAY_ALL,
 	TO_STRING,
 	WAIT,
-	ANIMAL_SAY_HELLO, //9
+	ANIMAL_SAY_HELLO,
 	ANIMAL_TO_STRING
 
 }obj_vfunc_idx_t;
@@ -60,7 +60,7 @@ typedef struct DOG
 
 typedef struct CAT
 {
-	object_t dog_meta;
+	object_t cat_meta;
 	char *colors;
 	
 }cat_t;
@@ -80,9 +80,11 @@ void AnimalSayHello(void *this)
 	printf("I have %d legs\n", ((animal_t*)this)->num_legs);
 }
 
-void AnimalInstanceBlock()
+void AnimalInstanceBlock(void *this)
 {
 	printf("Instance initialization block Animal \n");
+	((animal_t*)this)->num_legs = 5;
+	((animal_t*)this)->num_masters = 1;
 }
 
 void AnimalStaticBlock()
@@ -95,16 +97,11 @@ void AnimalStaticBlock()
 	}	
 }
 
-
-
-void AnimalCtorA(animal_t *this)
+void AnimalCtor(void *this)
 {	
 	AnimalStaticBlock();
-	AnimalInstanceBlock();
-	this->num_legs = 5;
-	this->num_masters = 1;
-
-	printf("Animal Ctor\n");
+	AnimalInstanceBlock(this);
+	printf("Animal Ctor \n");
 	((animal_t*)this)->ID = ++g_counter;
 	AnimalSayHello(this);
 	ShowCounter();
@@ -113,9 +110,8 @@ void AnimalCtorA(animal_t *this)
 void AnimalCtorB(void *this, int num_masters)
 {	
 	AnimalStaticBlock();
-	AnimalInstanceBlock();
+	AnimalInstanceBlock(this);
 	printf("Animal Ctor int \n");
-	((animal_t*)this)->num_legs = 5;
 	((animal_t*)this)->num_masters = num_masters;
 	((animal_t*)this)->ID = ++g_counter;
 }
@@ -143,11 +139,12 @@ void AnimalFinalize(void *this)
 	printf("finalize Animal with ID:  %d \n", ((animal_t*)this)->ID);
 }
 
-// -- Dog Methods -- //
+/* / -- Dog Methods -- / */
 
-void DogInstanceBlock()
+void DogInstanceBlock(void *this)
 {
 	printf("Instance initialization block Dog \n");
+	((animal_t*)this)->num_legs = 4;
 } 
 
 void DogStaticBlock()
@@ -163,8 +160,7 @@ void DogCtor(dog_t *this)
 {
 	DogStaticBlock();
 	AnimalCtorB(this, 2);
-	DogInstanceBlock();
-	((animal_t*)this)->num_legs = 4;
+	DogInstanceBlock(this);
 	printf("Dog Ctor \n");
 }
 
@@ -180,8 +176,15 @@ void DogFinalize(void *this)
 	AnimalFinalize(this);
 }
 
-// -- Cat Methods -- //
-void CatStaticBlock()
+/* / -- Cat Methods -- / */
+
+void CatInstanceBlock(void *this)
+{	
+	AnimalInstanceBlock(this);
+	((animal_t*)this)->num_masters = 5;
+}
+
+void CatStaticBlock(void *this)
 {	
 	if(0 == g_cat_loaded)
 	{
@@ -192,21 +195,23 @@ void CatStaticBlock()
 
 void CatCtorB(void *this, char *colors)
 {	
+	CatStaticBlock(this);
 	((cat_t*)this)->colors = colors;
 	printf("Cat Ctor with color: %s \n", ((cat_t*)this)->colors);
 
 }
 
-void CatCtorA(void *this)
-{
-	CatCtorB(this,"black");
+void CatCtor(void *this)
+{	
+	CatStaticBlock(this);
+	CatInstanceBlock(this);
+	AnimalCtor(this);
+	((cat_t*)this)->colors = "black";
 	printf("Cat Ctor \n");
 	((animal_t*)this)->num_masters = 2;
 }
 
-
-
-// -- Object Functions -- //
+/* / -- Object Functions -- / */
 void objectClone(void *param){}
 void objectEquals(void *param){}
 void objectFinalize(void *param){}
@@ -217,8 +222,7 @@ void objectNotifyAll(void *param){}
 void objectToString(void *param){}
 void objectWait(void *param){}
 
-
-//-- Virtual Tables -- //
+/* /-- Virtual Tables -- / */
 vFunc_t objectVTable[] = {	&objectClone, 
           				  	&objectEquals,
 							&objectFinalize,
@@ -254,11 +258,21 @@ vFunc_t dogVTable[] = {	&objectClone,
 							&DogSayHello,
 							};
 
-
+vFunc_t catVTable[] = {	&objectClone, 
+          				  	&objectEquals,
+							&objectFinalize,
+							&objectGetClass,
+							&objectHashCode,
+							&objectNotify,
+							&objectNotifyAll,
+							&objectToString,
+							&objectWait
+							};
 
 class_t object_meta = {"Object", sizeof(object_t), NULL, &objectVTable};
 class_t animal_meta = {"Animal", sizeof(animal_t), &object_meta, &animalVTable};
 class_t dog_meta = {"Dog", sizeof(dog_t), &animal_meta, &dogVTable};
+class_t cat_meta = {"Cat", sizeof(cat_t),&animal_meta, &catVTable};
 
 object_t *ObjectAlloc(class_t *metadata)
 {
@@ -273,13 +287,17 @@ int main(){
 	object_t *object;
 
 	animal_t *animalA = (animal_t*)ObjectAlloc(&animal_meta);
-	AnimalCtorA(animalA);
-
 	dog_t *dogA = (dog_t*)ObjectAlloc(&dog_meta);
+	cat_t *catA = (cat_t*)ObjectAlloc(&cat_meta);
+
+	AnimalCtor(animalA);
+
 	DogCtor(dogA);
 
-	//(*animalA->animal_meta.metadata->vFuncTable)[ANIMAL_SAY_HELLO](animalA);
-	ShowCounter(); //Animal.showCounter();
+	CatCtor(catA);
+
+	/* /(*animalA->animal_meta.metadata->vFuncTable)[ANIMAL_SAY_HELLO](animalA); */
+	ShowCounter();
 
 	printf("%d\n", animalA->ID);
 	printf("%d\n",((animal_t*)dogA)->ID);
