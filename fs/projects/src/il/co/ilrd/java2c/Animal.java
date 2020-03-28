@@ -19,13 +19,13 @@ class Animal{
 		System.out.println(super.toString());
 	}
 	
-	public Animal(int num_masters){
+	public Animal(int num_masters){ //done
 		System.out.println("Animal Ctor int");
 		this.ID = ++counter;
 		this.num_masters = num_masters;
 	}
 	
-	public void sayHello(){
+	public void sayHello(){ //done
 		System.out.println("Animal Hello!");
 		System.out.println("I have "+ num_legs + " legs");
 	}
@@ -49,7 +49,7 @@ class Animal{
 		super.finalize();
 	}
 	
-	static {
+	static {//done
 		System.out.println("Static block Animal 2");
 	}
 	

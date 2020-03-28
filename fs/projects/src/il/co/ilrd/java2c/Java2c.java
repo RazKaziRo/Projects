@@ -10,17 +10,17 @@ public class Java2c {
 		Object obj;//done
 		Animal animal = new Animal();
 		Dog dog = new Dog();
-		Cat cat = new Cat();
-		LegendaryAnimal la = new LegendaryAnimal();
+		//Cat cat = new Cat();
+		//LegendaryAnimal la = new LegendaryAnimal();
 		
 		Animal.showCounter();
 		
 		System.out.println(animal.ID);
 		System.out.println(((Animal)dog).ID);
-		System.out.println(((Animal)cat).ID);
-		System.out.println(((Animal)la).ID);
+		//System.out.println(((Animal)cat).ID);
+		//System.out.println(((Animal)la).ID);
 		
-		Animal[] array = {
+		/*Animal[] array = {
 				new Dog(),
 				new Cat(),
 				new Cat("white"),
@@ -39,6 +39,6 @@ public class Java2c {
 		
 		//System.gc();
 		//System.out.println("After gc");
-		//Runtime.runFinalizersOnExit(true);
+		//Runtime.runFinalizersOnExit(true);*/
 	}
 }
