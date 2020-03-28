@@ -10,7 +10,7 @@ public class Java2c {
 		Object obj;//done
 		Animal animal = new Animal();
 		Dog dog = new Dog();
-		//Cat cat = new Cat();
+		Cat cat = new Cat();
 		//LegendaryAnimal la = new LegendaryAnimal();
 		
 		Animal.showCounter();
