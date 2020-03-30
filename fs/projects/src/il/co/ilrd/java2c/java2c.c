@@ -13,37 +13,35 @@
 typedef void (*vFunc_t)(void*);
 typedef enum VFUNCIDX
 {
-	CLONE,
+	CLONE,		
    	EQUALS,
    	FINALIZ,
    	GET_CLASS,
 	HASCODE,
-	NOTIFY,
+	NOTIFY,		
 	NOTIFAY_ALL,
 	TO_STRING,
 	WAIT,
-	ANIMAL_SAY_HELLO,
-	ANIMAL_TO_STRING
+	SAY_HELLO
 
 }obj_vfunc_idx_t;
 
-typedef struct CLASS{
+typedef struct Class{
 
     char *name;
 	size_t size;
-	struct CLASS *super;
+	struct Class *super;
 	vFunc_t (*vFuncTable)[];
 
 }class_t;
 
-typedef struct OBJECT{
+typedef struct Object{
 
 	class_t* metadata;
 
 }object_t;
 
-
-typedef struct ANIMAL{
+typedef struct Animal{
 	
 	object_t animal_meta;
 	int num_legs;
@@ -52,22 +50,55 @@ typedef struct ANIMAL{
 
 }animal_t;
 
-typedef struct DOG
+typedef struct Dog
 {
-	object_t dog_meta;
+	animal_t dog_meta;
 
 }dog_t;
 
-typedef struct CAT
+typedef struct Cat
 {
-	object_t cat_meta;
+	animal_t cat_meta;
 	char *colors;
 	
 }cat_t;
 
+typedef struct Legendery
+{
+	cat_t legendery_meta;
+	
+}legendery_t;
+
+typedef struct ToString
+{
+	object_t *obj;
+	char ret_buffer[100];
+
+}to_str_t;
 
 static int g_counter = 0;
-static int g_animal_loaded = 0, g_dog_loaded = 0, g_cat_loaded;
+static int g_animal_loaded = 0, g_dog_loaded = 0, g_cat_loaded, g_legendery_loaded = 0;
+
+/* / -- Object Functions -- / */
+
+void objectClone(void *param){}
+void objectEquals(void *param){}
+void objectFinalize(void *param){}
+void objectGetClass(void *param){}
+void objectHashCode(void *param){}
+void objectNotify(void *param){}
+void objectNotifyAll(void *param){}
+void objectToString(void *param){}
+void objectWait(void *param){}
+
+static void foo(animal_t *a)
+{
+	to_str_t *to_str_pack = malloc(sizeof(*to_str_pack));
+	to_str_pack->obj = (object_t*)a;
+
+	(*((animal_t*)a)->animal_meta.metadata->vFuncTable)[TO_STRING](to_str_pack);
+	printf("%s\n",to_str_pack->ret_buffer);
+}
 
 static void ShowCounter()
 {
@@ -89,7 +120,7 @@ void AnimalInstanceBlock(void *this)
 
 void AnimalStaticBlock()
 {
-	if(0 == g_animal_loaded)
+	if (0 == g_animal_loaded)
 	{
 		printf("Static block Animal 1 \n");
 		printf("Static block Animal 2 \n");
@@ -97,14 +128,34 @@ void AnimalStaticBlock()
 	}	
 }
 
+void AnimalToString(void *pack)
+{
+	char id_buffer[sizeof(((animal_t *)((to_str_t *)pack)->obj)->ID)];
+
+	strcat(((to_str_t *)pack)->ret_buffer ,"Animal with ID: ");
+	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
+	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+}
+
 void AnimalCtor(void *this)
 {	
+	to_str_t *to_str_pack = malloc(sizeof(*to_str_pack));
+	to_str_pack->obj = this;
+
 	AnimalStaticBlock();
+
+	if (((animal_t*)this)->ID == 0)
+	{
 	AnimalInstanceBlock(this);
 	printf("Animal Ctor \n");
 	((animal_t*)this)->ID = ++g_counter;
-	AnimalSayHello(this);
+	(*((animal_t*)this)->animal_meta.metadata->vFuncTable)[SAY_HELLO](this);
+	(*((animal_t*)this)->animal_meta.metadata->vFuncTable)[TO_STRING](to_str_pack);
 	ShowCounter();
+	printf("%s\n",to_str_pack->ret_buffer);
+	printf("il.co.ilrd.java2c.%s@%p \n",((animal_t*)this)->animal_meta.metadata->name,this);
+	}
+
 }
 
 void AnimalCtorB(void *this, int num_masters)
@@ -116,27 +167,15 @@ void AnimalCtorB(void *this, int num_masters)
 	((animal_t*)this)->ID = ++g_counter;
 }
 
-int getNumMasters(animal_t *this)
+int getNumMasters(void *this) 	
 {
-	return this->num_masters;
-}
-
-void AnimalToString(void *param)
-{
-		/*
-	char *id_buffer = malloc(sizeof(((animal_t*)this)->ID));
-	itoa(this->ID, id_buffer,2);
-
-	char *string = strcat("Animal with ID:", id_buffer);
-	free(id_buffer);
-	id_buffer = NULL;
-
-	return string;*/
+	return ((animal_t*)this)->num_masters;
 }
 
 void AnimalFinalize(void *this)
 {
 	printf("finalize Animal with ID:  %d \n", ((animal_t*)this)->ID);
+	objectFinalize(this);
 }
 
 /* / -- Dog Methods -- / */
@@ -149,14 +188,14 @@ void DogInstanceBlock(void *this)
 
 void DogStaticBlock()
 {
-	if(0 == g_dog_loaded)
+	if (0 == g_dog_loaded)
 	{
 		printf("Static block Dog \n");
 		g_dog_loaded = 1;
 	}	
 }
 
-void DogCtor(dog_t *this)
+void DogCtor(void *this)
 {
 	DogStaticBlock();
 	AnimalCtorB(this, 2);
@@ -170,6 +209,15 @@ void DogSayHello(void *this)
 	printf("I have %d legs \n", ((animal_t*)this)->num_legs);
 }
 
+void DogToString(void *pack)
+{
+	char id_buffer[sizeof(((animal_t *)((to_str_t *)pack)->obj)->ID)];
+
+	strcat(((to_str_t *)pack)->ret_buffer ,"Dog with ID: ");
+	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
+	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+}
+
 void DogFinalize(void *this)
 {
 	printf("finalize Dog with ID:  %d \n", ((animal_t*)this)->ID);
@@ -180,13 +228,15 @@ void DogFinalize(void *this)
 
 void CatInstanceBlock(void *this)
 {	
-	AnimalInstanceBlock(this);
+	if (((animal_t*)this)->ID == 0)
+	{
 	((animal_t*)this)->num_masters = 5;
+	}
 }
 
 void CatStaticBlock(void *this)
 {	
-	if(0 == g_cat_loaded)
+	if (0 == g_cat_loaded)
 	{
 		printf("Static block Cat \n");
 		g_cat_loaded = 1;
@@ -196,6 +246,9 @@ void CatStaticBlock(void *this)
 void CatCtorB(void *this, char *colors)
 {	
 	CatStaticBlock(this);
+	CatInstanceBlock(this);
+	AnimalCtor(this);
+
 	((cat_t*)this)->colors = colors;
 	printf("Cat Ctor with color: %s \n", ((cat_t*)this)->colors);
 
@@ -205,24 +258,68 @@ void CatCtor(void *this)
 {	
 	CatStaticBlock(this);
 	CatInstanceBlock(this);
-	AnimalCtor(this);
-	((cat_t*)this)->colors = "black";
-	printf("Cat Ctor \n");
 	((animal_t*)this)->num_masters = 2;
+	CatCtorB(this, "black");
+	AnimalCtor(this);
+
+	printf("Cat Ctor \n");
 }
 
-/* / -- Object Functions -- / */
-void objectClone(void *param){}
-void objectEquals(void *param){}
-void objectFinalize(void *param){}
-void objectGetClass(void *param){}
-void objectHashCode(void *param){}
-void objectNotify(void *param){}
-void objectNotifyAll(void *param){}
-void objectToString(void *param){}
-void objectWait(void *param){}
+void CatToString(void *pack)
+{
+	char id_buffer[4];
+
+	strcat(((to_str_t *)pack)->ret_buffer ,"Cat with ID: ");
+	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
+	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+}
+
+void CatFinalize(void *this)
+{
+	printf("finalize Cat with ID: %d\n", ((animal_t*)this)->ID);
+	objectFinalize(this);
+}
+
+/* /-- Legendery Methods -- / */
+
+void LegenderyStaticBlock()
+{
+	if (0 == g_legendery_loaded)
+	{
+		printf("Static block Legendery Animal\n");
+		g_legendery_loaded = 1;
+	}
+}
+
+void LegenderyCtor(void *this)
+{
+	LegenderyStaticBlock();
+	CatCtor(this);
+	printf("Legendery Ctor \n");
+}
+
+void LegendaryToString(void *pack)
+{
+	char id_buffer[sizeof(((animal_t *)((to_str_t *)pack)->obj)->ID)];
+
+	strcat(((to_str_t *)pack)->ret_buffer ,"LegendaryAnimal with ID: ");
+	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
+	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+}
+
+void LegenderySayHello(void *this)
+{
+	printf("Legendery Hello! \n");
+}
+
+void LegenderyFinalize(void *this)
+{
+	printf("finalize LegendaryAnimal with ID: %d\n", ((animal_t*)this)->ID);
+	objectFinalize(this);
+}
 
 /* /-- Virtual Tables -- / */
+
 vFunc_t objectVTable[] = {	&objectClone, 
           				  	&objectEquals,
 							&objectFinalize,
@@ -240,39 +337,55 @@ vFunc_t animalVTable[] = {	&objectClone,
 							&objectHashCode,
 							&objectNotify,
 							&objectNotifyAll,
-							&objectToString,
+							&AnimalToString,
 							&objectWait,
 							&AnimalSayHello,
-							&AnimalToString,
+							&AnimalFinalize,
 							};
 
-vFunc_t dogVTable[] = {	&objectClone, 
+vFunc_t dogVTable[] = {		&objectClone, 
           				  	&objectEquals,
 							&objectFinalize,
 							&objectGetClass,
 							&objectHashCode,
 							&objectNotify,
 							&objectNotifyAll,
-							&objectToString,
+							&DogToString,
 							&objectWait,
 							&DogSayHello,
+							&DogFinalize
 							};
 
-vFunc_t catVTable[] = {	&objectClone, 
+vFunc_t catVTable[] = {		&objectClone, 
           				  	&objectEquals,
-							&objectFinalize,
+							&CatFinalize,
 							&objectGetClass,
 							&objectHashCode,
 							&objectNotify,
 							&objectNotifyAll,
-							&objectToString,
-							&objectWait
+							&CatToString,
+							&objectWait,
+							&AnimalSayHello
+							};
+
+vFunc_t legenderyVTable[] = {&objectClone, 
+          				  	&objectEquals,
+							&CatFinalize,
+							&objectGetClass,
+							&objectHashCode,
+							&objectNotify,
+							&objectNotifyAll,
+							&LegendaryToString,
+							&objectWait,
+							&LegenderySayHello,
+							&LegenderyFinalize
 							};
 
 class_t object_meta = {"Object", sizeof(object_t), NULL, &objectVTable};
 class_t animal_meta = {"Animal", sizeof(animal_t), &object_meta, &animalVTable};
 class_t dog_meta = {"Dog", sizeof(dog_t), &animal_meta, &dogVTable};
 class_t cat_meta = {"Cat", sizeof(cat_t),&animal_meta, &catVTable};
+class_t legendery_meta = {"LegendaryAnimal", sizeof(legendery_t), &cat_meta, &legenderyVTable};
 
 object_t *ObjectAlloc(class_t *metadata)
 {
@@ -284,22 +397,49 @@ object_t *ObjectAlloc(class_t *metadata)
 
 int main(){
 
-	object_t *object;
+	object_t *obj;
+	animal_t* array[5];
+	animal_t *animal = (animal_t*)ObjectAlloc(&animal_meta);
+	dog_t *dog = (dog_t*)ObjectAlloc(&dog_meta);
+	cat_t *cat = (cat_t*)ObjectAlloc(&cat_meta);
+	legendery_t *la = (legendery_t*)ObjectAlloc(&legendery_meta);
+	int i = 0;
 
-	animal_t *animalA = (animal_t*)ObjectAlloc(&animal_meta);
-	dog_t *dogA = (dog_t*)ObjectAlloc(&dog_meta);
-	cat_t *catA = (cat_t*)ObjectAlloc(&cat_meta);
+	AnimalCtor(animal);
+	DogCtor(dog);
+	CatCtor(cat);
+	LegenderyCtor(la);
 
-	AnimalCtor(animalA);
-
-	DogCtor(dogA);
-
-	CatCtor(catA);
-
-	/* /(*animalA->animal_meta.metadata->vFuncTable)[ANIMAL_SAY_HELLO](animalA); */
 	ShowCounter();
 
-	printf("%d\n", animalA->ID);
-	printf("%d\n",((animal_t*)dogA)->ID);
+	printf("%d\n", animal->ID);
+	printf("%d\n",((animal_t*)dog)->ID);
+	printf("%d\n",((animal_t*)cat)->ID);
+	printf("%d\n",((animal_t*)la)->ID);
+
+	array[0] = (animal_t*)ObjectAlloc(&dog_meta);
+	DogCtor(array[0]);
+
+	array[1] = (animal_t*)ObjectAlloc(&cat_meta);
+	CatCtor(array[1]);
+
+	array[2] = (animal_t*)ObjectAlloc(&cat_meta);
+	CatCtorB(array[2],"white");
+
+	array[3] = (animal_t*)ObjectAlloc(&legendery_meta); 
+	LegenderyCtor(array[3]);
 	
+	array[4] = (animal_t*)ObjectAlloc(&animal_meta);
+	AnimalCtor(array[4]);
+
+	for(i = 0; i < 5; ++i)
+	{
+		(*(array[i])->animal_meta.metadata->vFuncTable)[SAY_HELLO](array[i]);
+		printf("%d\n", getNumMasters(array[i]));
+	}
+
+	for(i = 0; i < 5; ++i)
+	{
+		foo(array[i]);
+	}
 }
