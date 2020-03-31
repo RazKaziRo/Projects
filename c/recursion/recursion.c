@@ -104,3 +104,45 @@ char *RecursiveStrStr(const char *haystack, const char *needle)
 	
 	return(char *)haystack;
 }
+
+int recMultiply(int num, int times){
+
+    if(times == 0)
+    {
+    	return 0;
+    }
+    
+    num += recMultiply(num, times - 1);
+
+	return num;
+}
+
+int recDivision(int num, int dividor){
+
+	int count = 0;
+
+	if(num == 0 || dividor == 0)
+	{
+		return 0;
+	}
+
+	++ count;
+	count += recDivision(num - dividor, dividor);
+
+	return count;
+
+}
+
+unsigned int BitWiseAddition(unsigned int x, unsigned y)
+{	
+
+	unsigned int carry = x & y;
+
+	if(y == 0)
+	{
+		return x;
+	}
+
+	BitWiseAddition(x ^ y , carry << 1);
+
+}

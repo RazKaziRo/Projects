@@ -120,9 +120,29 @@ void TestRecursiveStrStr()
 	RUN_TEST(RecursiveStrStr(src4, tofind4) == strstr(src3, tofind3),"FAIL: strcmp FAIL")
 }
 
+void TestRecursiveMultiply()
+{	
+	int res = recMultiply(5,1);
+	printf("%d\n", res);
+
+}
+
+void TestRecursiveDivision()
+{	
+	int res = recDivision(15,0);
+	printf("%d\n", res);
+
+}
+
+void TestBitWiseAddition()
+{
+	printf("%u \n", BitWiseAddition(28, 1));
+}
+
 int main(int argc, char const *argv[])
 {
 
+	/*
  	TestRecursiveFibonacci();
 
 	TestIterativeFibonacci();
@@ -136,6 +156,13 @@ int main(int argc, char const *argv[])
 	TestRecursiveStrCat();
 
 	TestRecursiveStrStr();
+	*/
+
+	TestRecursiveMultiply();
+
+	TestRecursiveDivision();
+
+	TestBitWiseAddition();
 
 	UNUSED(argc);
 	UNUSED(argv);

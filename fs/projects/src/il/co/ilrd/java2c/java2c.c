@@ -11,7 +11,7 @@
 #include <stdlib.h> /*malloc()*/
 
 typedef void (*vFunc_t)(void*);
-typedef enum VFUNCIDX
+enum
 {
 	CLONE,		
    	EQUALS,
@@ -24,7 +24,7 @@ typedef enum VFUNCIDX
 	WAIT,
 	SAY_HELLO
 
-}obj_vfunc_idx_t;
+};
 
 typedef struct Class{
 
@@ -98,6 +98,7 @@ static void foo(animal_t *a)
 
 	(*((animal_t*)a)->animal_meta.metadata->vFuncTable)[TO_STRING](to_str_pack);
 	printf("%s\n",to_str_pack->ret_buffer);
+	free(to_str_pack);
 }
 
 static void ShowCounter()
@@ -114,8 +115,7 @@ void AnimalSayHello(void *this)
 void AnimalInstanceBlock(void *this)
 {
 	printf("Instance initialization block Animal \n");
-	((animal_t*)this)->num_legs = 5;
-	((animal_t*)this)->num_masters = 1;
+
 }
 
 void AnimalStaticBlock()
@@ -130,11 +130,7 @@ void AnimalStaticBlock()
 
 void AnimalToString(void *pack)
 {
-	char id_buffer[sizeof(((animal_t *)((to_str_t *)pack)->obj)->ID)];
-
-	strcat(((to_str_t *)pack)->ret_buffer ,"Animal with ID: ");
-	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
-	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+	sprintf(((to_str_t *)pack)->ret_buffer, "Animal with ID: %d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
 }
 
 void AnimalCtor(void *this)
@@ -149,6 +145,8 @@ void AnimalCtor(void *this)
 	AnimalInstanceBlock(this);
 	printf("Animal Ctor \n");
 	((animal_t*)this)->ID = ++g_counter;
+	((animal_t*)this)->num_legs = 5;
+	((animal_t*)this)->num_masters = 1;
 	(*((animal_t*)this)->animal_meta.metadata->vFuncTable)[SAY_HELLO](this);
 	(*((animal_t*)this)->animal_meta.metadata->vFuncTable)[TO_STRING](to_str_pack);
 	ShowCounter();
@@ -156,6 +154,7 @@ void AnimalCtor(void *this)
 	printf("il.co.ilrd.java2c.%s@%p \n",((animal_t*)this)->animal_meta.metadata->name,this);
 	}
 
+	free(to_str_pack);
 }
 
 void AnimalCtorB(void *this, int num_masters)
@@ -163,6 +162,7 @@ void AnimalCtorB(void *this, int num_masters)
 	AnimalStaticBlock();
 	AnimalInstanceBlock(this);
 	printf("Animal Ctor int \n");
+	((animal_t*)this)->num_legs = 5;
 	((animal_t*)this)->num_masters = num_masters;
 	((animal_t*)this)->ID = ++g_counter;
 }
@@ -211,11 +211,7 @@ void DogSayHello(void *this)
 
 void DogToString(void *pack)
 {
-	char id_buffer[sizeof(((animal_t *)((to_str_t *)pack)->obj)->ID)];
-
-	strcat(((to_str_t *)pack)->ret_buffer ,"Dog with ID: ");
-	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
-	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+	sprintf(((to_str_t *)pack)->ret_buffer, "Dog with ID: %d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
 }
 
 void DogFinalize(void *this)
@@ -267,11 +263,7 @@ void CatCtor(void *this)
 
 void CatToString(void *pack)
 {
-	char id_buffer[4];
-
-	strcat(((to_str_t *)pack)->ret_buffer ,"Cat with ID: ");
-	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
-	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+	sprintf(((to_str_t *)pack)->ret_buffer, "Cat with ID: %d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
 }
 
 void CatFinalize(void *this)
@@ -300,11 +292,7 @@ void LegenderyCtor(void *this)
 
 void LegendaryToString(void *pack)
 {
-	char id_buffer[sizeof(((animal_t *)((to_str_t *)pack)->obj)->ID)];
-
-	strcat(((to_str_t *)pack)->ret_buffer ,"LegendaryAnimal with ID: ");
-	sprintf(id_buffer, "%d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
-	strcat(((to_str_t *)pack)->ret_buffer, id_buffer);
+	sprintf(((to_str_t *)pack)->ret_buffer, "LegendaryAnimal with ID: %d", ((animal_t *)((to_str_t *)pack)->obj)->ID);
 }
 
 void LegenderySayHello(void *this)
@@ -441,5 +429,11 @@ int main(){
 	for(i = 0; i < 5; ++i)
 	{
 		foo(array[i]);
+		free(array[i]);
 	}
+
+	free(animal);
+	free(dog);
+	free(cat);
+	free(la);
 }

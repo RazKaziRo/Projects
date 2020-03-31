@@ -2,7 +2,7 @@ package il.co.ilrd.quizzes;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-public class March24Quizz {
+public class March24thQuizz {
 	ReentrantLock lock = new ReentrantLock();
 	SyncWritingReading swr = new SyncWritingReading(lock);
 	
@@ -42,7 +42,7 @@ public class March24Quizz {
 		Thread [] readers = new Thread[10];
 		Thread [] writers = new Thread[10];
 		
-		March24Quizz mr = new March24Quizz();
+		March24thQuizz mr = new March24thQuizz();
 		Readers readersClass = mr.new Readers();
 		Writers writersClass = mr.new Writers();
 
