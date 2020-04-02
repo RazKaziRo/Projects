@@ -1,11 +1,19 @@
 package il.co.ilrd.generics;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 
 public class Singly<T> implements Iterable<T> {
 	
-	private Node headNode = new Node(null, null);
+	private Node<T> headNode;
+	private volatile int modCount;
+	
+	public Singly() {
+		
+		headNode = new Node<T>(null, null);
+		modCount = 0;
+	}
 	
 	public T popFront(){
 		
@@ -15,6 +23,7 @@ public class Singly<T> implements Iterable<T> {
 			
 			data = headNode.getData();
 			headNode = headNode.nextNode;
+			++modCount;
 		}
 		
 		return data;
@@ -23,8 +32,9 @@ public class Singly<T> implements Iterable<T> {
 	
 	public void pushFront(T data) {
 		
-		Node newNode = new Node(data, headNode);
+		Node<T> newNode = new Node<T>(data, headNode);
 		headNode = newNode;
+		++modCount;
 	}
 	
 	public boolean isEmpty() {
@@ -35,7 +45,7 @@ public class Singly<T> implements Iterable<T> {
 	public int size() {
 		
 		int counter = 0;
-		Node nodeHolder = null;
+		Node<T> nodeHolder = null;
 		
 		if(!isEmpty()) {
 			
@@ -50,22 +60,32 @@ public class Singly<T> implements Iterable<T> {
 		return counter;
 	}
 	
-	private class Node{
+	private Node<T> getHeadNode() {
+		return headNode;
+	}
+
+	
+	private int getModCount() {
+		return modCount;
+	}
+
+
+	private static class Node<T>{
 		
-		private Node nextNode;
+		private Node<T> nextNode;
 		private T data;
 
-		public Node(T data, Node nextNode){
+		private Node(T data, Node<T> nextNode){
 			
-			setData(data);
+			setData(data); 
 			setNextNode(nextNode);
 		}
 
-		public Node getNextNode() {
+		public Node<T> getNextNode() {
 			return nextNode;
 		}
 
-		private void setNextNode(Node nextNode) {
+		private void setNextNode(Node<T> nextNode) {
 			this.nextNode = nextNode;
 		}
 
@@ -79,18 +99,27 @@ public class Singly<T> implements Iterable<T> {
 		
 	}
 	
-private class SinglyIteratorIMP implements Iterator<T>{
+private static class SinglyIteratorIMP<T> implements Iterator <T>{
 	
-	private Node currentNode;
+	private Node<T> currentNode;
+	private Singly<T> list;
+	private volatile int modCount;
 
-	public SinglyIteratorIMP() {
+	private SinglyIteratorIMP(Singly<T> list) {
 		
-		currentNode = headNode;
+		this.list = list;
+		currentNode = list.getHeadNode();
+		modCount = list.getModCount();
 	}
 
 	
 	@Override
 	public boolean hasNext() {
+		if(list.getModCount() != modCount) {
+			
+			throw new ConcurrentModificationException("ConcurrentModificationException");
+		}
+		
 		return (currentNode.getNextNode() != null);
 	}
 
@@ -99,7 +128,7 @@ private class SinglyIteratorIMP implements Iterator<T>{
 		
 		T dataHolder = null;
 		
-		if(hasNext()) {
+		if(hasNext() && list.getModCount() == modCount) {
 			
 			dataHolder = currentNode.getData();
 			currentNode = currentNode.getNextNode();
@@ -111,14 +140,16 @@ private class SinglyIteratorIMP implements Iterator<T>{
 }
 
 @Override
-public Iterator<T> iterator() { //FAIL SAFE
+public Iterator<T> iterator() {
 	
-	return begin();
+	Iterator<T> itr = new SinglyIteratorIMP<T>(this);
+	
+	return itr;
 }
 
 public Iterator<T> find(T data){
 	
-	Iterator<T> itrRunner = new SinglyIteratorIMP();
+	Iterator<T> itrRunner = new SinglyIteratorIMP<T>(this);
 	Iterator<T> itrHolder = null;
 	
 	T dataHolder = null;
@@ -137,16 +168,19 @@ public Iterator<T> find(T data){
 	return null;
 }
 
-public Iterator<T> begin(){
-	
-	Iterator<T> itr = new SinglyIteratorIMP();
-	
-	return itr;
-}
 
 public static <E> Singly<E> merge(Singly<E> listA, Singly<E> listB){
 		
-return null;		
+	Singly<E> mergeSingly = new Singly<E>();
+	for(E element : newReverse(listA)) {
+		mergeSingly.pushFront(element);
+	}
+	
+	for(E element : newReverse(listB)) {
+		mergeSingly.pushFront(element);
+	}
+	
+	return mergeSingly;
 }
 
 public static <E>Singly<E> newReverse(Singly<E> list){

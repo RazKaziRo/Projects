@@ -3,6 +3,7 @@ package il.co.ilrd.generics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
@@ -102,7 +103,7 @@ class SinglyTest {
 			
 		}
 		Iterator<Integer> itrFinder = sllOfIntegers.find(1);
-		System.out.println(itrFinder.next());
+		//System.out.println(itrFinder.next());
 
 	}
 	
@@ -110,7 +111,10 @@ class SinglyTest {
 	public void testReverse() {
 		
 		Singly<Integer> sllOfIntegers = new Singly<Integer>();
-
+		
+		Iterator<Integer> itr = sllOfIntegers.iterator();
+		
+		
 		for(int i = 1; i <= 1000; ++i) {
 			
 			sllOfIntegers.pushFront(i);
@@ -124,6 +128,71 @@ class SinglyTest {
 			
 			assertEquals("FAIL: AT SIZE " + i, ReveseSllOfIntegers.popFront().compareTo(i), true);
 		}
+		
+	}
+	
+	@Test
+	public void testMerge() {
+		
+		Singly<Integer> listA = new Singly<Integer>();
+		Singly<Integer> listB = new Singly<Integer>();
+		
+		for(int i = 1; i <= 1000; ++i) {
+			
+			listA.pushFront(i);
+			listB.pushFront(i + 1000);
+		}
+		
+		Singly<Integer> listC = Singly.merge(listA, listB);
+		
+		for(int i = 2000; i <= 1; --i) {
+			
+		assertEquals("FAIL: AT SIZE " + i,listC.popFront().compareTo(i), true);
+
+		}		
+	}
+	
+	@Test 
+	public void testFailFast() throws ConcurrentModificationException{
+		
+		Singly<Integer> listA = new Singly<Integer>();
+		
+		for(int i = 1; i <= 1000; ++i) {
+			
+			listA.pushFront(i);
+			
+		}
+		
+		try {
+		for(Integer element : listA) {
+			
+			System.out.println("PushFront: " + element);
+			if(element.equals(100)) {
+				listA.pushFront(0);
+			}
+	
+			}
+		}
+		catch(ConcurrentModificationException e){
+			System.out.println(e);
+		}
+		
+		try {
+		for(Integer element : listA) {
+			
+			System.out.println("PopFront: " + element);
+			if(element.equals(100)) {
+				listA.popFront();
+			}
+	
+			}
+		}
+		catch(ConcurrentModificationException e){
+			System.out.println(e);
+		}
+		
+		
+
 		
 	}
 
