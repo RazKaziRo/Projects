@@ -24,10 +24,10 @@ public class Singly<T> implements Iterable<T> {
 			data = headNode.getData();
 			headNode = headNode.nextNode;
 			++modCount;
+			return data;
 		}
 		
-		return data;
-	
+		throw new NullPointerException();
 	}
 	
 	public void pushFront(T data) {
@@ -103,19 +103,20 @@ private static class SinglyIteratorIMP<T> implements Iterator <T>{
 	
 	private Node<T> currentNode;
 	private Singly<T> list;
-	private volatile int modCount;
+	private volatile int expectedModCount;
 
 	private SinglyIteratorIMP(Singly<T> list) {
 		
 		this.list = list;
 		currentNode = list.getHeadNode();
-		modCount = list.getModCount();
+		expectedModCount = list.getModCount();
 	}
 
 	
 	@Override
 	public boolean hasNext() {
-		if(list.getModCount() != modCount) {
+		
+		if(list.getModCount() != expectedModCount) {
 			
 			throw new ConcurrentModificationException("ConcurrentModificationException");
 		}
@@ -128,7 +129,7 @@ private static class SinglyIteratorIMP<T> implements Iterator <T>{
 		
 		T dataHolder = null;
 		
-		if(hasNext() && list.getModCount() == modCount) {
+		if(hasNext() && list.getModCount() == expectedModCount) {
 			
 			dataHolder = currentNode.getData();
 			currentNode = currentNode.getNextNode();
@@ -141,33 +142,25 @@ private static class SinglyIteratorIMP<T> implements Iterator <T>{
 
 @Override
 public Iterator<T> iterator() {
-	
-	Iterator<T> itr = new SinglyIteratorIMP<T>(this);
-	
-	return itr;
+
+	return new SinglyIteratorIMP<T>(this);
 }
 
-public Iterator<T> find(T data){
+public Iterator<T> find(T data) {
 	
-	Iterator<T> itrRunner = new SinglyIteratorIMP<T>(this);
-	Iterator<T> itrHolder = null;
+	Iterator<T> runner = iterator();
 	
-	T dataHolder = null;
-	
-	while(itrRunner.hasNext()) {
+	for (T element : this) {
 		
-		itrHolder = itrRunner;
-		dataHolder = itrRunner.next();
-		
-		if(dataHolder.equals(data)) {
-			
-			return itrHolder;
+		if (element.equals(data)) {
+			return runner;
 		}
+		
+		runner.next();
 	}
-
+	
 	return null;
 }
-
 
 public static <E> Singly<E> merge(Singly<E> listA, Singly<E> listB){
 		
