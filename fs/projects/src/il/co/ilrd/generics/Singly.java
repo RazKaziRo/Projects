@@ -11,7 +11,7 @@ public class Singly<T> implements Iterable<T> {
 	
 	public Singly() {
 		
-		headNode = new Node<T>(null, null);
+		headNode = new Node<T>(null, null); 
 		modCount = 0;
 	}
 	
