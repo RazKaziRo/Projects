@@ -102,8 +102,8 @@ class SinglyTest {
 			sllOfIntegers.pushFront(i);
 			
 		}
-		Iterator<Integer> itrFinder = sllOfIntegers.find(1000);
-		System.out.println("FIND: " + itrFinder.next());
+		Iterator<Integer> itrFinder = sllOfIntegers.find(0);
+		//System.out.println("FIND: " + itrFinder.next());
 
 	}
 	

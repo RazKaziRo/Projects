@@ -44,17 +44,10 @@ public class Singly<T> implements Iterable<T> {
 	
 	public int size() {
 		
-		int counter = 0;
-		Node<T> nodeHolder = null;
+		int counter = 0;	
 		
-		if(!isEmpty()) {
-			
-			nodeHolder = headNode.getNextNode();
-			
-			while(nodeHolder != null) {
-				++counter;
-				nodeHolder = nodeHolder.nextNode; 
-			}
+		for(T element : this) {
+			++counter;
 		}
 		
 		return counter;
@@ -118,7 +111,7 @@ private static class SinglyIteratorIMP<T> implements Iterator <T>{
 		
 		if(list.getModCount() != expectedModCount) {
 			
-			throw new ConcurrentModificationException("ConcurrentModificationException");
+			throw new ConcurrentModificationException();
 		}
 		
 		return (currentNode.getNextNode() != null);
@@ -129,7 +122,7 @@ private static class SinglyIteratorIMP<T> implements Iterator <T>{
 		
 		T dataHolder = null;
 		
-		if(hasNext() && list.getModCount() == expectedModCount) {
+		if(hasNext()) {
 			
 			dataHolder = currentNode.getData();
 			currentNode = currentNode.getNextNode();
