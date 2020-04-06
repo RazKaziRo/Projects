@@ -10,6 +10,8 @@
 #include <string.h> /*strcat()*/
 #include <stdlib.h> /*malloc()*/
 
+#define BUFFER_SIZE 80
+
 typedef void (*vFunc_t)(void*);
 
 enum
@@ -71,16 +73,9 @@ typedef struct Legendery
 	
 }legendery_t;
 
-typedef struct ToString
-{
-	object_t *obj;
-	char ret_buffer[100];
-
-}to_str_t;
-
 static int g_animal_counter = 0;
 int g_animal_loaded = 0, g_dog_loaded = 0, g_cat_loaded, g_legendery_loaded = 0;
-char g_buffer[80];
+char g_buffer[BUFFER_SIZE];
 
 /* / -- Object Functions -- / */
 
@@ -99,7 +94,7 @@ void objectWait(object_t *this){}
 
 static void ResetBuffer(){
 
-	memset(&g_buffer, 0, sizeof(g_buffer));
+	memset(&g_buffer, 0, BUFFER_SIZE);
 }
 
 static void foo(animal_t *a)
@@ -210,7 +205,7 @@ void DogCtor(dog_t *this)
 void DogSayHello(dog_t *this)
 {
 	printf("Dog Hello! \n");
-	printf("I have %d legs \n", ((animal_t*)this)->num_legs);
+	printf("I have %d legs \n", this->num_legs);
 }
 
 void DogToString(dog_t *this)
@@ -408,9 +403,6 @@ int main(){
 	printf("%d\n",((animal_t*)dog)->ID);
 	printf("%d\n",((animal_t*)cat)->ID);
 	printf("%d\n",((animal_t*)la)->ID);
-
-	printf("dog->num_legs: %d\n",dog->num_legs);
-	printf("((animal_t*)dog)->num_legs: %d\n",((animal_t*)dog)->num_legs);
 
 	array[0] = (animal_t*)ObjectAlloc(&dog_meta);
 	DogCtor((dog_t*)array[0]);
