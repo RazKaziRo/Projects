@@ -54,6 +54,7 @@ typedef struct Animal{
 typedef struct Dog
 {
 	animal_t dog_meta;
+	int num_legs;
 
 }dog_t;
 
@@ -185,7 +186,6 @@ void AnimalFinalize(animal_t *this)
 void DogInstanceBlock(dog_t *this)
 {
 	printf("Instance initialization block Dog \n");
-	((animal_t*)this)->num_legs = 4;
 } 
 
 void DogStaticBlock()
@@ -202,6 +202,8 @@ void DogCtor(dog_t *this)
 	DogStaticBlock();
 	AnimalCtorB((animal_t*)this, 2);
 	DogInstanceBlock(this);
+	this->num_legs = 4;
+
 	printf("Dog Ctor \n");
 }
 
@@ -407,6 +409,9 @@ int main(){
 	printf("%d\n",((animal_t*)cat)->ID);
 	printf("%d\n",((animal_t*)la)->ID);
 
+	printf("dog->num_legs: %d\n",dog->num_legs);
+	printf("((animal_t*)dog)->num_legs: %d\n",((animal_t*)dog)->num_legs);
+
 	array[0] = (animal_t*)ObjectAlloc(&dog_meta);
 	DogCtor((dog_t*)array[0]);
 
@@ -421,6 +426,8 @@ int main(){
 	
 	array[4] = (animal_t*)ObjectAlloc(&animal_meta);
 	AnimalCtor(array[4]);
+
+
 
 	for(i = 0; i < 5; ++i)
 	{
