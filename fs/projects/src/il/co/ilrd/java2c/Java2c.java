@@ -30,7 +30,6 @@ public class Java2c {
 		
 		for(Animal a : array){
 			a.sayHello();
-			System.out.println("Hash: " + a.hashCode());
 			System.out.println(a.getNumMasters());
 		}
 		
@@ -38,8 +37,8 @@ public class Java2c {
 			foo(a);
 		}
 		
-		/*System.gc();
+		System.gc();
 		System.out.println("After gc");
-		Runtime.runFinalizersOnExit(true);*/
+		Runtime.runFinalizersOnExit(true);
 	}
 }
