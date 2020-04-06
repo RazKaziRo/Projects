@@ -39,7 +39,7 @@ class Animal{
 	}
 	
 	@Override
-	public String toString(){ //done
+	public String toString(){ 
 		return "Animal with ID: " + ID; 
 	}
 	
