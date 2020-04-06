@@ -20,7 +20,7 @@ public class Java2c {
 		System.out.println(((Animal)cat).ID);
 		System.out.println(((Animal)la).ID);
 		
-		Animal[] array = {
+		Animal[] array = { 
 				new Dog(),
 				new Cat(),
 				new Cat("white"),
@@ -37,8 +37,8 @@ public class Java2c {
 			foo(a);
 		}
 		
-		//System.gc();
-		//System.out.println("After gc");
-		//Runtime.runFinalizersOnExit(true);*/
+		/*System.gc();
+		System.out.println("After gc");
+		Runtime.runFinalizersOnExit(true);*/
 	}
 }
