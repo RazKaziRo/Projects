@@ -134,9 +134,6 @@ void AnimalInstanceBlock(animal_t *this)
 	printf("Instance initialization block Animal\n");
 	this->num_legs = 5;
 	this->num_masters = 1;
-
-	UNUSED(this);
-
 }
 
 void AnimalStaticBlock()
