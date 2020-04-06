@@ -30,6 +30,7 @@ public class Java2c {
 		
 		for(Animal a : array){
 			a.sayHello();
+			System.out.println("Hash: " + a.hashCode());
 			System.out.println(a.getNumMasters());
 		}
 		
