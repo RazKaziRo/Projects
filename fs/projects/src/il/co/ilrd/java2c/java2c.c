@@ -11,7 +11,7 @@
 #include <stdlib.h> /*malloc()*/
 
 #define BUFFER_SIZE 80
-
+#define UNUSED(x) (void)(x)
 typedef void (*vFunc_t)(void*);
 
 enum
@@ -64,44 +64,58 @@ typedef struct Cat
 {
 	animal_t cat_meta;
 	char *colors;
-	
+	int num_masters;
 }cat_t;
 
-typedef struct Legendery
+typedef struct Legendary
 {
 	cat_t legendery_meta;
 	
 }legendery_t;
 
-static int g_animal_counter = 0;
-int g_animal_loaded = 0, g_dog_loaded = 0, g_cat_loaded, g_legendery_loaded = 0;
+int g_animal_counter;
 char g_buffer[BUFFER_SIZE];
 
 /* / -- Object Functions -- / */
 
-void objectClone(object_t *this){}
-void objectEquals(object_t *this){}
+void objectClone(object_t *this){
+	UNUSED(this);
+}
+void objectEquals(object_t *this){
+	UNUSED(this);
+}
+
 void objectFinalize(object_t *this){
 	free(this);
 }
-void objectGetClass(object_t *this){}
-void objectHashCode(object_t *this){}
-void objectNotify(object_t *this){}
-void objectNotifyAll(object_t *this){}
-void objectToString(object_t *this){}
-void objectWait(object_t *this){}
-
-
-static void ResetBuffer(){
-
-	memset(&g_buffer, 0, BUFFER_SIZE);
+void objectGetClass(object_t *this){
+	UNUSED(this);
+}
+void objectHashCode(object_t *this){
+	UNUSED(this);
+}
+void objectNotify(object_t *this){
+	UNUSED(this);
+}
+void objectNotifyAll(object_t *this){
+	UNUSED(this);
+}
+void objectWait(object_t *this){
+	UNUSED(this);
 }
 
-static void foo(animal_t *a)
-{
-	(*a->animal_meta.metadata->vFuncTable)[TO_STRING](a);
+char *objectToString(object_t *this){
+
+	memset(&g_buffer, 0, BUFFER_SIZE);
+	sprintf(g_buffer, "il.co.ilrd.java2c.%s@%p",this->metadata->name,(void*)this);
+	return g_buffer;
+}
+
+void foo(animal_t *animal)
+{	
+	(*animal->animal_meta.metadata->vFuncTable)[TO_STRING](animal);
 	printf("%s\n",g_buffer);
-	ResetBuffer();
+	memset(&g_buffer, 0, BUFFER_SIZE);
 }
 
 void AnimalShowCounter()
@@ -117,50 +131,57 @@ void AnimalSayHello(animal_t *this)
 
 void AnimalInstanceBlock(animal_t *this)
 {
-	printf("Instance initialization block Animal \n");
+	printf("Instance initialization block Animal\n");
+	this->num_legs = 5;
+	this->num_masters = 1;
+
+	UNUSED(this);
+
 }
 
 void AnimalStaticBlock()
 {
+	static int g_animal_loaded = 0;
+
 	if (0 == g_animal_loaded)
 	{
-		printf("Static block Animal 1 \n");
-		printf("Static block Animal 2 \n");
+		g_animal_counter = 0;
+		printf("Static block Animal 1\n");
+		printf("Static block Animal 2\n");
 		g_animal_loaded = 1;
 	}	
 }
 
-void AnimalToString(animal_t *this)
-{
+char* AnimalToString(animal_t *this)
+{	
+	memset(&g_buffer, 0, BUFFER_SIZE);
 	sprintf(g_buffer, "Animal with ID: %d", this->ID);
+	return g_buffer;
 }
 
 void AnimalCtor(animal_t *this)
 {	
 	AnimalStaticBlock();
 
-	if (this->ID == 0)
-	{
 	AnimalInstanceBlock(this);
-	printf("Animal Ctor \n");
+	printf("Animal Ctor\n");
 	this->ID = ++g_animal_counter;
-	this->num_legs = 5;
-	this->num_masters = 1;
+	
 	(*this->animal_meta.metadata->vFuncTable)[SAY_HELLO](this);
-	(*this->animal_meta.metadata->vFuncTable)[TO_STRING](this);
 	AnimalShowCounter();
+
+	(*this->animal_meta.metadata->vFuncTable)[TO_STRING](this);
 	printf("%s\n",g_buffer);
-	ResetBuffer();
-	printf("il.co.ilrd.java2c.%s@%p \n",this->animal_meta.metadata->name,this);
-	}
+
+	objectToString((object_t *)this);
+	printf("%s\n",g_buffer);
 }
 
-void AnimalCtorB(animal_t *this, int num_masters)
+void AnimalCtorInt(animal_t *this, int num_masters)
 {	
 	AnimalStaticBlock();
 	AnimalInstanceBlock(this);
-	printf("Animal Ctor int \n");
-	this->num_legs = 5;
+	printf("Animal Ctor int\n");
 	this->num_masters = num_masters;
 	this->ID = ++g_animal_counter;
 }
@@ -180,26 +201,34 @@ void AnimalFinalize(animal_t *this)
 
 void DogInstanceBlock(dog_t *this)
 {
-	printf("Instance initialization block Dog \n");
+	printf("Instance initialization block Dog\n");
+	this->num_legs = 4;
+
+	UNUSED(this);
 } 
 
-void DogStaticBlock()
+void DogStaticBlock(dog_t *this)
 {
+	static int g_dog_loaded = 0;
+
 	if (0 == g_dog_loaded)
 	{
-		printf("Static block Dog \n");
+		printf("Static block Dog\n");
 		g_dog_loaded = 1;
 	}	
+
+	UNUSED(this);
 }
 
 void DogCtor(dog_t *this)
-{
-	DogStaticBlock();
-	AnimalCtorB((animal_t*)this, 2);
-	DogInstanceBlock(this);
-	this->num_legs = 4;
+{	
+	AnimalStaticBlock((animal_t*)this);
 
-	printf("Dog Ctor \n");
+	DogStaticBlock(this);
+	AnimalCtorInt((animal_t*)this, 2);
+	DogInstanceBlock(this);
+
+	printf("Dog Ctor\n");
 }
 
 void DogSayHello(dog_t *this)
@@ -208,9 +237,11 @@ void DogSayHello(dog_t *this)
 	printf("I have %d legs \n", this->num_legs);
 }
 
-void DogToString(dog_t *this)
-{
+char *DogToString(dog_t *this)
+{	
+	memset(&g_buffer, 0, BUFFER_SIZE);
 	sprintf(g_buffer, "Dog with ID: %d", ((animal_t*)this)->ID);
+	return g_buffer;
 }
 
 void DogFinalize(dog_t *this)
@@ -222,46 +253,52 @@ void DogFinalize(dog_t *this)
 /* / -- Cat Methods -- / */
 
 void CatInstanceBlock(cat_t *this)
-{	
-	if (((animal_t*)this)->ID == 0)
-	{
-		((animal_t*)this)->num_masters = 5;
-	}
+{
+	this->num_masters = 5;
+
+	UNUSED(this);
 }
 
 void CatStaticBlock(cat_t *this)
 {	
+	static int g_cat_loaded = 0;
+
 	if (0 == g_cat_loaded)
 	{
-		printf("Static block Cat \n");
+		printf("Static block Cat\n");
 		g_cat_loaded = 1;
 	}
+
+	UNUSED(this);
 }
 
-void CatCtorB(cat_t *this, char *colors)
+void CatCtorColor(cat_t *this, char *colors)
 {	
+	AnimalStaticBlock((animal_t*)this);
 	CatStaticBlock(this);
-	CatInstanceBlock(this);
+
 	AnimalCtor((animal_t*)this);
+	CatInstanceBlock(this);
 
 	((cat_t*)this)->colors = colors;
 	printf("Cat Ctor with color: %s \n", this->colors);
 }
 
 void CatCtor(cat_t *this)
-{	
-	CatStaticBlock(this);
-	CatInstanceBlock(this);
-	((animal_t*)this)->num_masters = 2;
-	CatCtorB(this, "black");
-	AnimalCtor((animal_t*)this);
+{		
+	AnimalStaticBlock((animal_t*)this);
+
+	CatCtorColor(this, "black");
+	this->num_masters = 2;
 
 	printf("Cat Ctor \n");
 }
 
-void CatToString(cat_t *this)
-{
+char *CatToString(cat_t *this)
+{	
+	memset(&g_buffer, 0, BUFFER_SIZE);
 	sprintf(g_buffer, "Cat with ID: %d", ((animal_t *)this)->ID);
+	return g_buffer;
 }
 
 void CatFinalize(cat_t *this)
@@ -270,35 +307,44 @@ void CatFinalize(cat_t *this)
 	AnimalFinalize((animal_t*)this);
 }
 
-/* /-- Legendery Methods -- / */
+/* /-- Legendary Methods -- / */
 
-void LegenderyStaticBlock()
+void LegendaryStaticBlock(legendery_t *this)
 {
+	static int g_legendery_loaded = 0;
+
 	if (0 == g_legendery_loaded)
 	{
-		printf("Static block Legendery Animal\n");
+		printf("Static block Legendary Animal\n");
 		g_legendery_loaded = 1;
 	}
+
+	UNUSED(this);
 }
 
-void LegenderyCtor(legendery_t *this)
-{
-	LegenderyStaticBlock();
+void LegendaryCtor(legendery_t *this)
+{	
+	CatStaticBlock((cat_t*)this);
+
+	LegendaryStaticBlock(this);
 	CatCtor((cat_t*)this);
-	printf("Legendery Ctor \n");
+	printf("Legendary Ctor \n");
 }
 
-void LegendaryToString(legendery_t *this)
+char *LegendaryToString(legendery_t *this)
 {
+	memset(&g_buffer, 0, BUFFER_SIZE);
 	sprintf(g_buffer, "LegendaryAnimal with ID: %d", ((animal_t *)this)->ID);
+	return g_buffer;
 }
 
-void LegenderySayHello(legendery_t *this)
+void LegendarySayHello(legendery_t *this)
 {
-	printf("Legendery Hello! \n");
+	printf("Legendary Hello! \n");
+	UNUSED(this);
 }
 
-void LegenderyFinalize(legendery_t *this)
+void LegendaryFinalize(legendery_t *this)
 {
 	printf("finalize LegendaryAnimal with ID: %d\n", ((animal_t*)this)->ID);
 	CatFinalize((cat_t*)this);
@@ -356,15 +402,15 @@ vFunc_t catVTable[] = {		(vFunc_t)&objectClone,
 
 vFunc_t legenderyVTable[] = {(vFunc_t)&objectClone, 
           				  	(vFunc_t)&objectEquals,
-							(vFunc_t)&LegenderyFinalize,
+							(vFunc_t)&LegendaryFinalize,
 							(vFunc_t)&objectGetClass,
 							(vFunc_t)&objectHashCode,
 							(vFunc_t)&objectNotify,
 							(vFunc_t)&objectNotifyAll,
 							(vFunc_t)&LegendaryToString,
 							(vFunc_t)&objectWait,
-							(vFunc_t)&LegenderySayHello,
-							(vFunc_t)&LegenderyFinalize
+							(vFunc_t)&LegendarySayHello,
+							(vFunc_t)&LegendaryFinalize
 							};
 
 class_t object_meta = {"Object", sizeof(object_t), NULL, &objectVTable};
@@ -395,7 +441,7 @@ int main(){
 	AnimalCtor(animal);
 	DogCtor(dog);
 	CatCtor(cat);
-	LegenderyCtor(la);
+	LegendaryCtor(la);
 
 	AnimalShowCounter();
 
@@ -411,15 +457,13 @@ int main(){
 	CatCtor((cat_t*)array[1]);
 
 	array[2] = (animal_t*)ObjectAlloc(&cat_meta);
-	CatCtorB((cat_t*)array[2],"white");
+	CatCtorColor((cat_t*)array[2],"white");
 
 	array[3] = (animal_t*)ObjectAlloc(&legendery_meta); 
-	LegenderyCtor((legendery_t*)array[3]);
+	LegendaryCtor((legendery_t*)array[3]);
 	
 	array[4] = (animal_t*)ObjectAlloc(&animal_meta);
 	AnimalCtor(array[4]);
-
-
 
 	for(i = 0; i < 5; ++i)
 	{
@@ -439,8 +483,12 @@ int main(){
 		(*(array[i])->animal_meta.metadata->vFuncTable)[FINALIZ](array[i]);
 	}	
 
-	LegenderyFinalize(la);
+	LegendaryFinalize(la);
 	CatFinalize(cat);
 	DogFinalize(dog);
 	AnimalFinalize(animal);
+
+	UNUSED(obj);
+
+	return 0;
 }
