@@ -70,13 +70,14 @@ class PairTest {
 		Character [] char_array = {'E','A','O','Z'};
 		
 		Pair<Integer, Integer> pA = Pair.minMax(int_array);
+		System.out.println(pA);
 		
 		assertEquals(0, pA.getKey());
 		assertEquals(8, pA.getValue());
 		
 		Pair <Character, Character> pB = Pair.minMax(char_array);
 		System.out.println(pB);
-		
+
 		assertEquals('A', pB.getKey());
 		assertEquals('Z', pB.getValue());
 	}
