@@ -1,5 +1,8 @@
 package il.co.ilrd.generics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Exercises {
 	
 	public class FooReference<T> {
@@ -60,6 +63,20 @@ public class Exercises {
 		System.out.println(strRef.getClassAtRunTime());
 		strRef.setT("World");
 		System.out.println("f.getT() " + strRef.getT());
+		
+		
+		List rawList;
+		List<?> listOfAnyType = null;
+		List<Object> listOfObject = new ArrayList<Object>();
+		List<String> listOfString = new ArrayList<String>();
+		List<Integer> listOfInteger = new ArrayList<Integer>();
+		
+		rawList = listOfAnyType;
+		rawList = listOfString;
+		rawList = listOfInteger;
+		listOfAnyType = listOfString;
+		listOfAnyType = listOfInteger;
+		//listOfObject = (List<Object>)listOfString;
 
 }
 	
