@@ -3,7 +3,7 @@ package il.co.ilrd.java2c;
 class Animal{
 	
 	static {
-		System.out.println("Static block Animal 1");
+		System.out.println("Static block Animal 1"); 
 	}
 	
 	{
