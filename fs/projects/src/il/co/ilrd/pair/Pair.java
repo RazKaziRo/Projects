@@ -1,10 +1,11 @@
 package il.co.ilrd.pair;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Pair<K, V> implements Map.Entry<K, V>{
-
+	
 	private K key;
 	private V value;
 	
@@ -21,11 +22,11 @@ public class Pair<K, V> implements Map.Entry<K, V>{
 		return of(pair.getValue(), pair.getKey());
 	}
 
-	public K setKey(K key) {
+	/*public K setKey(K key) {
 		K keyHolder = getKey();
-		setKey(key);
+		this.key = key;
 		return keyHolder;
-	}
+	}*/
 
 	@Override
 	public K getKey() {
@@ -40,7 +41,7 @@ public class Pair<K, V> implements Map.Entry<K, V>{
 	@Override
 	public V setValue(V value) {
 		V valueHolder = getValue();
-		setValue(value);
+		this.value = value;
 		return valueHolder;
 	}
 
@@ -57,15 +58,20 @@ public class Pair<K, V> implements Map.Entry<K, V>{
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
-
+	
+	//read hashcode + equals - effective java
+	
+	//
 	@Override
 	public boolean equals(Object obj) {
+		
 		if (this == obj)
 			return true;
-		if (obj == null)
+		
+		if(!(obj instanceof Pair)) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
+		
 		Pair<?, ?> other = (Pair<?, ?>) obj;
 		if (key == null) {
 			if (other.key != null)
