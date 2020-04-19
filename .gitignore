@@ -1,5 +1,6 @@
 # Ignore everything
 *
+!/**/
 !**.c
 !**.h
 !.gitignore
@@ -12,4 +13,3 @@
 !.o
 !.so
 !**.java
-!**.class
