@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.directory.ModificationItem;
-
-import org.omg.CORBA.Current;
-
 import il.co.ilrd.pair.Pair; 
 
 public class HashMap<K,V> implements Map<K, V>{ 
@@ -45,6 +41,7 @@ public class HashMap<K,V> implements Map<K, V>{
 		for(List<Map.Entry<K, V>> element : hashMap) {
 			element.clear();
 		}
+		++modCount;
 	}
 	
 	@Override
@@ -60,16 +57,14 @@ public class HashMap<K,V> implements Map<K, V>{
 
 	@Override
 	public boolean containsValue(Object value) {
-		for(List<Map.Entry<K, V>> externalList : hashMap) {
-			for(Map.Entry<K, V> internalList : externalList) {
-				if(internalList.getValue().equals(value)) {
-					return true;
-				}
+		
+		for(V v : values()) {
+			if(v.equals(value)) {
+				return true;
 			}
 		}
 		
 		return false;
-		
 	}
 
 	@Override
@@ -83,12 +78,13 @@ public class HashMap<K,V> implements Map<K, V>{
 
 	@Override
 	public V get(Object key) {
-		List<Map.Entry<K, V>> internallList = hashMap.get(getBucket(key));
-		for(Map.Entry<K, V> element: internallList) {
-			if(element.getKey().equals(key)) {
-				return element.getValue();
-			}
+		
+		Map.Entry<K, V> pair = getEntry(key);
+		
+		if(pair != null) {
+			return pair.getValue();
 		}
+		
 		return null;
 	}
 
@@ -111,14 +107,15 @@ public class HashMap<K,V> implements Map<K, V>{
 		
 		if(containsKey(key)) {
 			Entry<K, V> pair = getEntry(key);
+			
 			if(pair != null) {
 				return pair.setValue(value);
-
 			}
 		}
 		
 		hashMap.get(getBucket(key)).add(Pair.of(key, value));
 		++modCount;
+		
 		return null;
 	}
 
@@ -126,7 +123,6 @@ public class HashMap<K,V> implements Map<K, V>{
 	public void putAll(Map<? extends K, ? extends V> m) {
 		
 		for(Map.Entry<? extends K, ? extends V> element : m.entrySet()) {
-			
 			this.put(element.getKey(), element.getValue());
 		}
 		
@@ -139,7 +135,6 @@ public class HashMap<K,V> implements Map<K, V>{
 		V valueHolder = null;
 		
 		if(containsKey(key)) {
-			
 			Map.Entry<K, V> pair = getEntry(key);
 			valueHolder = pair.getValue();
 			hashMap.get(getBucket(key)).remove(pair);
@@ -190,7 +185,9 @@ public class HashMap<K,V> implements Map<K, V>{
 
 	
 	private class EntrySet extends AbstractSet<Map.Entry<K, V>>{
-
+		
+		int expectedModCount = modCount;
+		
 		@Override
 		public Iterator<Entry<K, V>> iterator() {
 			return new EntryIterator();
@@ -214,6 +211,10 @@ public class HashMap<K,V> implements Map<K, V>{
 			
 			@Override
 			public boolean hasNext() {
+				if(expectedModCount != modCount) {
+					throw new ConcurrentModificationException();
+				}
+				
 				return(internalIter.hasNext() || externalIter.hasNext());	
 			}
 
