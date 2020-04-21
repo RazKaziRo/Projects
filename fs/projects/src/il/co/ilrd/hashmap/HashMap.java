@@ -18,9 +18,6 @@ public class HashMap<K,V> implements Map<K, V>{
 	private List<List<Map.Entry<K, V>>> hashMap;
 	private final int capacity;
 	private final static int DEFAULT_CAPACITY = 16;
-	private Set<Map.Entry<K, V>> entrySet;
-	private Set<K> keySet;
-	private Collection<V> values;
 	protected int modCount = 0;
 	
 	public HashMap() {
@@ -47,34 +44,26 @@ public class HashMap<K,V> implements Map<K, V>{
 	
 	@Override
 	public boolean containsKey(Object key) {
-		List<Map.Entry<K, V>> internalList = hashMap.get(getBucket(key));
-		for(Map.Entry<K, V> element: internalList) {
-			if(key == null || element.getKey().equals(key)) {
-				return true;
-			}
-		}
-		return false;
+		
+		return(null != getEntry(key));
 	}
 
 	@Override
 	public boolean containsValue(Object value) {
 		
-		for(V v : values()) {
-			if(v.equals(value)) {
+		Set<Map.Entry<K, V>> entry = entrySet();
+		
+		for(Map.Entry<K, V> element: entry) {
+			if(element.getValue() == null || element.getValue().equals(value)) {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 
 	@Override
 	public Set<Entry<K, V>> entrySet() {
-		if(entrySet == null) {
-			entrySet = new EntrySet();
-		}
-		
-		return entrySet;
+		return new EntrySet();
 	}
 
 	@Override
@@ -91,16 +80,13 @@ public class HashMap<K,V> implements Map<K, V>{
 
 	@Override
 	public boolean isEmpty() {
-		return size() ==  0;
+		Set<Map.Entry<K, V>> entrySet = new EntrySet();
+		return(!entrySet.iterator().hasNext());
 	}
 
 	@Override
 	public Set<K> keySet() {
-		if(keySet == null) {
-			keySet = new KeySet();
-		}
-		
-		return keySet;
+		return new KeySet();
 	}
 
 	@Override
@@ -160,10 +146,7 @@ public class HashMap<K,V> implements Map<K, V>{
 
 	@Override
 	public Collection<V> values() {
-		if(values == null) {
-			values = new ValueSet();
-		}
-		return values;
+		return new ValueSet();
 	}
 	
 	

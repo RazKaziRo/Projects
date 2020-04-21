@@ -10,7 +10,27 @@ import org.junit.jupiter.api.Test;
 
 class HashMapTest {
 	@Test
-    void testPut() {
+    void testNulls() {
+		
+		HashMap<String, Integer> hashMap = new HashMap<String, Integer>(5);
+		
+		hashMap.put("A", 10);
+		hashMap.put("B", null);
+		hashMap.put("C", 30);
+		hashMap.put("D", 40);
+		hashMap.put(null, 50);
+		
+		assertEquals(true,hashMap.containsKey(null));
+		assertEquals(true,hashMap.containsValue(null));
+		assertEquals(50,hashMap.remove(null));
+		assertEquals(null,hashMap.remove("B"));
+		assertEquals(false,hashMap.containsValue(null));
+    }
+	
+	@Test
+	void testHashMapPut() {
+		HashMap<String, Integer> hashMap = new HashMap<String, Integer>(6);
+		
         HashMap<Integer, Integer> hash_Map3 = new HashMap<Integer, Integer>();
         hash_Map3.put(1, 10);
         hash_Map3.put(2, 20);
@@ -43,12 +63,7 @@ class HashMapTest {
 
         System.out.println(hash_Map3.values());
         assertEquals((Integer)10, hash_Map3.put(1, 8));
-    }
-	
-	@Test
-	void testHashMapPut() {
-		HashMap<String, Integer> hashMap = new HashMap<String, Integer>(6);
-		
+        
 		hashMap.put("A", null);
 		hashMap.put("B", null);
 		hashMap.put("C", 30);
