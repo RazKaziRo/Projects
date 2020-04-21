@@ -17,7 +17,7 @@ public class HashMap<K,V> implements Map<K, V>{
 
 	private List<List<Map.Entry<K, V>>> hashMap;
 	private final int capacity;
-	private final static int DEFAULT_CAPACITY = 16; 
+	private final static int DEFAULT_CAPACITY = 16;
 	private Set<Map.Entry<K, V>> entrySet;
 	private Set<K> keySet;
 	private Collection<V> values;
