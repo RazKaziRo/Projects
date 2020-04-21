@@ -20,6 +20,7 @@ public class HashMap<K,V> implements Map<K, V>{
 	private final static int DEFAULT_CAPACITY = 16; 
 	private Set<Map.Entry<K, V>> entrySet;
 	private Set<K> keySet;
+	private Collection<V> values;
 	protected int modCount = 0;
 	
 	public HashMap() {
@@ -159,7 +160,10 @@ public class HashMap<K,V> implements Map<K, V>{
 
 	@Override
 	public Collection<V> values() {
-		return new ValueSet();
+		if(values == null) {
+			values = new ValueSet();
+		}
+		return values;
 	}
 	
 	
