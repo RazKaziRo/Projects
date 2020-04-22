@@ -3,7 +3,7 @@ package il.co.ilrd.factory;
 import java.util.Map;
 import il.co.ilrd.hashmap.HashMap;
 
-public class ComputerFactory<K, W, V, U, R> {
+public class ComputerFactory<K, W, V, U, R> { 
 
 	//K - Key
 	//R - Computer

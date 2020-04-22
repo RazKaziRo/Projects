@@ -1,5 +1,6 @@
 package il.co.ilrd.hashmap;
 
+//FIXME: move to collection package pair + hashmap
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class HashMap<K,V> implements Map<K, V>{
 			return 0;
 		}
 		
-		return key.hashCode() % capacity;
+		return ((key.hashCode() % capacity) > 0) ? (key.hashCode() % capacity) : ((key.hashCode() % capacity) * -1) % capacity ;
 	}
 
 
@@ -173,8 +174,6 @@ public class HashMap<K,V> implements Map<K, V>{
 	
 	private class EntrySet extends AbstractSet<Map.Entry<K, V>>{
 		
-		int expectedModCount = modCount;
-		
 		@Override
 		public Iterator<Entry<K, V>> iterator() {
 			return new EntryIterator();
@@ -187,6 +186,8 @@ public class HashMap<K,V> implements Map<K, V>{
 		
 		private class EntryIterator implements Iterator<Entry<K,V>>{
 			
+			int expectedModCount = modCount;
+
 			Iterator<List<Map.Entry<K, V>>> externalIter = hashMap.iterator();
 			Iterator<Map.Entry<K, V>> internalIter = externalIter.next().iterator();
 			
