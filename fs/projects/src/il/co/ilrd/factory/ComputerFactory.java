@@ -17,8 +17,12 @@ public class ComputerFactory<K, W, V, U, R> {
 	}
 	
 	public R create(K key,U ram ,V hdd ,W cpu){
-		return map_types.get(key).apply(ram, hdd, cpu);
+		ThreeParameterFunction<U, V, W, R> fnc = map_types.get(key);
+		if(fnc != null) {
+			return fnc.apply(ram, hdd, cpu);
+		}	
 		
+		throw new NullPointerException("Wrong Key");
 	}
 
 }

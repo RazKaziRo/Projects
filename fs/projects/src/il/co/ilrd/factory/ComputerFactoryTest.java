@@ -5,10 +5,10 @@ public class ComputerFactoryTest {
 	public static void main(String[]argv) {
 		
 		ComputerFactory<String, String,String, String, Computer> factory = new ComputerFactory<String, String, String, String, Computer>();
-		factory.add("PC", PC::new);
-		factory.add("Server", Server::new);
-		Computer pcCtor = factory.create("PC", "8GB RAM", "256GM HDD", "I7 CPU");
-		Computer serverCtor = factory.create("Server", "32GB RAM", "1024GM HDD", "I9 CPU");
+		factory.add("PC Ctor", PC::new);
+		factory.add("Server Ctor", Server::new);
+		Computer pcCtor = factory.create("PC Ctor", "8GB RAM", "256GM HDD", "I7 CPU");
+		Computer serverCtor = factory.create("Server Ctor", "32GB RAM", "1024GM HDD", "I9 CPU");
 		
 		factory.add("PC Static", PC::pcFactory);
 		Computer pcStatic = factory.create("PC Static", "4GM RAM", "128GB HDD", "I5 CPU");
