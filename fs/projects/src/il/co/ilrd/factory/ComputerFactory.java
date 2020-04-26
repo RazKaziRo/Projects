@@ -1,7 +1,8 @@
 package il.co.ilrd.factory;
 
 import java.util.Map;
-import il.co.ilrd.hashmap.HashMap;
+
+import il.co.ilrd.collections.HashMap;
 
 public class ComputerFactory<K, W, V, U, R> { 
 

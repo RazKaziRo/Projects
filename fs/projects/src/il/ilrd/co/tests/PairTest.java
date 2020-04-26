@@ -1,10 +1,12 @@
-package il.co.ilrd.pair;
+package il.ilrd.co.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Comparator;
 
 import org.junit.jupiter.api.Test;
+
+import il.co.ilrd.collections.Pair;
 
 class EmployeeNoCmp {
 	

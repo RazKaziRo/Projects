@@ -1,4 +1,4 @@
-package il.co.ilrd.hashmap;
+package il.ilrd.co.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
+import il.co.ilrd.collections.HashMap;
 
 class HashMapTest {
 	@Test

@@ -1,5 +1,6 @@
 package il.co.ilrd.observer;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -14,9 +15,11 @@ public class Dispatcher<T> {
 		}
 	
 	public void stopAll() {
+		
 		for(Callback<T> cb : callbackList) {
 			cb.notifyDeath();
 		}
+		callbackList.clear();
 	}
 	
 	public void updateAll(T msg) {
@@ -43,6 +46,7 @@ public class Dispatcher<T> {
 		
 		private void notifyDeath() {
 			r.run();
+			dispatcher = null;
 		}
 		
 		public void stopService() {

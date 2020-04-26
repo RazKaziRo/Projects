@@ -1,6 +1,5 @@
-package il.co.ilrd.hashmap;
+package il.co.ilrd.collections;
 
-//FIXME: move to collection package pair + hashmap
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -11,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import il.co.ilrd.pair.Pair; 
 
 public class HashMap<K,V> implements Map<K, V>{ 
 
@@ -63,7 +60,7 @@ public class HashMap<K,V> implements Map<K, V>{
 	}
 
 	@Override
-	public Set<Entry<K, V>> entrySet() {
+	public Set<Map.Entry<K, V>> entrySet() {
 		return new EntrySet();
 	}
 
