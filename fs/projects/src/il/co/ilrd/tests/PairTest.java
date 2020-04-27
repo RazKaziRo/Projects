@@ -1,4 +1,4 @@
-package il.ilrd.co.tests;
+package il.co.ilrd.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 

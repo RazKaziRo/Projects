@@ -7,30 +7,16 @@ import java.util.Queue;
 public class WaitableQueue<E> {
 	
 	private Queue<E> queue;
-	private final int qCapacity;
-	private static final int DEFAULT_CAPACITY = 11;
 	
 	public WaitableQueue() {
-		this(DEFAULT_CAPACITY);
+		queue = new PriorityQueue<E>();
 	}
 	
-	public WaitableQueue(int qCapacity) {
-		queue = new PriorityQueue<E>(qCapacity);
-		this.qCapacity = qCapacity;
+	public WaitableQueue(Comparator<E> cmp) {
+		queue = new PriorityQueue<E>(cmp);
 	}
-	
-	public WaitableQueue(int qCapacity, Comparator<E> cmp) {
-		queue = new PriorityQueue<E>(qCapacity, cmp);
-		this.qCapacity = qCapacity;
-	}
-	
-	
+		
 	public synchronized void enqueue(E item) throws InterruptedException  {
-		
-		
-		while(queue.size() == this.qCapacity) {
-		      wait();
-		}
 		
 		queue.add(item);
 		
@@ -42,12 +28,8 @@ public class WaitableQueue<E> {
 	
 	public synchronized E dequeue() throws InterruptedException {
 		
-		while(queue.size() == 0){
+		while(queue.isEmpty()){
 		      wait();
-		}
-		
-		if(queue.size() == this.qCapacity){
-		      notifyAll();
 		}
 
 		return queue.remove();
@@ -56,19 +38,13 @@ public class WaitableQueue<E> {
 
 	public synchronized E dequeueWithTimeot(int timeInSeconds) throws InterruptedException{
 		
-		long startTime = System.nanoTime();
+		long endTime = System.currentTimeMillis() + timeInSeconds * 1000;
 		
-		while(queue.size() == 0 && (startTime + timeInSeconds) > System.nanoTime()) {
+		while(queue.isEmpty() && (endTime > System.currentTimeMillis())) {
+			wait(endTime -  System.currentTimeMillis());
+		}
 			
-			wait(timeInSeconds);
-		}
-				
-		if(queue.size() > 0) {
-			return queue.remove();
-		}
-		else {
-			return null;
-		}
+		return (!queue.isEmpty() ? queue.remove() : null);
 	}
 }
 
