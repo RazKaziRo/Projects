@@ -150,21 +150,22 @@ public class Test {
      singlePool.shutdown();
      */
      
+     fixedPool.awaitTermination(1, TimeUnit.SECONDS);
+
+     
      Future<String> futureR1 = fixedPool.submit(r1, "R1 FINISH");
      Future<String> futureR2 = fixedPool.submit(r2, "R2 FINISH");
      Future<String> futureR3 =fixedPool.submit(r3, "R3 FINISH");
      Future<String> futureR4 = fixedPool.submit(r4, "R4 FINISH");
      Future<String> futureR5 = fixedPool.submit(r5, "R5 FINISH");
      
-     fixedPool.shutdown();
+    // fixedPool.shutdown();
      
      System.out.println(futureR1.get());
      System.out.println(futureR2.get());
      System.out.println(futureR3.get());
      System.out.println(futureR4.get());
      System.out.println(futureR5.get());
-
-     
      
  }
 }
