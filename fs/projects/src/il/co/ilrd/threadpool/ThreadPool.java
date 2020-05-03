@@ -1,107 +1,225 @@
 package il.co.ilrd.threadpool;
 
-import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import com.sun.org.glassfish.external.amx.MBeanListener.Callback;
 
 import il.co.ilrd.collections.WaitableQueue;
 
 public class ThreadPool {
 
 	private int totalThreads;
-	private WaitableQueue<Task<?>> queue;
-	private Queue<WorkerThread> threadPool;
-	private volatile boolean shtDnflag = true;
+	private WaitableQueue<Task<?>> taskQueue;
+	private WaitableQueue<WorkerThread> threadQueue;
+	private volatile boolean shutDownFlag = false;
+	private Semaphore semaphore = new Semaphore(0);
 	
 	public ThreadPool(int totalThreads) {
 		this.totalThreads = totalThreads;
 		
-		queue = new WaitableQueue<Task<?>>();
+		taskQueue = new WaitableQueue<>();
+		threadQueue = new WaitableQueue<>();
 		
 		for (int i = 0; i < this.totalThreads; ++i) {
-			new WorkerThread().start();
+			new WorkerThread(taskQueue).start();
 		}
+			
 	}
-
 	
 	public enum Priority {
+		
 		LOW (1),
 		MID(2),
 		HIGH(3);
 		
 		private int priority;
+		
 		private Priority(int priority) {
 			this.priority = priority;
 		}
 		
-		public int getPriority() {
+		public int getPriorityVal() {
 			return priority;
 		}
 	}
-//	LOWEST (0)
-//	HIGHEST (4)
 	
-	private class WorkerThread extends Thread{
+	private static class WorkerThread extends Thread{
 		
-		boolean keep_running = true;
+		private boolean keepGoingflg = true;
+		private WaitableQueue<Task<?>> taskQueue;
+		
+		WorkerThread(WaitableQueue<Task<?>>  taskQueue){
+			this.taskQueue = taskQueue;
+		}
 		
 		@Override
 		public void run() {
-			while (keep_running) {
-				queue.dequeue
+			
+			while(keepGoingflg) {
+				try {
+					taskQueue.dequeue().futureTask.run();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 		
+		private void stopThread() {
+			keepGoingflg = false;
+		}
 	}
 	
-	private static class Task <T>{
+	private static class Task <T> implements Comparable<Task<T>>{
+
 		private int priority;
-		private Future<T> future;
-		private Callable<T> cb; //turn runnable to callable
-		
-		public Task(int priority, Callable<T> cb) {
+		private FutureTask<T> futureTask;
+
+		private Task(Callable<T> callable, int priority) {
+			
 			this.priority = priority;
-			future = new Future<T>(cb);
-			this.cb = cb;
-		}			
+			futureTask = new FutureTask<>(callable);
+			
+		}
+		@Override
+		public int compareTo(Task<T> otherTask) {
+			return  otherTask.priority- this.priority;
+		}
+		
+	}
+	
+	public Future<Object> submit(Runnable runnable, Priority priority) throws InterruptedException  {
+		
+		if (shutDownFlag) {
+			throw new RejectedExecutionException("Cannot accept more Tasks, Shutdown In Process...");
+		}
+
+		Task<Object> t = new Task<>(Executors.callable(runnable), priority.getPriorityVal());
+		taskQueue.enqueue(t);
+		
+		return t.futureTask;
+	
+	}
+	
+	public <T> Future<T> submit(Runnable runnable, Priority priority, T result) throws InterruptedException {
+		if (shutDownFlag) {
+			throw new RejectedExecutionException("Cannot accept more Tasks, Shutdown In Process...");
+		}
+		
+		Task<T> t = new Task<>(Executors.callable(runnable, result),priority.getPriorityVal());
+		taskQueue.enqueue(t);
+		
+		return t.futureTask;
+		
+	}
+	
+	public <T> Future<T> submit(Callable<T> callable) throws InterruptedException {
+		if (shutDownFlag) {
+			throw new RejectedExecutionException("Cannot accept more Tasks, Shutdown In Process...");
+		}
+		
+		Task<T> t = new Task<>(callable, Priority.MID.getPriorityVal());
+		taskQueue.enqueue(t);
+			
+		return t.futureTask;
+	}
+	
+	public <T> Future<T> submit(Callable<T> callable, Priority priority) throws InterruptedException {
+		if (shutDownFlag) {
+			throw new RejectedExecutionException("Cannot accept more Tasks, Shutdown In Process...");
+		}
+		
+		Task<T> t = new Task<>(callable, priority.getPriorityVal());
+		taskQueue.enqueue(t);
+		
+		return t.futureTask;
+	}
+	
+	public void setNumOfThreads(int num) throws InterruptedException {
+		
+		if(num > totalThreads) {
+			for(int i = 0; i< (num - totalThreads); ++i) {
+				WorkerThread t = new WorkerThread(taskQueue);
+				t.start();
+			}
+		}
+		else if(num < totalThreads) {
+			Callable<Object> specificShutDownTask = new Callable<Object>() {
+				
+				@Override
+				public Object call() throws Exception {
+					((WorkerThread)Thread.currentThread()).stopThread();
+					return null;
+				}
+			};
+			
+			for(int i = 0; i < totalThreads - num; ++i) {
+				Task<Object> t = new Task<>(specificShutDownTask, Priority.HIGH.getPriorityVal() + 1);
+				taskQueue.enqueue(t);
+			}
+		}
+		
+		totalThreads = num;
+
 	}
 
+	public void shutdown() throws InterruptedException {
+		
+		Callable<Object> shutDownTask = new Callable<Object>() {
 
-	public Future<Object> submit(Runnable r, Priority p) {
-		return null;
-	}
-	
-	public <T> Future<T> submit(Runnable r, Priority p, T value) {
-		return null;
-	}
-	
-	public <T> Future<T> submit(Callable<T> cb) {
-		return null;
-	}
-	
-	public <T> Future<T> submit(Callable<T> cb, Priority p) {
-		return null;
-	}
-	
-	public void setNumOfThreads(int num) {
+			@Override
+			public Object call() throws Exception {
+				((WorkerThread)Thread.currentThread()).stopThread();
+				threadQueue.enqueue((WorkerThread) Thread.currentThread());
+				return null;
+			}
+		};
 		
-	}
-	
-	public void shutdown() {
-		
-	}
-	
-	public void awaitTermination(int timeInSec, TimeUnit unit) throws IllegalStateException {
-		
-	}
+		shutDownFlag = true;
 
-	public void pause() {
+		for (int i = 0; i < totalThreads; ++i) {
+			taskQueue.enqueue(new Task<>(shutDownTask, Priority.LOW.getPriorityVal() - 1));
+		}
+	}
+	
+	public boolean awaitTermination(long timeOut, TimeUnit unit) throws InterruptedException {
 		
+		for (int i = 0; i < totalThreads; ++i) {
+			
+			try {
+				threadQueue.dequeueWithTimeot(unit.toSeconds(timeOut)).join();
+			}
+			catch(NullPointerException e) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public void pause() throws InterruptedException {
+		Callable<Object> pauseTask = new Callable<Object>() {
+			
+			@Override
+			public Object call() throws Exception {
+				semaphore.acquire();
+				return null;
+			}
+		};
+		
+		for (int i = 0; i < totalThreads; ++i) {
+			Task<Object> t = new Task<>(pauseTask, Priority.HIGH.getPriorityVal() + 1);
+			taskQueue.enqueue(t);
+		}
 	}
 	
 	public void resume() {
-		
+		semaphore.release(totalThreads);;
 	}
+
 }

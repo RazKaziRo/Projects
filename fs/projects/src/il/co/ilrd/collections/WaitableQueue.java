@@ -3,6 +3,7 @@ package il.co.ilrd.collections;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 public class WaitableQueue<E> {
 	
@@ -20,7 +21,7 @@ public class WaitableQueue<E> {
 		
 		queue.add(item);
 		
-		if(queue.size() == 1) {
+		if(queue.size() > 0) {
 			notifyAll();
 		}
 		
@@ -36,9 +37,9 @@ public class WaitableQueue<E> {
 	}
 	
 
-	public synchronized E dequeueWithTimeot(int timeInSeconds) throws InterruptedException{
+	public synchronized E dequeueWithTimeot(long timeInSeconds) throws InterruptedException{
 		
-		long endTime = System.currentTimeMillis() + timeInSeconds * 1000;
+		long endTime = System.currentTimeMillis() + (timeInSeconds * 1000);
 		
 		while(queue.isEmpty() && (endTime > System.currentTimeMillis())) {
 			wait(endTime -  System.currentTimeMillis());
