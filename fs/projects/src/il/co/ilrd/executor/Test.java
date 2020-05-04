@@ -91,7 +91,7 @@ public class Test {
              } 
              Thread.sleep(1000); 
          } 
-         System.out.println(name+" complete");
+         System.out.println(name+ " complete");
 		return name; 
 	}
 	 
@@ -99,11 +99,12 @@ public class Test {
 
  // Maximum number of threads in thread pool 
 
- public static void main(String[] args) throws InterruptedException, ExecutionException { 
+ public static void main(String[] args) throws Exception { 
 	 Test t = new Test();
 	 
-	 ThreadPool tp = new ThreadPool(3);	 
-	
+	 ThreadPool tp = new ThreadPool(MAX_T);	 
+     ExecutorService pool = Executors.newFixedThreadPool(MAX_T);   
+
      Runnable r1 = t.new RunnableTask("RunnableTask 1"); 
      Runnable r2 = t.new RunnableTask("RunnableTask 2"); 
      Runnable r3 = t.new RunnableTask("RunnableTask 3"); 
@@ -116,8 +117,23 @@ public class Test {
      Callable<String> c4 = t.new CallbleTask<String>("CallbleTask 4"); 
      Callable<String> c5 = t.new CallbleTask<String>("CallbleTask 5"); 
      
-    
+   
      /*
+     Future<String> futureP1 = pool.submit(c1);
+     Future<String> futureP2 = pool.submit(c2);
+     Future<String> futureP3 = pool.submit(c3);
+     Future<String> futureP4 = pool.submit(c4);
+     Future<String> futureP5 = pool.submit(c5);
+     
+     System.out.println(futureP5.get(1, TimeUnit.SECONDS));
+     System.out.println(futureP1.get());
+     System.out.println(futureP2.get());
+     System.out.println(futureP3.get());
+     System.out.println(futureP4.get());
+     
+     pool.shutdown();
+     
+    
      Future<String> futureR1 = tp.submit(r1,Priority.LOW, "R1 FINISH");
      Future<String> futureR2 = tp.submit(r2,Priority.HIGH, "R2 FINISH");
      Future<String> futureR3 = tp.submit(r3,Priority.HIGH, "R3 FINISH");
@@ -130,26 +146,30 @@ public class Test {
      System.out.println(futureR4.get());
      System.out.println(futureR5.get());
   
-     */
+      */
      
      Future<String> futureC1 = tp.submit(c1);
      Future<String> futureC2 = tp.submit(c2);
      Future<String> futureC3 = tp.submit(c3);
      Future<String> futureC4 = tp.submit(c4);
      Future<String> futureC5 = tp.submit(c5);
+   
+    
+     System.out.println("Task 5 cancle " + futureC5.isCancelled());
+     System.out.println("Task 5 isDone: "+ futureC5.isDone());
+     futureC5.cancel(false);
+     System.out.println("Task 5 cancle: " + futureC5.isCancelled());
+     System.out.println("Task 5 isDone: "+ futureC5.isDone());
+  
      
-     Thread.sleep(1000);
-     tp.setNumOfThreads(1);
-     
-     System.out.println(futureC1.get());
-     System.out.println(futureC2.get());
-     System.out.println(futureC3.get());
-     System.out.println(futureC4.get());
-     System.out.println(futureC5.get());
-     
+     //System.out.println("Future Task 5 Result: " + futureC5.get(1, TimeUnit.SECONDS));
+     System.out.println("Future Task 1 Result: " + futureC1.get());
+     System.out.println("Future Task 2 Result: " + futureC2.get());
+     System.out.println("Future Task 3 Result: " + futureC3.get());
+     System.out.println("Future Task 4 Result: " + futureC4.get());
      
 	 tp.shutdown();
-     
+       
  }
 }
 
