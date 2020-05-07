@@ -131,17 +131,6 @@ class ThreadPoolTest {
 		         System.out.println(Thread.currentThread().getId()+ " complete"); 
 			}
 		};
-		
-		ThreadPool t = new ThreadPool(4);
-		
-		t.submit(r, Priority.LOW);
-		t.submit(r, Priority.HIGH);
-		t.submit(r, Priority.MID);
-		t.submit(r, Priority.LOW);
-		t.submit(r, Priority.MID);
-		
-		t.awaitTermination(50, TimeUnit.SECONDS);
-		t.shutdown();
 	
 	}
 

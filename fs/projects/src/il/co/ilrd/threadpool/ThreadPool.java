@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import il.co.ilrd.collections.WaitableQueue;
+import sun.rmi.runtime.Log;
 
 public class ThreadPool<T> {
 
@@ -97,9 +98,13 @@ public class ThreadPool<T> {
 			return  otherTask.priority- this.priority;
 		}
 		
-		public void execute() throws Exception {
+		public void execute() {
 			if(!future.isCanceled) {
-				future.setValue(cb.call());
+				try {
+					future.setValue(cb.call());
+				} catch (Exception e) {
+					future.setException(e);;
+				}
 				future.releaseSem();
 			}
 			else {
@@ -117,7 +122,11 @@ public class ThreadPool<T> {
 			V value = null;
 			private boolean isDone = false;
 			private boolean isCanceled = false;
+			Exception exception = null;
 			
+			private void setException(Exception exception) {
+				this.exception = exception; 
+			}
 			private void releaseSem() {
 				futureSem.release();
 				isDone = true;
@@ -130,7 +139,7 @@ public class ThreadPool<T> {
 			@Override
 			public boolean cancel(boolean mayInterruptIfRunning) {
 				
-				if(!isCanceled && !isDone) {
+				if(!isDone) {
 					
 					isCanceled = true;
 					isDone = true;
@@ -140,9 +149,13 @@ public class ThreadPool<T> {
 			
 				return false;
 			}
-
+			
 			@Override
-			public V get() throws InterruptedException, ExecutionException {
+			public V get() throws InterruptedException, ExecutionException{
+				
+				if(exception != null) {
+					throw (RuntimeException)exception;
+				}
 				
 				futureSem.acquire();
 				return value;
@@ -151,6 +164,10 @@ public class ThreadPool<T> {
 			@Override
 			public V get(long timeout, TimeUnit unit)
 					throws InterruptedException, ExecutionException, TimeoutException {
+				
+				if(exception != null) {
+					throw (RuntimeException)exception;
+				}
 				
 				if(!isCanceled) {
 					
@@ -176,7 +193,7 @@ public class ThreadPool<T> {
 		
 	}
 	
-	public Future<Object> submit(Runnable runnable, Priority priority) throws Exception  {
+	public Future<Object> submit(Runnable runnable, Priority priority) throws Exception  { 
 		return submit(Executors.callable(runnable, null), priority);
 	
 	}
