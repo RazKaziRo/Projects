@@ -7,15 +7,19 @@ import java.util.Observer;
 
 public class FileObserver implements Observer{
 
-	public FileCrud fileCrud;
+	public CrudFile crudFile;
 	
 	public FileObserver(String pathToFile) throws IOException {
-		fileCrud = new FileCrud(pathToFile);
+		crudFile = new CrudFile(pathToFile);
 	}
 	
 	@Override
 	public void update(Observable o, Object obj) {
-			fileCrud.create((String)obj);		
+		crudFile.create((String)obj);		
 	}
+	
+	public void close() throws Exception {
+		crudFile.close();
+	}	
 
 }

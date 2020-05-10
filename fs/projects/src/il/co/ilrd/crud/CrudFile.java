@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 
-public class FileCrud implements Crud<String, Integer>{
+public class CrudFile implements Crud<String, Integer>{
 	
-	Integer lineNumber = 0;
-	BufferedWriter bufferWriter;
+	//FIXME: REMOVE PUBLIC MODIFIERS ALL METHODS
 	
-	public FileCrud(String txtFilePath) throws IOException {
+	private Integer lineNumber = 0;
+	private BufferedWriter bufferWriter;
+	
+	public CrudFile(String txtFilePath) throws IOException {
 		bufferWriter = new BufferedWriter(new FileWriter(txtFilePath, true));
 	}
 
@@ -24,29 +26,17 @@ public class FileCrud implements Crud<String, Integer>{
 
 	@Override
 	public Integer create(String lineToWrite) {
-		
-		if(lineToWrite != null) {
-			try {
-				System.out.println("Writing Line: " + lineToWrite);
-				bufferWriter.append(lineToWrite);
-				bufferWriter.newLine();
-				bufferWriter.flush();
-			} 
-			catch (IOException e) {
+
+		try {
+			bufferWriter.append(lineToWrite);
+			bufferWriter.newLine();
+			bufferWriter.flush();
+			
+		} catch (IOException e) {
 			e.printStackTrace();
-			}
+		}
 		
 		++lineNumber;
-		}
-		
-		else {
-			try {
-				close();
-			} 	
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		
 		return lineNumber;
 	}

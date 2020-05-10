@@ -4,30 +4,42 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.Observable;
 
 public class FileMonitor extends Observable{
 	
-	String filePath;	
-	volatile boolean keepMonitoring = true;
+	private String filePath;
+	private String fileToMonitor;
+	WatchService watcher;
 	
-	public FileMonitor(String filePath) {
+	private volatile boolean keepMonitoring = true;
+    WatchKey key;
+
+	public FileMonitor(String filePath, String fileToMonitor) {
 		this.filePath = filePath;
+		this.fileToMonitor = fileToMonitor;
 	}
 	
 	public void startMonitor() {
-		System.out.println("Start Monitoring...");
-		Thread thMonitor = new Thread(startMonitoring);
-		thMonitor.start();
+		new Thread(startMonitoring).start();
 	}
 	
 	private void writeLine(String newLine) {
 		setChanged();
 		notifyObservers(newLine);
 	}
+	
 	public void stopMonitor() throws IOException {
 		keepMonitoring = false;
-		writeLine(null);
+		watcher.close();
 	}
 	
 	Runnable startMonitoring = new Runnable() {
@@ -36,22 +48,50 @@ public class FileMonitor extends Observable{
 		public void run() {
 			
 			String line;
-			
-			try(BufferedReader lineBuffer = new BufferedReader(new FileReader(filePath))) {
+			Path dir = Paths.get(filePath);
+
+			try(BufferedReader lineBuffer = new BufferedReader(new FileReader(filePath +"/"+ fileToMonitor))) {
 				
+			watcher = FileSystems.getDefault().newWatchService();
+			
+			dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
+		
 			while(keepMonitoring) {	
-								
-				if((line = lineBuffer.readLine()) != null) {
-					System.out.println("Read Line: " + line);
-					writeLine(line);
-				}
+				
+			    key = watcher.take();
+
+			    for (WatchEvent<?> event : key.pollEvents()) {
+			    	
+			        WatchEvent.Kind<?> kind = event.kind();
+			        
+			        WatchEvent<Path> ev = (WatchEvent<Path>)event;
+			        Path fileName = ev.context();
+
+			        if (kind == StandardWatchEventKinds.OVERFLOW) {continue;} 
+			        else if (kind == StandardWatchEventKinds.ENTRY_CREATE){}  // process create event
+			        else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {} // process delete event
+			        
+			        else if (kind == StandardWatchEventKinds.ENTRY_MODIFY && 
+			        		(0 == fileName.toString().compareTo(fileToMonitor))) {
+			        	
+						while(keepMonitoring && (line = lineBuffer.readLine()) != null) {
+							writeLine(line);
+							System.out.println("Writing Line: " + line);
+						}			 
+			        }
+			    }
+			    
+			    key.reset();
 			}
 			
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}catch (ClosedWatchServiceException e) {
+				System.out.println("Monitor Closed");
 			}
 		}
 	};
