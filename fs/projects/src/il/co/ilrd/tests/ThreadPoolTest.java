@@ -1,4 +1,4 @@
-package il.co.ilrd.threadpool;
+package il.co.ilrd.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 

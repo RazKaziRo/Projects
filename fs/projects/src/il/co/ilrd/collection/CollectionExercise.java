@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-public class Exercise {
+public class CollectionExercise {
 
 		public static class DataObject{
 			
@@ -32,7 +32,7 @@ public class Exercise {
 		
 		public static void main(String[] argv) {
 			
-			Exercise ex = new Exercise();
+			CollectionExercise ex = new CollectionExercise();
 			
 			int [] intArray = {3,2,6,1,9};
 			for(int element : intArray) {
@@ -64,7 +64,7 @@ public class Exercise {
 			}
 			
 			Integer sum = 0;
-			Exercise.DataObject[] array = new DataObject[5];
+			CollectionExercise.DataObject[] array = new DataObject[5];
 			
 			array[0] = new DataObject("A", 1);
 			array[1] = new DataObject("B", 2);

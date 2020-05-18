@@ -18,10 +18,10 @@ public class FileMonitor extends Observable{
 	
 	private String filePath;
 	private String fileToMonitor;
-	WatchService watcher;
-	
+	private WatchService watcher;
+    private WatchKey key;
 	private volatile boolean keepMonitoring = true;
-    WatchKey key;
+
 
 	public FileMonitor(String filePath, String fileToMonitor) {
 		this.filePath = filePath;
@@ -70,7 +70,6 @@ public class FileMonitor extends Observable{
 			        if (kind == StandardWatchEventKinds.OVERFLOW) {continue;} 
 			        else if (kind == StandardWatchEventKinds.ENTRY_CREATE){}  // process create event
 			        else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {} // process delete event
-			        
 			        else if (kind == StandardWatchEventKinds.ENTRY_MODIFY && 
 			        		(0 == fileName.toString().compareTo(fileToMonitor))) {
 			        	

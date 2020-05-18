@@ -7,7 +7,7 @@ import java.util.Observer;
 
 public class FileObserver implements Observer{
 
-	public CrudFile crudFile;
+	private CrudFile crudFile;
 	
 	public FileObserver(String pathToFile) throws IOException {
 		crudFile = new CrudFile(pathToFile);
